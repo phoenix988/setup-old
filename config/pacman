@@ -1,0 +1,16 @@
+base-devel
+git
+nfs-utils
+openssh
+tmux
+kitty
+zsh
+fish
+neovim
+lightdm
+lsd
+rsync
+paru
+htop
+ttf-nerd-fonts-symbols
+docker 
