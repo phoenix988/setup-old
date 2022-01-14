@@ -1,0 +1,115 @@
+## Inserts a blank line between shell prompts
+#add_newline = false
+#
+#
+#[line_break]
+#disabled=true
+#
+## Replace the "❯" symbol in the prompt with "➜"
+#[character]                            # The name of the module we are configuring is "character"
+#success_symbol = "[⇒](bold green)"     # The "success_symbol" segment is being set to "➜" with the color "bold green"
+#error_symbol = "[✗](bold red)"     # The "success_symbol" segment is being set to "➜" with the color "bold green"
+#vicmd_symbol = "[⇐](bold green)"     # The "success_symbol" segment is being set to "➜" with the color "bold green"
+#
+## Disable the package module, hiding it from the prompt completely
+#[package]
+#disabled = true
+#
+
+
+format = """
+$status \
+${custom.tztime} \
+$username\
+$hostname\
+$slvl\
+$kubernetes\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$docker_context\
+$package\
+$cmake\
+$nodejs\
+$perl\
+$python \
+$dotnet\
+$dart\
+$dotnet\
+$elixir\
+$elm\
+$erlang\
+$golang\
+$helm\
+$java\
+$julia\
+$kotlin\
+$nim\
+$ocaml\
+$php\
+$purescript\
+$swift\
+$zig\
+$gcloud\
+$openstack\
+$crystal\
+$lua\
+$jobs\
+$ruby\
+$rust\
+$terraform\
+$vagrant\
+$nix_shell\
+$conda\
+$aws \
+$env_var\
+$cmd_durations\
+$line_break\
+$character"""
+
+# Don't print a new line at the start of the prompt
+add_newline = false
+
+[character]
+success_symbol = "[λ](grey)"
+error_symbol = "[λ](bold red)"
+
+[directory]
+truncation_length = 100
+truncate_to_repo = false
+style = "yellow"
+format = "[:$path]($style)[$read_only]($read_only_style) " 
+
+[git_branch]
+symbol = ""
+style = "bold white"
+format = '[\($symbol$branch\)]($style) '
+
+[git_status]
+untracked = ""
+format = '([\[$conflicted$deleted$renamed$modified$staged$behind\]]($style) )'
+modified = '*'
+
+#[python]
+#format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\))($style)'
+
+[status]
+disabled = false
+format = '[\[$status - $common_meaning\]](yellow)'
+
+[custom.tztime]
+command = 'date +"%a %b %d %Y %l:%M%p "'
+when = "true"
+format = '[\[$symbol($output)\]](purple)'
+
+[env_var]
+variable = "0"
+
+[hg_branch]
+disabled = true
+[time]
+disabled = true
+[battery]
+disabled = true
