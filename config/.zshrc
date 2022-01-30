@@ -108,7 +108,6 @@ eval "$(starship init zsh)"
 
 
 source $ZSH/aliases.sh
-uwufetch
 
 
 alias sou="source ~/.zshrc"
