@@ -104,17 +104,19 @@
     rofi="$config/rofi"
     starship="$config/starship.toml"
 
-
-
-    #This checks your fstab to see if you already automount my nfs shares
-    check_script=$(cat /etc/fstab | awk '/.scripts/ {print $1}')
-    check_dmenu=$(cat /etc/fstab | awk '/.dmenu/ {print $1}')
-    
     #Edits the fstab if needed to add my script folder
     #Temporarily change ownership on fstab
+    #And checks your fstab to see if you already have the correct entries
+    #and also if you can reach my NFS share if its offline and unavailable
+    #and if its unavailable it won't modify the fstab
+    check_script=$(cat /etc/fstab | awk '/.scripts/ {print $1}')
+    check_dmenu=$(cat /etc/fstab | awk '/.dmenu/ {print $1}')
+    ping 192.168.1.10 -c 1 &> /dev/null 
     
     printf "\nModifying your fstab if needed\n"  
     sleep 2
+    
+    #Modifying the fstab but this is temporaily and it will change back to default permissions
     sudo chown $USER:$USER /etc/fstab
        
     [ -z $check_script ] && cat $fstab | awk '/.scripts/' >> /etc/fstab && \
@@ -236,6 +238,10 @@
        printf "\nInstalling pacman packages from my package list if needed\n"
        sudo pacman -Sy $(cat $pacman) --needed --noconfirm &> /dev/null
       
+       
+       #Installs Docker if you want to
+       #Also asks you if you want portainer agent up and running using docker
+
        #Installs pfetch
        printf "\nInstalling pfetch if its no installed already using paru\n" 
        paru -S pfetch --needed --noconfirm &> /dev/null
@@ -343,7 +349,6 @@
     [ -d $HOME/.config/nvim ] && sudo ln -s $HOME/.config/nvim /root/.config/nvim &> /dev/null && \
        printf "\nLinking neovim config to root so it uses the same neovim config as the user\n"
        sleep 2
-
 
     #This will install portainer agent on the host
     #only if docker is installed on the system
