@@ -1,5 +1,22 @@
 #!/bin/bash
 
+    
+   until [ "$install_docker" = "y" -o "$install_docker" = "n"  ]
+   do
+   read -p "do you want to install docker? [y/n]: " install_docker 
+   
+        printf "\nPlease type y or n\n"
+
+   done
+   
+   exit
+
+
+
+
+
+
+
     #Will exit the script if you are root since I dont recommend running this as root
     [ $UID = "0" ] && printf "Don't run this script as root ..... aborting" && exit
    
@@ -245,11 +262,13 @@
        #Installs pfetch
        printf "\nInstalling pfetch if its no installed already using paru\n" 
        paru -S pfetch --needed --noconfirm &> /dev/null
+       paru -S autofs --needed --noconfirm &> /dev/null
       
        #This will deactivate logins for root
        check_root_if_activated=$(grep "root" /etc/passwd | awk -F : '{print $NF}' | awk -F / '{print $NF}')
        [ $check_root_if_activated != "nologin" ] && usermod_root=$(sudo usermod -s /usr/bin/nologin root | awk '{print $3}')       
-      
+     
+
        #adds the user to the docker group
        sudo usermod -aG docker $USER &> /dev/null
 
