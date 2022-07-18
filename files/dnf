@@ -14,3 +14,4 @@ NetworkManager-tui
 dnf-plugins-core
 kitty
 nmap
+lightdm

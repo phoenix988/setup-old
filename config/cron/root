@@ -1,0 +1,33 @@
+
+
+#Update Grub
+0 2 * * 1,4  /usr/bin/grub-mkconfig -o /boot/grub/grub.cfg
+
+
+#backup crontabs
+#0 4 * * * /usr/bin/myscripts/backup_cron.sh > /dev/null
+
+
+#Updates the system
+30 6 * * *  /sbin/pacman -Syyu --noconfirm 
+40 6 * * * /usr/bin/myscripts/create_nvim_link  
+
+
+#Trim all my ssd drives
+0 4 * * 1,3,5,7 /sbin/fstrim --all --verbose || true 
+
+
+#Creates snapshots of my virtual machines and deletes the old ones 
+#0 6 * * * /usr/bin/myscripts/kvmsnapshot.sh 
+#0 7 * * * /usr/bin/myscripts/deleteoldkvmsnapshot.sh 
+
+
+#Takes snapshots of my btrfs partitions and deletes the old ones
+30 5 * * * /usr/bin/myscripts/btrfs_backup_script/create_remove_btrfssnapshot.sh
+
+
+#Check if any of my vms are paused every 15 minutes and if so resumes them 
+0,15,30,45 * * * * /usr/bin/myscripts/checkif_vm_is_running.sh 
+@reboot /usr/bin/myscripts/checkif_vm_is_running.sh 
+
+

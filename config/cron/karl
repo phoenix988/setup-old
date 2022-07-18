@@ -1,0 +1,33 @@
+
+#Backups
+0 3 * * * /usr/bin/myscripts/file_backups/main 
+
+
+#RSYNC 
+0 8 * * * /usr/bin/myscripts/file_backups/rsync &> /dev/null
+
+
+#Backup most of my homefolder except all my symlinks that points to the cloud
+0 8 * * *    /usr/bin/rsync -aAXv --delete --exclude={Videos,Games,.cache,.local,iso_nfs} /home/karl/  /mnt/backup/home/full_home_backup/  > /dev/null  
+
+
+
+#Makes sure my Yandex.Disk starts at boot
+@reboot /usr/bin/yandex-disk start &> /dev/null
+
+
+#Sync my mailbox
+*/5 * * * * /usr/bin/mailsync &> /dev/null
+ 
+
+
+#Pacman packages
+0 6 * * 1 /usr/bin/pacman -Qqen > /media/cloud_storage/Backups/package_list/pac.packages.txt
+
+#Aur packages
+0 6 * * 1 /usr/bin/pacman -Qqem > /media/cloud_storage/Backups/package_list/aur.packages.txt
+ 
+
+#Update AUR packages
+0 4 * * 6 /usr/bin/paru -Sua --noconfirm
+

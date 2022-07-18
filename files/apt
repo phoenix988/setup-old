@@ -10,3 +10,5 @@ rsync
 docker.io
 kitty
 wget
+lightdm
+neomutt
