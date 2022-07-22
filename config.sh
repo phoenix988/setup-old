@@ -107,28 +107,15 @@ it will configure timezone for you etc [y/n]:" full_install_arch
               
                done
               
-               user=karl
-               hostname=test
-               
+                              
                sudo mount $drive /mnt 
                pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
                arch-chroot /mnt
-               printf "\nUpdating locales\n"
-               sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/g' /etc/locale.gen
-               echo "LANG=en_GB.UTF-8" > /etc/locale.conf
-               locale-gen
-               printf "\nsetting up timezone\n"
-               ln -sf /usr/share/zoneinfo/Europe/Vilnius /etc/localtime
-               printf "\nebaling networking\n"
-               systemctl enable NetworkManager
-               printf "\nadding user\n" 
-               useradd $user
-               passwd $user
-               printf "\nsetting up hostname\n"
-               echo "$hostname" > /etc/hostname
-                
+               
+
+               printf "chroot is done"
                exit
 
    fi
