@@ -112,7 +112,7 @@ it will configure timezone for you etc [y/n]:" full_install_arch
                pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
-               cp $HOME/git-reps/files/arch-chroot.sh
+               cp $HOME/git-reps/files/arch-chroot.sh /mnt/root/
                arch-chroot /mnt
                
 
