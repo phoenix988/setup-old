@@ -22,6 +22,7 @@
    qutebrowser="$config/qutebrowser"
    rofi="$config/rofi"
    starship="$config/starship.toml"
+   lightdm="$config/lightdm"
 
    #checks the OS that you are running
    check_os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
@@ -71,7 +72,58 @@
    
    done 
    
+   until [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ]  
+
+   do 
+            read -p "You're using Arch...Do yo want to do a complete setup ?
+it will configure timezone for you etc [y/n]:" full_install_arch
+  
+    if [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ] ; then 
+            echo "" &> /dev/null
+   else
+            printf "\nPlease type y or n\n"
    fi 
+
+   done
+
+   fi 
+   
+
+   if [ $full_install_arch = "y" ] ; then
+              
+               while [ -z "$check_drive" ] ; do 
+               read -p "Which Partition do you want to use for the Install?: " drive
+               check_drive=$(lsblk $drive 2> /dev/null)
+                
+               if [ -z "$check_drive" ] ; then
+
+                  printf "\nPlease type a proper drive..Cant find the drive you specified\n"
+
+               else
+                
+                  echo "" &> /dev/null
+
+               fi
+              
+               done
+              
+              
+               sudo mount $drive /mnt 
+               pacstrap /mnt base-devel grub btrfs-progs networkmanager 
+               genfstab -U >> /mnt/etc/fstab
+               arch-chroot /mnt
+               sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/g' /etc/locale.gen
+               echo "LANG=en_GB.UTF-8" > /etc/locale.conf
+               locale-gen
+               ln -sf /usr/share/zoneinfo/Europe/Vilnius /etc/localtime
+               systemctl enable NetworkManager
+               useradd $user
+               passwd $user
+               echo "$hostname" > /etc/hostname
+                
+               exit
+
+   fi
    
    until [ "$modify_fstab" = "y" -o "$modify_fstab" = "n"  ]
    
@@ -89,8 +141,6 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    done 
    
    clear
-
-   exit
 
 
    #Will exit the script if you are root since I dont recommend running this as root
@@ -371,7 +421,10 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
                      printf "\nInstalls xorg\n"
                      
                      sudo pacman -S xorg --needed --noconfirm &> /dev/null
-   
+            
+
+
+            
             fi
             #Installs pfetch
             printf "\nInstalling pfetch and autofs if its no installed already using paru\n" 
@@ -384,7 +437,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             check_root_if_activated=$(grep "root" /etc/passwd | awk -F : '{print $NF}' | awk -F / '{print $NF}')
             [ $check_root_if_activated != "nologin" ] && usermod_root=$(sudo usermod -s /usr/bin/nologin root | awk '{print $3}')       
 
-   fi
+               fi
       
    
    #Copying all my config files from the git repo I cloned to your
@@ -413,6 +466,9 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    cp -r $rofi $HOME/.config/
    printf "\nstarship.toml\n"
    cp -r $starship $HOME/.config/
+
+   #Copy files that requrie sudo permission
+   sudo cp -r $lightdm /etc
 
 
    #only link neovim to vim if neovim is installed 
