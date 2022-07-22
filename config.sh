@@ -113,6 +113,7 @@ it will configure timezone for you etc [y/n]:" full_install_arch
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
                cp $HOME/setup/files/arch-chroot.sh /mnt/root/
+               printf "\nNow you need to run the script located in /root/arch-chroot.sh\n"
                arch-chroot /mnt
                
 
