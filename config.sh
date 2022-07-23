@@ -193,7 +193,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
           [ -d /etc/dnf ] && sudo dnf install -y zsh    &> /dev/null 
           [ -d /etc/apt ] && sudo apt install -y zsh    &> /dev/null 
-          [ -e /etc/pacman.conf ] && sudo pacman -S zsh &> /dev/null 
+          [ -e /etc/pacman.conf ] && sudo pacman -S zsh --noconfirm &> /dev/null 
 
    fi
 
@@ -217,9 +217,9 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           
           sudo chown karl:karl $HOME/.config/oh-my-zsh
           #Install some zsh plugins     
-          git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.config/oh-my-zsh/zsh-autosuggestions
+          git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.config/oh-my-zsh/zsh-autosuggestions &> /dev/null
 
-          git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/oh-my-zsh/zsh-syntax-highlighting
+          git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/oh-my-zsh/zsh-syntax-highlighting &> /dev/null
 
    fi
    
