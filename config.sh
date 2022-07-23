@@ -522,7 +522,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    #This will create .config folder for root
    printf "\n\n Creates config folder for root if it doesnt exist\n"
-   [ -d /root/.config ] && sudo mkdir /root/.config &> /dev/null
+   [ -d /root/.config ] || sudo mkdir /root/.config &> /dev/null
 
    #This will link the neovim config to the root USER
    #so neovim will have the same config even if you edit something as root
