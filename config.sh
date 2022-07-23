@@ -197,16 +197,8 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    fi
 
-   printf "\nChecks if oh-my-zsh is installed\n" 
-
-   if [ -d $HOME/.config/oh-my-zsh ] ; then     
-     
-          printf "\nOh my Zsh is Installed\n"
-          
-          sleep 2
    
-   else
-
+          printf "\nInstalls oh my zsh\n"
           #Installs oh my zsh
           sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
            
@@ -221,7 +213,6 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
           git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/oh-my-zsh/zsh-syntax-highlighting &> /dev/null
 
-   fi
    
    #This will change the default shell to zsh
    which zsh &> /dev/null 
@@ -235,13 +226,9 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    #Installs the starship prompt if its not installed   
    #This will print the version of starship Installed 
    #But if it's not installed this script will go ahead and install it
-   printf "\n Checks if starship is installed .. and installs it if its not\n"
-   
-   sleep 2
-   
-   which starship &> /dev/null
 
-   [ $? = "0" ] || wget https://starship.rs/install.sh &> /dev/null 
+    printf "\nInstalls starship\n"
+    wget https://starship.rs/install.sh &> /dev/null 
    
    [ -e $HOME/install.sh ] && sudo chmod 755 ./install.sh && sudo ./install.sh --yes > /dev/null && rm $HOME/install.sh 
 
