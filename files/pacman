@@ -20,3 +20,12 @@ qtile
 bat
 net-tools
 rofi
+lxsession
+conky
+feh
+network-manager-applet
+volumeicon
+picom
+python-psutil
+ttf-iosevka-nerd
+ttf-iosevka
