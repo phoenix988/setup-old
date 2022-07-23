@@ -280,7 +280,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
     
        printf "\nInstalls starship\n"
     
-    curl -sS https://starship.rs/install.sh | sh 
+      $HOME/setup/files/starship.sh --yes &> /dev/null 
     
     fi 
    
