@@ -26,14 +26,13 @@
 
    #checks the OS that you are running
    check_os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
-  
    #Asks if you want to install docker
    until [ "$install_docker" = "y" -o "$install_docker" = "n"  ]
    do
             read -p "do you want to install docker? [y/n]: " install_docker 
    
    if [ "$install_docker" = "y" -o "$install_docker" = "n" ] ; then 
-            echo "" &> /dev/null
+            printf "\n"
    else
             printf "\nPlease type y or n\n"
    fi 
@@ -48,7 +47,8 @@
             read -p "do you want to configure portainer agent? [y/n]: " install_portainer 
    
    if [ "$install_portainer" = "y" -o "$install_portainer" = "n" ] ; then 
-            echo "" &> /dev/null
+            
+            printf "\n"
    else
             printf "\nPlease type y or n\n"
    fi 
@@ -65,7 +65,8 @@
             read -p "Do you want to install Xorg? [y/n]: " install_xorg 
    
    if [ "$install_xorg" = "y" -o "$install_xorg" = "n" ] ; then 
-            echo "" &> /dev/null
+            
+            printf "\n"
    else
             printf "\nPlease type y or n\n"
    fi 
@@ -79,7 +80,7 @@
 it will configure timezone for you etc [y/n]:" full_install_arch
   
     if [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ] ; then 
-            echo "" &> /dev/null
+            printf "\n"
    else
             printf "\nPlease type y or n\n"
    fi 
@@ -101,7 +102,7 @@ it will configure timezone for you etc [y/n]:" full_install_arch
 
                else
                 
-                  echo "" &> /dev/null
+                  printf "\n"
 
                fi
               
@@ -116,7 +117,7 @@ it will configure timezone for you etc [y/n]:" full_install_arch
                
                cp $HOME/setup/files/arch-chroot.sh /mnt/root/
                printf "\nNow you need to run the script located in /root/arch-chroot.sh\n"
-               arch-chroot /mnt
+               arch-chroot /mnt /mnt/root/arch-chroot.sh
 
                printf "chroot is done"
  
@@ -132,12 +133,25 @@ it will configure timezone for you etc [y/n]:" full_install_arch
 You can check what will be added in the files folder [y/n]: " modify_fstab 
    
    if [ "$modify_fstab" = "y" -o "$modify_fstab" = "n" ] ; then 
-            echo "" &> /dev/null
+            printf "\n"
    else
             printf "\nPlease type y or n\n"
    fi 
    
    done 
+   
+   until [ "$install_fonts" = "y" -o "$install_fonts" = "n"  ]
+   do
+            read -p "do you want to get all my fonts [y/n]?: " install_docker 
+   
+   if [ "$install_fonts" = "y" -o "$install_fonts" = "n" ] ; then 
+            printf "\n"
+   else
+            printf "\nPlease type y or n\n"
+   fi 
+
+   done
+
    
    clear
 
@@ -450,7 +464,14 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
                      printf "\nInstalling xorg\n"
                      
                      sudo pacman -S xorg --needed --noconfirm &> /dev/null
-            
+
+                     checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
+           
+            if [ "$checks_gpu" = "NVIDIA" ] ; then 
+
+                     sudo pacman -S nvidia --noconfirm --needed   
+
+            fi
 
 
             
@@ -550,4 +571,13 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
                  -v /var/run/docker.sock:/var/run/docker.sock  \
                  -v portainer_data_agent:/var/lib/docker/volumes portainer/agent &> /dev/null 
           fi
+   fi
+
+
+   if [ $install_fonts = "y" ] ; then
+
+       git clone https://github.com/phoenix988/fonts.git $HOME &> /dev/null
+       
+       sudo cp -r $HOME/fonts/fonts/* /usr/share/fonts
+
    fi

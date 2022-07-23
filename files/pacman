@@ -28,3 +28,6 @@ volumeicon
 picom
 python-psutil
 ttf-iosevka-nerd
+psmisc
+pulseaudio
+neofetch
