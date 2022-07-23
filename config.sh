@@ -203,7 +203,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
            
           [ -d $HOME/.config ] || mkdir $HOME/.config
-          sudo cp -r $HOME/.oh-my-zsh $HOME/.config/oh-my-zsh
+          sudo cp -r $HOME/.oh-my-zsh/* $HOME/.config/oh-my-zsh/
           
           [ -e $HOME/.oh-my-zsh ] && rm -rf $HOME/.oh-my-zsh
           
@@ -214,24 +214,17 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/oh-my-zsh/zsh-syntax-highlighting &> /dev/null
 
    
-   #This will change the default shell to zsh
-   which zsh &> /dev/null 
+          printf "\nChanging default shell to ZSH\n"
+          usermod=$(sudo usermod -s /bin/zsh $USER)       
 
-   [ $? = "0" ] && usermod=$(sudo usermod -s /bin/zsh $USER | awk '{print $3}') || printf "\n ZSH is not installed wont change shell\n"
-   printf "\n Changing Default shell to zsh if needed\n"
-   
-   #removes oh my zsh if its for some reason exist in the wrong directory
-   [ -e $HOME/.oh-my-zsh ] && rm -rf $HOME/.oh-my-zsh
-   
-   #Installs the starship prompt if its not installed   
-   #This will print the version of starship Installed 
-   #But if it's not installed this script will go ahead and install it
+    #Installs the starship prompt if its not installed   
+    #This will print the version of starship Installed 
+    #But if it's not installed this script will go ahead and install it
 
     printf "\nInstalls starship\n"
-    wget https://starship.rs/install.sh &> /dev/null 
+    
+    curl -sS https://starship.rs/install.sh | sh 
    
-   [ -e $HOME/install.sh ] && sudo chmod 755 ./install.sh && sudo ./install.sh --yes > /dev/null && rm $HOME/install.sh 
-
    #Clones oh my tmux
    [ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux &> /dev/null
 
