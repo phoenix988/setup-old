@@ -1,6 +1,6 @@
 #!/bin/bash              
 
-               read -p "What name do you want on the user account?: " user
+               read -p  "What name do you want on the user account?: " user
                read -p  "What Hostname do you want?: " host_name
                
 
@@ -8,7 +8,7 @@
                
                do
                  
-                   read -p "Do you want UEFI or BIOS Install?[U/B]" bios_version
+                   read -p "Do you want UEFI or BIOS Install?[U/B]: " bios_version
 
                
                if [ $bios_version = "u" -o $bios_version = "U" -o $bios_version = "B" -o $bios_version = "b" ] ; then
@@ -27,7 +27,7 @@
 
                   while [ -z "$check_efidrive" ] ; do 
               
-                      read -p "What Partition do you want to be your EFI drive?" efidrive
+                      read -p "What Partition do you want to be your EFI drive?: " efidrive
                       check_efidrive=$(lsblk $drive 2> /dev/null)
                      
                   if [ -z "$check_efidrive" ] ; then
@@ -46,7 +46,7 @@
 
                   while [ -z "$check_biosdrive" ] ; do 
               
-                      read -p "What Partition do you want to be your BIOS drive?" biosdrive
+                      read -p "What Partition do you want to be your BIOS drive?: " biosdrive
                       check_biosdrive=$(lsblk $biosdrive 2> /dev/null)
                      
                   if [ -z "$check_biosdrive" ] ; then
@@ -68,11 +68,14 @@
                printf "\nUpdating locales\n"
                sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/g' /etc/locale.gen
                echo "LANG=en_GB.UTF-8" > /etc/locale.conf
-               locale-gen
+               locale-gen &> /dev/null
+               
                printf "\nSetting up timezone\n"
                ln -sf /usr/share/zoneinfo/Europe/Vilnius /etc/localtime
+               
                printf "\nEnabling networking\n"
-               systemctl enable NetworkManager
+               systemctl enable NetworkManager &> /dev/null
+               
                printf "\nAdding user\n" 
                useradd $user
                passwd $user
@@ -86,11 +89,32 @@
                    
                    mount $efidrive /boot/EFI
                    grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB 
+                   
+                   if [ $? = "0" ] ; then
+
+                      echo "" &> /dev/null
+                      
+                   else 
+
+                      exit
+
+                   fi
 
                else
 
                    grub-install --target=i386-pc $biosdrive 
                
+
+                   if [ $? = "0" ] ; then
+
+                      echo "" &> /dev/null
+                      
+                   else 
+
+                      exit
+
+                   fi
+
 
                fi   
                
