@@ -79,16 +79,18 @@
                printf "\nAdding user\n" 
                useradd $user
                passwd $user
-               
+               usermod -aG wheel $user   
+
                printf "\nSetting up hostname\n"
                echo "$host_name" > /etc/hostname
+            
               
                if [ $bios_version = "U" -o $bios_version = "u" ] ; then
 
                    [ -d /boot/EFI ] || mkdir /boot/EFI
                    
                    mount $efidrive /boot/EFI
-                   grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB 
+                   grub-in=$(grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB) 
                   
 
                    genfstab -U / > /etc/fstab
@@ -106,7 +108,7 @@
 
                else
 
-                   grub-install --target=i386-pc $biosdrive 
+                   grub-in=$(grub-install --target=i386-pc $biosdrive)
                
 
                    if [ $? = "0" ] ; then

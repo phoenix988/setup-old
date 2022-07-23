@@ -109,7 +109,7 @@ it will configure timezone for you etc [y/n]:" full_install_arch
               
                               
                sudo mount $drive /mnt 
-               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr
+               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat
                
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
