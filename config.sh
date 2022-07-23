@@ -234,10 +234,12 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           #Installs oh my zsh
           printf "\nInstalls oh my zsh\n"
           
+          sleep 2
+          
           [ -d $HOME/.config ] || mkdir $HOME/.config
           
           [ -d $HOME/.config/oh-my-zsh/ ] && sudo rm -rf $HOME/.config/oh-my-zsh/
-          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/files/ohmyzsh.sh)" "" --unattended
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/files/ohmyzsh.sh)" "" --unattended > /dev/null
 
           sudo chown karl:karl -R $HOME/.config/oh-my-zsh
           
