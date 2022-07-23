@@ -82,6 +82,10 @@
                usermod -aG wheel $user   
                [ -d /home/$user ] || mkdir /home/$user
                [ -d /home/$user ] && chown karl:karl -R /home/$user
+
+               printf "\nModifying sudoers file\n"
+               echo '%wheel ALL=(ALL:ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo &> /dev/null 
+
                printf "\nSetting up hostname\n"
                echo "$host_name" > /etc/hostname
             
