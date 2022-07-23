@@ -1,21 +1,20 @@
 #!/bin/bash              
 
-               user=karl
-               hostname=test
-
+               read -p "What name do you want on the user account?: " user
+               read -p  "What Hostname do you want?: " hostname
 
                printf "\nUpdating locales\n"
                sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/g' /etc/locale.gen
                echo "LANG=en_GB.UTF-8" > /etc/locale.conf
                locale-gen
-               printf "\nsetting up timezone\n"
+               printf "\nSetting up timezone\n"
                ln -sf /usr/share/zoneinfo/Europe/Vilnius /etc/localtime
-               printf "\nenabling networking\n"
+               printf "\nEnabling networking\n"
                systemctl enable NetworkManager
-               printf "\nadding user\n" 
+               printf "\nAdding user\n" 
                useradd $user
                passwd $user
-               printf "\nsetting up hostname\n"
+               
+               printf "\nSetting up hostname\n"
                echo "$hostname" > /etc/hostname
                
-               exit
