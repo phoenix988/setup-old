@@ -223,8 +223,16 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    fi
 
    
-          printf "\nInstalls oh my zsh\n"
+          if [ -e $HOME/.config/oh-my-zsh/oh-my-zsh.sh ] ; then
+
+               printf "\nOH my zsh already installed\n"
+
+
+          else
+
+          
           #Installs oh my zsh
+          printf "\nInstalls oh my zsh\n"
           
           [ -d $HOME/.config ] || mkdir $HOME/.config
           
@@ -241,13 +249,24 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
           printf "\nChanging default shell to ZSH\n"
           usermod=$(sudo usermod -s /bin/zsh $USER)       
+          
+          fi
+
     #Installs the starship prompt if its not installed   
     #This will print the version of starship Installed 
     #But if it's not installed this script will go ahead and install it
 
-    printf "\nInstalls starship\n"
+    if [ -e /usr/local/bin/starship ] ; then
+
+       printf "\nStarship already Installed\n"
+    
+    else 
+    
+       printf "\nInstalls starship\n"
     
     curl -sS https://starship.rs/install.sh | sh 
+    
+    fi 
    
    #Clones oh my tmux
    [ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux &> /dev/null
