@@ -4,7 +4,7 @@
                read -p  "What Hostname do you want?: " host_name
                
 
-               until [ $bios_version = "u" -o $bios_version = "U" -o $bios_version = "B" -o $bios_version = "b" ] ; 
+               until [ "$bios_version" = "u" -o "$bios_version" = "U" -o "$bios_version" = "B" -o "$bios_version" = "b" ] ; 
                
                do
                  
@@ -27,7 +27,7 @@
 
                   while [ -z "$check_efidrive" ] ; do 
               
-                      read -p "What Partition do you want to be your EFI drive?" biosdrive
+                      read -p "What Partition do you want to be your EFI drive?" efidrive
                       check_efidrive=$(lsblk $drive 2> /dev/null)
                      
                   if [ -z "$check_efidrive" ] ; then
@@ -82,7 +82,7 @@
               
                if [ $bios_version = "U" -o $bios_version = "u" ] ; then
 
-                   [ -d /boot/EFI ] && mkdir /boot/EFI
+                   [ -d /boot/EFI ] || mkdir /boot/EFI
                    
                    mount $efidrive /boot/EFI
                    grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB 
