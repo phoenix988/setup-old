@@ -208,8 +208,6 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    fi
 
-
-   printf "\nChecks if zsh is installed\n" 
     
    if [ -e /usr/bin/zsh ] ; then
        
@@ -231,7 +229,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
            
           [ -d $HOME/.config ] || mkdir $HOME/.config
-          sudo cp -r $HOME/.oh-my-zsh $HOME/.config/oh-my-zsh
+          sudo cp -r $HOME/.oh-my-zsh/ $HOME/.config/oh-my-zsh
           
           [ -d $HOME/.oh-my-zsh ] && rm -rf $HOME/.oh-my-zsh
           
