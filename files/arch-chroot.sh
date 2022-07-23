@@ -80,7 +80,8 @@
                useradd $user
                passwd $user
                usermod -aG wheel $user   
-
+               [ -d /home/$user ] || mkdir /home/$user
+               [ -d /home/$user ] && chown karl:karl -R /home/$user
                printf "\nSetting up hostname\n"
                echo "$host_name" > /etc/hostname
             
