@@ -89,7 +89,11 @@
                    
                    mount $efidrive /boot/EFI
                    grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB 
-                   
+                  
+
+                   genfstab -U / > /etc/fstab
+
+
                    if [ $? = "0" ] ; then
 
                       echo "" &> /dev/null
