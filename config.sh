@@ -241,7 +241,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
    which starship &> /dev/null
 
-   [ $? != "0" ] && wget https://starship.rs/install.sh &> /dev/null 
+   [ $? = "0" ] || wget https://starship.rs/install.sh &> /dev/null 
    
    [ -e $HOME/install.sh ] && sudo chmod 755 ./install.sh && sudo ./install.sh --yes > /dev/null && rm $HOME/install.sh 
 
@@ -503,7 +503,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    #This will install portainer agent on the host
    #only if choose to install docker on the system
-   if [ $install_portainer = "y" ] ; then
+   if [ "$install_portainer" = "y" ] ; then
           
        docker -v &> /dev/null 
 
