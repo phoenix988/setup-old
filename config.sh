@@ -225,15 +225,14 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
           printf "\nInstalls oh my zsh\n"
           #Installs oh my zsh
-          export ZSH="$HOME/.oh-my-zsh"
-          sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-           
+          
           [ -d $HOME/.config ] || mkdir $HOME/.config
-          sudo cp -r $HOME/.oh-my-zsh/ $HOME/.config/oh-my-zsh
           
-          [ -d $HOME/.oh-my-zsh ] && rm -rf $HOME/.oh-my-zsh
+          [ -d $HOME/.config/oh-my-zsh/ ] && sudo rm -rf $HOME/.config/oh-my-zsh/
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/files/ohmyzsh.sh)"
+
+          sudo chown karl:karl -R $HOME/.config/oh-my-zsh
           
-          sudo chown karl:karl $HOME/.config/oh-my-zsh
           #Install some zsh plugins     
           git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.config/oh-my-zsh/zsh-autosuggestions &> /dev/null
 
