@@ -142,7 +142,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
    until [ "$install_fonts" = "y" -o "$install_fonts" = "n"  ]
    do
-            read -p "do you want to get all my fonts [y/n]?: " install_docker 
+            read -p "do you want to get all my fonts [y/n]?: " install_fonts 
    
    if [ "$install_fonts" = "y" -o "$install_fonts" = "n" ] ; then 
             printf "\n"
