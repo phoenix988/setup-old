@@ -109,15 +109,17 @@ it will configure timezone for you etc [y/n]:" full_install_arch
               
                               
                sudo mount $drive /mnt 
-               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd
+               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr
+               
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
+               
                cp $HOME/setup/files/arch-chroot.sh /mnt/root/
                printf "\nNow you need to run the script located in /root/arch-chroot.sh\n"
                arch-chroot /mnt
-               
 
                printf "chroot is done"
+ 
                exit
 
    fi
