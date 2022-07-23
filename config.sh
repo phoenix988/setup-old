@@ -179,8 +179,35 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
                      [ $? != "0" ] && printf "\n cloning repo failed......aborting" && exit
    fi 
        
-   #This makes sure oh my zsh and zsh will be configured 
-   #and setup correctly using my config files
+
+   if [ -e /usr/bin/curl ] ; then
+       
+          printf "\ncurl already Installed\n"
+          sleep 2
+   
+   else 
+
+          [ -d /etc/dnf ] && sudo dnf install -y  curl  &> /dev/null 
+          [ -d /etc/apt ] && sudo apt install -y  curl  &> /dev/null 
+          [ -e /etc/pacman.conf ] && sudo pacman -S curl --noconfirm --needed &> /dev/null 
+
+   fi
+
+
+
+   if [ -e /usr/bin/wget ] ; then
+       
+          printf "\nwget already Installed\n"
+          sleep 2
+   
+   else 
+
+          [ -d /etc/dnf ] && sudo dnf install -y wget &> /dev/null 
+          [ -d /etc/apt ] && sudo apt install -y wget &> /dev/null 
+          [ -e /etc/pacman.conf ] && sudo pacman -S wget --noconfirm --needed &> /dev/null 
+
+   fi
+
 
    printf "\nChecks if zsh is installed\n" 
     
@@ -237,7 +264,9 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    #This will create .dmenu and .scripts in $HOME if they dont exist
    printf "\nCreating script folders in $HOME if they doesnt exist already\n"
+   
    sleep 2
+   
    [ -d $HOME/.scripts ] || mkdir $HOME/.scripts
    [ -d $HOME/.dmenu ] || mkdir $HOME/.dmenu
 
@@ -246,6 +275,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    #And checks your fstab to see if you already have the correct entries
    #and also if you can reach my NFS share if its offline and unavailable
    #and if its unavailable it won't modify the fstab
+   if [ $modify_fstab = "y" ] ; then 
    check_script=$(cat /etc/fstab | awk '/.scripts/ {print $1}')
    check_dmenu=$(cat /etc/fstab | awk '/.dmenu/ {print $1}')
    ping 192.168.1.10 -c 1 &> /dev/null 
@@ -275,6 +305,8 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
        
             printf "\nPing failed Nothing will be done\n"  
    
+   fi
+
    fi
    
    #Checks what package manager you have and then install some packages
@@ -378,7 +410,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             printf "\nInstalling pacman packages from my package list if needed\n"
             sudo pacman -Sy $(cat $pacman) --needed --noconfirm > /dev/null 2> $HOME/.pacman.error
             [ -e $HOME/.pacman.error ] && errorpacman=$(cat $HOME/.pacman.error) 
-            [ -z "$errorpacman" ] || printf "\n You got some error installing packages here is the log \n\n $HOME/.pacman.error"
+            [ -z "$errorpacman" ] || printf "\n You got some error installing packages here is the log \n\n $HOME/.pacman.error\n"
        
             #Installs Docker if you said yes 
             if [ $install_docker = "y" ] ; then 
