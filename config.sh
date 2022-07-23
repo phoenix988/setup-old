@@ -216,9 +216,9 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
    else 
 
-          [ -d /etc/dnf ] && sudo dnf install -y zsh curl wget   &> /dev/null 
-          [ -d /etc/apt ] && sudo apt install -y zsh curl  wget &> /dev/null 
-          [ -e /etc/pacman.conf ] && sudo pacman -S zsh curl wget --noconfirm --needed &> /dev/null 
+          [ -d /etc/dnf ] && sudo dnf install -y zsh  &> /dev/null 
+          [ -d /etc/apt ] && sudo apt install -y zsh  &> /dev/null 
+          [ -e /etc/pacman.conf ] && sudo pacman -S zsh  --noconfirm --needed &> /dev/null 
 
    fi
 
@@ -237,7 +237,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           [ -d $HOME/.config ] || mkdir $HOME/.config
           
           [ -d $HOME/.config/oh-my-zsh/ ] && sudo rm -rf $HOME/.config/oh-my-zsh/
-          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/files/ohmyzsh.sh)"
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/files/ohmyzsh.sh)" "" --unattended
 
           sudo chown karl:karl -R $HOME/.config/oh-my-zsh
           
@@ -445,7 +445,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             #installs xorg if you said yes 
             if [ $install_xorg  = "y" ] ; then
    
-                     printf "\nInstalls xorg\n"
+                     printf "\nInstalling xorg\n"
                      
                      sudo pacman -S xorg --needed --noconfirm &> /dev/null
             
@@ -454,7 +454,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             
             fi
             #Installs pfetch
-            printf "\nInstalling pfetch and autofs if its no installed already using paru\n" 
+            printf "\nInstalling pfetch,autofs,mutt-wizard and lightdm themes if needed using paru\n" 
             paru -S pfetch --needed --noconfirm &> /dev/null
             paru -S autofs --needed --noconfirm &> /dev/null
             paru -S mutt-wizard --needed --noconfirm &> /dev/null

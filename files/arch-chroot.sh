@@ -94,8 +94,8 @@
 
                    [ -d /boot/EFI ] || mkdir /boot/EFI
                    
-                   mount $efidrive /boot/EFI
-                   grub-in=$(grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB) 
+                   mount $efidrive /boot/EFI &> /dev/null
+                   grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB > /dev/null 
                   
 
                    genfstab -U / > /etc/fstab
@@ -113,7 +113,7 @@
 
                else
 
-                   grub-in=$(grub-install --target=i386-pc $biosdrive)
+                   grub-install --target=i386-pc $biosdrive > /dev/null
                
 
                    if [ $? = "0" ] ; then
