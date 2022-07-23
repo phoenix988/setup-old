@@ -191,9 +191,9 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
    else 
 
-          [ -d /etc/dnf ] && sudo dnf install -y zsh    &> /dev/null 
-          [ -d /etc/apt ] && sudo apt install -y zsh    &> /dev/null 
-          [ -e /etc/pacman.conf ] && sudo pacman -S zsh --noconfirm &> /dev/null 
+          [ -d /etc/dnf ] && sudo dnf install -y zsh curl wget   &> /dev/null 
+          [ -d /etc/apt ] && sudo apt install -y zsh curl  wget &> /dev/null 
+          [ -e /etc/pacman.conf ] && sudo pacman -S zsh curl wget --noconfirm --needed &> /dev/null 
 
    fi
 
@@ -398,13 +398,13 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             printf "\nInstalling pacman packages from my package list if needed\n"
             sudo pacman -Sy $(cat $pacman) --needed --noconfirm > /dev/null 2> $HOME/.pacman.error
             [ -e $HOME/.pacman.error ] && errorpacman=$(cat $HOME/.pacman.error) 
-            [ -z $errorpacman ] || printf "\n You got some error installing packages here is the log \n\n $HOME/.pacman.error"
+            [ -z "$errorpacman" ] || printf "\n You got some error installing packages here is the log \n\n $HOME/.pacman.error"
        
             #Installs Docker if you said yes 
             if [ $install_docker = "y" ] ; then 
 
                      printf "\nInstalling Docker\n"
-                     sudo pacman -S docker &> /dev/null
+                     sudo pacman -S docker --noconfirm &> /dev/null
 
                      #adds the user to the docker group
                      sudo usermod -aG docker $USER &> /dev/null
@@ -430,7 +430,9 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             paru -S pfetch --needed --noconfirm &> /dev/null
             paru -S autofs --needed --noconfirm &> /dev/null
             paru -S mutt-wizard --needed --noconfirm &> /dev/null
-            
+            paru -S lightdm-webkit2-greeter --needed --noconfirm &> /dev/null
+            paru -S lightdm-webkit2-theme-glorious --needed --noconfirm &> /dev/null
+           
             #This will deactivate logins for root
             printf "\nDeactivating root account for security reasons , if its needed\n"
             check_root_if_activated=$(grep "root" /etc/passwd | awk -F : '{print $NF}' | awk -F / '{print $NF}')
