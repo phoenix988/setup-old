@@ -17,3 +17,5 @@ docker
 neomutt
 cronie
 qtile
+bat
+net-tools

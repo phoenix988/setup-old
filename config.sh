@@ -227,6 +227,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
           printf "\nInstalls oh my zsh\n"
           #Installs oh my zsh
+          export ZSH="$HOME/.oh-my-zsh"
           sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
            
           [ -d $HOME/.config ] || mkdir $HOME/.config
@@ -243,7 +244,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
           printf "\nChanging default shell to ZSH\n"
           usermod=$(sudo usermod -s /bin/zsh $USER)       
-
+exit
     #Installs the starship prompt if its not installed   
     #This will print the version of starship Installed 
     #But if it's not installed this script will go ahead and install it
