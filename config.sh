@@ -459,7 +459,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             printf "\nInstalling pacman packages from my package list if needed\n"
             sudo pacman -Sy $(cat $pacman) --needed --noconfirm > /dev/null 2> $HOME/.pacman.error
             [ -e $HOME/.pacman.error ] && errorpacman=$(cat $HOME/.pacman.error) 
-            [ -z "$errorpacman" ] || printf "\n You got some error installing packages here is the log \n\n$HOME/.pacman.error\n"
+            [ -z "$errorpacman" ] || printf "\nYou got some error installing packages here is the log \n$HOME/.pacman.error\n"
        
             #Installs Docker if you said yes 
             if [ $install_docker = "y" ] ; then 
@@ -559,7 +559,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    sleep 2
 
    #This will create .config folder for root
-   printf "\n\n Creates config folder for root if it doesnt exist\n"
+   printf "\n\nCreates config folder for root if it doesnt exist\n"
    [ -d /root/.config ] || sudo mkdir /root/.config &> /dev/null
 
    #This will link the neovim config to the root USER
@@ -619,7 +619,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    if [ $install_fonts = "y" ] ; then
 
-       git clone https://github.com/phoenix988/fonts.git $HOME &> /dev/null
+       git clone https://github.com/phoenix988/fonts.git $HOME/fonts &> /dev/null
        
        sudo cp -r $HOME/fonts/fonts/* /usr/share/fonts
 
