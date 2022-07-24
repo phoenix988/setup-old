@@ -9,6 +9,7 @@
    
    #config path
    config="$HOME/setup/config"
+   files="$HOME/setup/files"
 
    #config_files
    tmuxconflocal="$config/.tmux.conf.local"
@@ -23,6 +24,7 @@
    rofi="$config/rofi"
    starship="$config/starship.toml"
    lightdm="$config/lightdm"
+   archchroot="$files/arch-chroot.sh"
 
    #checks the OS that you are running
    check_os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
