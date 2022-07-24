@@ -552,6 +552,23 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    [ -d $HOME/.config/nvim ] && sudo ln -s $HOME/.config/nvim /root/.config/nvim &> /dev/null && \
    sleep 2
 
+   #Change grub theme 
+   check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}')
+
+   if [ $check_grub_theme = "GRUB_THEME" ] ; then
+ 
+             printf "\nUpdating grub theme\n" 
+             sed -i 's/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt\"/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt/g'
+   
+   else 
+     
+      echo "GRUB_THEME=/boot/grub/themes/CyberRe/theme.txt" >> /etc/default/grub
+
+   fi
+
+   grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
+
+
    #This will install portainer agent on the host
    #only if choose to install docker on the system
    if [ "$install_portainer" = "y" ] ; then
