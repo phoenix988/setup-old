@@ -570,19 +570,20 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    sleep 2
 
    #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
-   check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}')
-   sudo cp -r $HOME/setup/files/grub-themes /boot/grub/themes
+   check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v ^#)
+   sudo cp -r $HOME/setup/files/grub-themes/* /boot/grub/themes
 
-   if [ $check_grub_theme = "GRUB_THEME" ] ; then
+   if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
  
              printf "\nUpdating grub theme\n" 
              sudo sed -i 's/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt\"/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt/g'
    
    else 
     
-      sudo chown karl:karl /etc/default/grub
-      echo "GRUB_THEME=/boot/grub/themes/CyberRe/theme.txt" >> /etc/default/grub
-      sudo chown root:root /etc/default/grub
+             printf "\nUpdating grub theme\n" 
+             sudo chown karl:karl /etc/default/grub
+             echo "GRUB_THEME=/boot/grub/themes/CyberRe/theme.txt" >> /etc/default/grub
+             sudo chown root:root /etc/default/grub
    fi
 
       sudo  grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
