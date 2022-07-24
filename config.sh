@@ -44,7 +44,7 @@
    #Asks if you want to configure portainer agent but only if you choose to install docker   
    until [ "$install_portainer" = "y" -o "$install_portainer" = "n"  ]
    do
-            read -p "do you want to configure portainer agent? [y/n]: " install_portainer 
+            read -p "Do you want to configure portainer agent? [y/n]: " install_portainer 
    
    if [ "$install_portainer" = "y" -o "$install_portainer" = "n" ] ; then 
             
@@ -76,8 +76,8 @@
    until [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ]  
 
    do 
-            read -p "You're using Arch...Do yo want to do a complete setup ?
-it will configure timezone for you etc [y/n]:" full_install_arch
+            read -p "You're using Arch...Do yo want to do a complete Install ?
+it will configure everything you need to get started with arch [y/n]:" full_install_arch
   
     if [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ] ; then 
             printf "\n"
@@ -95,30 +95,45 @@ it will configure timezone for you etc [y/n]:" full_install_arch
                while [ -z "$check_drive" ] ; do 
                read -p "Which Partition do you want to use for the Install?: " drive
                check_drive=$(lsblk $drive 2> /dev/null)
-                
+               
                if [ -z "$check_drive" ] ; then
 
-                  printf "\nPlease type a proper drive..Cant find the drive you specified\n"
+                  printf "\nPlease type a proper drive..Can't find the drive you specified\n"
 
                else
                 
+                  check_fstype=$(lsblk -f drive | head -n2 | tail -n1 | awk '{print $2}' ) 
                   printf "\n"
 
                fi
               
                done
               
-                              
-               sudo mount $drive /mnt 
+               if [ $check_fstype = "btrfs" ] ; then
+                   
+                   sudo mount $drive /mnt &> /dev/null   
+                   sudo btrfs subvolume create /mnt/@ &> /dev/null
+                   sudo btrfs subvolume create /mnt/@home &> /dev/null
+                   sudo umount /mnt &> /dev/null
+                   sudo mount -o subvol=@ $drive /mnt &> /dev/null
+
+               else 
+               
+                  sudo mount $drive /mnt 
+               
+               fi
+               
                pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat
                
+               [ $check_fstype = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
+
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
                
-               cp $HOME/setup/files/arch-chroot.sh /mnt/root/
+               cp $HOME/setup/files/arch-chroot.sh /mnt/root/ &> /dev/null
+               cp $HOME/arch-chroot.sh /mnt/root/ &> /dev/null
                printf "\nNow you need to run the script located in /root/arch-chroot.sh\n"
-               arch-chroot /mnt /mnt/root/arch-chroot.sh
-
+               arch-chroot /mnt 
                printf "chroot is done"
  
                exit
@@ -142,7 +157,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
    until [ "$install_fonts" = "y" -o "$install_fonts" = "n"  ]
    do
-            read -p "do you want to get all my fonts [y/n]?: " install_fonts 
+            read -p "Do you want to get all my fonts [y/n]?: " install_fonts 
    
    if [ "$install_fonts" = "y" -o "$install_fonts" = "n" ] ; then 
             printf "\n"
@@ -424,7 +439,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    #This is for pacman or arch based distors
    if [ -e /etc/pacman.conf ] ; then
        
-            printf "\n Adding Pacman Repos if needed\n"
+            printf "\nAdding Pacman Repos if needed\n"
             #This will check if you already have andonties repo in your pacman.conf 
             check_pacman=$(cat /etc/pacman.conf | awk '/andontie-aur/' | \
             sed -e 's/\[//g' -e 's/\]//g')
@@ -442,7 +457,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             printf "\nInstalling pacman packages from my package list if needed\n"
             sudo pacman -Sy $(cat $pacman) --needed --noconfirm > /dev/null 2> $HOME/.pacman.error
             [ -e $HOME/.pacman.error ] && errorpacman=$(cat $HOME/.pacman.error) 
-            [ -z "$errorpacman" ] || printf "\n You got some error installing packages here is the log \n\n $HOME/.pacman.error\n"
+            [ -z "$errorpacman" ] || printf "\n You got some error installing packages here is the log \n\n$HOME/.pacman.error\n"
        
             #Installs Docker if you said yes 
             if [ $install_docker = "y" ] ; then 
@@ -552,7 +567,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    [ -d $HOME/.config/nvim ] && sudo ln -s $HOME/.config/nvim /root/.config/nvim &> /dev/null && \
    sleep 2
 
-   #Change grub theme 
+   #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
    check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}')
    sudo cp -r $HOME/setup/files/grub-themes /boot/grub/themes
 
@@ -568,7 +583,14 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
       sudo chown root:root /etc/default/grub
    fi
 
-   grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
+      sudo  grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
+
+
+   #Move my wallpapers to Pictures folder
+   [ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
+   cp -r $HOME/setup/Wallpapers $HOME/Pictures
+   cp $HOME/setup/config/.fehbg $HOME/
+
 
 
    #This will install portainer agent on the host
@@ -579,7 +601,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
           if [ $? = "0" ] ; then
              
-                 printf "\nInstalling Portainer agent so you can use this server\nFor docker containers only if its needed"
+                 printf "\nInstalling Portainer agent so you can use this server\nFor docker containers only if its needed\n"
                  
                  portainer_agent=$(sudo docker ps | awk '$NF == "portainer_agent" {print $NF}' 2> /dev/null)
                  
