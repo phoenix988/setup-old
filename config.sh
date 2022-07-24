@@ -576,7 +576,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
  
              printf "\nUpdating grub theme\n" 
-             sudo sed -i 's/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt\"/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt/g' /etc/default/grub
+             sudo sed -i 's/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt\"/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt/g' /etc/default/grub &> /dev/null
    
    else 
     
