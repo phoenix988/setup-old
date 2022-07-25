@@ -1,100 +1,15 @@
 #!/bin/bash
    
-   #adding some long paths to variables so it will be easier to use
-   fstab="/home/karl/setup/files/fstab"
-   pacman_conf="/home/karl/setup/files/pacman.conf"
-   pacman="/home/karl/setup/files/pacman"
-   dnf="/home/karl/setup/files/dnf"
-   apt="/home/karl/setup/files/apt"
+        hostname=$(hostname)
    
-   #config path
-   config="$HOME/setup/config"
-   files="$HOME/setup/files"
-
-   #config_files
-   tmuxconflocal="$config/.tmux.conf.local"
-   xmonad="$config/.xmonad"
-   zshrc="$config/.zshrc"
-   fish="$config/fish"
-   kitty="$config/kitty"
-   nvim="$config/nvim"
-   myzsh="$config/myzsh/aliases.sh"
-   qtile="$config/qtile"
-   qutebrowser="$config/qutebrowser"
-   rofi="$config/rofi"
-   starship="$config/starship.toml"
-   lightdm="$config/lightdm"
-   archchroot="$files/arch-chroot.sh"
-
-   #checks the OS that you are running
-   check_os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
-   #Asks if you want to install docker
-   until [ "$install_docker" = "y" -o "$install_docker" = "n"  ]
-   do
-            read -p "do you want to install docker? [y/n]: " install_docker 
-   
-   if [ "$install_docker" = "y" -o "$install_docker" = "n" ] ; then 
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
-
-   done
-   
-   if [ $install_docker = "y" ] ; then
-  
-   #Asks if you want to configure portainer agent but only if you choose to install docker   
-   until [ "$install_portainer" = "y" -o "$install_portainer" = "n"  ]
-   do
-            read -p "Do you want to configure portainer agent? [y/n]: " install_portainer 
-   
-   if [ "$install_portainer" = "y" -o "$install_portainer" = "n" ] ; then 
-            
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
-   done
-   fi  
-
-   if [ $check_os = "Arch" ] ; then
-  
-   #Asks if you want to install Xorg if you run arch   
-   until [ "$install_xorg" = "y" -o "$install_xorg" = "n"  ]
-   
-   do
+      if [ $hostname ="archiso" ] ; then 
+       
+      pacman -S --noconfirm --needed wget
     
-            read -p "Do you want to install Xorg? [y/n]: " install_xorg 
-   
-   if [ "$install_xorg" = "y" -o "$install_xorg" = "n" ] ; then 
-            
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
-   
-   done 
-   
-   until [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ]  
+      wget https://github.com/phoenix988/setup/raw/main/files/arch-chroot.sh 
 
-   do 
-            read -p "You're using Arch...Do yo want to do a complete Install ?
-it will configure everything you need to get started with arch [y/n]:" full_install_arch
-  
-    if [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ] ; then 
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
-
-   done
-
-   fi 
-   
-
-   if [ $full_install_arch = "y" ] ; then
-              
-               while [ -z "$check_drive" ] ; do 
+      while [ -z "$check_drive" ] ; do 
+      
                read -p "Which Partition do you want to use for the Install?: " drive
                check_drive=$(lsblk $drive 2> /dev/null)
                
@@ -125,22 +40,102 @@ it will configure everything you need to get started with arch [y/n]:" full_inst
                
                fi
                
-               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat
+               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat git
                
                [ $check_fstype = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
 
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
                
-               cp $HOME/setup/files/arch-chroot.sh /mnt/root/ &> /dev/null
                cp $HOME/arch-chroot.sh /mnt/root/ &> /dev/null
                printf "\nNow you need to run the script located in /root/arch-chroot.sh\n"
                arch-chroot /mnt 
                printf "chroot is done"
  
                exit
+ 
+         else
+   
+   #adding some long paths to variables so it will be easier to use
+   fstab="/home/karl/setup/files/fstab"
+   pacman_conf="/home/karl/setup/files/pacman.conf"
+   pacman="/home/karl/setup/files/pacman"
+   dnf="/home/karl/setup/files/dnf"
+   apt="/home/karl/setup/files/apt"
+   
+   #config path
+   config="$HOME/setup/config"
+   files="$HOME/setup/files"
 
-   fi
+   #config_files
+   tmuxconflocal="$config/.tmux.conf.local"
+   xmonad="$config/.xmonad"
+   zshrc="$config/.zshrc"
+   fish="$config/fish"
+   kitty="$config/kitty"
+   nvim="$config/nvim"
+   myzsh="$config/myzsh/aliases.sh"
+   qtile="$config/qtile"
+   qutebrowser="$config/qutebrowser"
+   rofi="$config/rofi"
+   starship="$config/starship.toml"
+   lightdm="$config/lightdm"
+   archchroot="$files/arch-chroot.sh"
+   cronfile="$config/cron"
+
+   #checks the OS that you are running
+   check_os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
+   
+   #Asks if you want to install docker
+   until [ "$install_docker" = "y" -o "$install_docker" = "n"  ]
+   do
+            read -p "do you want to install docker? [y/n]: " install_docker 
+   
+   if [ "$install_docker" = "y" -o "$install_docker" = "n" ] ; then 
+            printf "\n"
+   else
+            printf "\nPlease type y or n\n"
+   fi 
+
+   done
+   
+   if [ $install_docker = "y" ] ; then
+  
+         #Asks if you want to configure portainer agent but only if you choose to install docker   
+         until [ "$install_portainer" = "y" -o "$install_portainer" = "n"  ]
+         do
+                  read -p "Do you want to configure portainer agent? [y/n]: " install_portainer 
+         
+         if [ "$install_portainer" = "y" -o "$install_portainer" = "n" ] ; then 
+                  
+                  printf "\n"
+         else
+                  printf "\nPlease type y or n\n"
+         fi 
+         done
+   fi  
+
+   if [ $check_os = "Arch" ] ; then
+  
+   #Asks if you want to install Xorg if you run arch   
+         until [ "$install_xorg" = "y" -o "$install_xorg" = "n"  ]
+         
+         do
+          
+                  read -p "Do you want to install Xorg? [y/n]: " install_xorg 
+         
+         if [ "$install_xorg" = "y" -o "$install_xorg" = "n" ] ; then 
+                  
+                  printf "\n"
+         else
+                  printf "\nPlease type y or n\n"
+         fi 
+         
+         done 
+   
+
+   fi 
+   
    
    until [ "$modify_fstab" = "y" -o "$modify_fstab" = "n"  ]
    
@@ -311,13 +306,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
    [ -e $HOME/.tmux.conf ] || ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf 
 
-   #This will create .dmenu and .scripts in $HOME if they dont exist
-   printf "\nCreating script folders in $HOME if they doesnt exist already\n"
    
-   sleep 2
-   
-   [ -d $HOME/.scripts ] || mkdir $HOME/.scripts
-   [ -d $HOME/.dmenu ] || mkdir $HOME/.dmenu
 
    #Edits the fstab if needed to add my script folder
    #Temporarily change ownership on fstab
@@ -325,6 +314,14 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    #and also if you can reach my NFS share if its offline and unavailable
    #and if its unavailable it won't modify the fstab
    if [ $modify_fstab = "y" ] ; then 
+   
+   printf "\nCreating script folders in $HOME if they doesnt exist already\n"
+   sleep 2
+   #This will create .dmenu and .scripts in $HOME if they dont exist
+   [ -d $HOME/.scripts ] || mkdir $HOME/.scripts
+   [ -d $HOME/.dmenu ] || mkdir $HOME/.dmenu
+  
+   #Checks if I need to modify the fstab
    check_script=$(cat /etc/fstab | awk '/.scripts/ {print $1}')
    check_dmenu=$(cat /etc/fstab | awk '/.dmenu/ {print $1}')
    ping 192.168.1.10 -c 1 &> /dev/null 
@@ -539,6 +536,15 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    #Copy files that requrie sudo permission
    sudo cp -r $lightdm /etc
 
+   #copying cron files if you said yes to it
+   if [ $cron_install = "y" ] ; then
+
+        sudo cp -r $cronfile/* /var/spool/cron
+
+   fi
+
+
+
 
    #only link neovim to vim if neovim is installed 
    if [ -e /usr/bin/nvim ] ; then
@@ -570,7 +576,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    sleep 2
 
    #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
-   check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v ^#)
+   check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
    sudo cp -r $HOME/setup/files/grub-themes/* /boot/grub/themes
 
    if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
@@ -590,11 +596,25 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
 
    #Move my wallpapers to Pictures folder
+   printf "\nCloning my wallpaper repo and move them to $HOME/Pictures\n"
    [ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
-   cp -r $HOME/setup/Wallpapers $HOME/Pictures
-   cp $HOME/setup/config/.fehbg $HOME/
+   git clone https://github.com/phoenix988/wallpapers.git $HOME/wallapers &> /dev/null
+   cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
+   cp $HOME/setup/config/.fehbg $HOME/ &> /dev/null
+   rm -rf $HOME/wallpapers &> /dev/null
 
+  #Creates my personal scripts folder in usr/bin if it doesn't exis
+   if [ $modify_fstab = "n" ] ; then
 
+        git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles &> /dev/null
+
+        sudo cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
+       
+        [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
+
+        rm -rf $HOME/dotfiles &> /dev/null
+  
+   fi 
 
    #This will install portainer agent on the host
    #only if choose to install docker on the system
@@ -623,5 +643,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
        git clone https://github.com/phoenix988/fonts.git $HOME/fonts &> /dev/null
        
        sudo cp -r $HOME/fonts/fonts/* /usr/share/fonts
+
+   fi
 
    fi
