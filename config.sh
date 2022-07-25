@@ -1,8 +1,8 @@
 #!/bin/bash
    
-        hostname=$(hostname)
+        hostname=$(hostname 2> /dev/null)
    
-      if [ $hostname ="archiso" ] ; then 
+      if [ "$hostname" = "archiso" ] ; then 
        
       pacman -S --noconfirm --needed wget
     
