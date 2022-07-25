@@ -8,29 +8,9 @@
     
       wget https://github.com/phoenix988/setup/raw/main/files/arch-chroot.sh 
 
-<<<<<<< HEAD
-      while [ -z "$check_drive" ] ; do 
-      
-=======
-   do 
-            read -p "You're using Arch...Do yo want to do a complete Install ?
-it will configure everything you need to get started with arch [y/n]:" full_install_arch
-  
-    if [ "$full_install_arch" = "y" -o "$full_install_arch" = "n" ] ; then 
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
 
-   done
-
-   fi 
-   
-
-   if [ "$full_install_arch" = "y" ] ; then
               
                while [ -z "$check_drive" ] ; do 
->>>>>>> 91a95bc9b68aa6ac39995b22a509af0ef8faa6ab
                read -p "Which Partition do you want to use for the Install?: " drive
                check_drive=$(lsblk $drive 2> /dev/null)
                
@@ -41,7 +21,7 @@ it will configure everything you need to get started with arch [y/n]:" full_inst
                else
                 
                   check_fstype=$(lsblk -f drive | head -n2 | tail -n1 | awk '{print $2}' ) 
-                  printf "\n"
+                  printf "\nChecks the filesystem"
 
                fi
               
