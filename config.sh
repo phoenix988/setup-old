@@ -538,7 +538,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    sudo cp -r $lightdm /etc
 
    #copying cron files if you said yes to it
-   if [ $cron_install = "y" ] ; then
+   if [ "$cron_install" = "y" ] ; then
 
         sudo cp -r $cronfile/* /var/spool/cron
 
@@ -599,7 +599,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    #Move my wallpapers to Pictures folder
    printf "\nCloning my wallpaper repo and move them to $HOME/Pictures\n"
    [ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
-   git clone https://github.com/phoenix988/wallpapers.git $HOME/wallapers &> /dev/null
+   git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
    cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
    cp $HOME/setup/config/.fehbg $HOME/ &> /dev/null
    rm -rf $HOME/wallpapers &> /dev/null
@@ -644,6 +644,8 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
        git clone https://github.com/phoenix988/fonts.git $HOME/fonts &> /dev/null
        
        sudo cp -r $HOME/fonts/fonts/* /usr/share/fonts
+
+       rm -rf $HOME/fonts &> /dev/null
 
    fi
 
