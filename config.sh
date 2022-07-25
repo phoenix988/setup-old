@@ -20,7 +20,7 @@
 
                else
                 
-                  check_fstype=$(lsblk -f drive | head -n2 | tail -n1 | awk '{print $2}' ) 
+                  check_fstype=$(lsblk -f $drive | head -n2 | tail -n1 | awk '{print $2}' ) 
                   printf "\nChecks the filesystem"
 
                fi
