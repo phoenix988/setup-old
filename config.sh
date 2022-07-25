@@ -92,7 +92,7 @@ it will configure everything you need to get started with arch [y/n]:" full_inst
    fi 
    
 
-   if [ $full_install_arch = "y" ] ; then
+   if [ "$full_install_arch" = "y" ] ; then
               
                while [ -z "$check_drive" ] ; do 
                read -p "Which Partition do you want to use for the Install?: " drive
@@ -476,7 +476,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             fi
    
             #installs xorg if you said yes 
-            if [ $install_xorg  = "y" ] ; then
+            if [ "$install_xorg"  = "y" ] ; then
    
                      printf "\nInstalling xorg\n"
                      
