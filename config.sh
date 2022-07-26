@@ -88,7 +88,7 @@
  
          else
  
-    until [ $use_default = "y" -o $use_default = "Y" -o $use_default = "n" -o $use_default = "N" ] 
+    until [ "$use_default" = "y" -o "$use_default" = "Y" -o "$use_default" = "n" -o "$use_default" = "N" ] 
     
     do
             
