@@ -4,7 +4,7 @@
    
       if [ "$hostname" = "archiso" ] ; then 
        
-      pacman -S --noconfirm --needed wget
+      pacman -S --noconfirm --needed wget archlinux-keyring
     
       [ -e $HOME/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
 
@@ -64,7 +64,7 @@
                
                fi
                
-               pacstrap /mnt archlinux-keyring base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat git
+               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat git
                
                [ "$check_fstype" = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
 
