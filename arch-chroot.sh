@@ -1,8 +1,10 @@
 #!/bin/bash              
-
+               user=$(awk -F = '{if(NR==1) print $NF}') /root/.bashrc
+               host_name=$(awk -F = '{if(NR==2) print $NF}') /root/.bashrc
+               bios_version=$(awk -F = '{if(NR==3) print $NF}') /root/.bashrc
                
                              
-               if [ $bios_version = "u" -o $bios_version = "U" ] ; then
+               if [ "$bios_version" = "u" -o "$bios_version" = "U" ] ; then
 
                   while [ -z "$check_efidrive" ] ; do 
               
@@ -69,7 +71,7 @@
                echo "$host_name" > /etc/hostname
             
               
-               if [ $bios_version = "U" -o $bios_version = "u" ] ; then
+               if [ "$bios_version" = "U" -o "$bios_version" = "u" ] ; then
 
                    [ -d /boot/EFI ] || mkdir /boot/EFI
                    

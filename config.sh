@@ -25,7 +25,7 @@
 
                else
                    
-                   read -p "Invalid value please enter U/u or B/b"
+                   printf "\nInvalid value please enter U/u or B/b\n"
 
                fi 
                
@@ -72,11 +72,12 @@
               
                chmod 775 $HOME/arch-chroot.sh
                cp $HOME/arch-chroot.sh /mnt/root/ &> /dev/null
-               printf "\nNow you need to run the script located in /root/arch-chroot.sh\n"
+
+               #Runs everything in chroot mode to configure the rest
                arch-chroot /mnt echo "user=$user" >> /mnt/root/.bashrc 
                arch-chroot /mnt echo "host_name=$host_name" >> /mnt/root/.bashrc 
                arch-chroot /mnt echo "bios_version=$bios_version" >> /mnt/root/.bashrc 
-               arch-chroot /mnt $HOME/arch-chroot.sh
+               arch-chroot /mnt sh $HOME/arch-chroot.sh
                printf "chroot is done"
  
                exit
