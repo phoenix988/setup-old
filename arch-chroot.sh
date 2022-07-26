@@ -1,7 +1,7 @@
 #!/bin/bash              
-               user=$(awk -F = '{if(NR==1) print $NF}') /root/.bashrc
-               host_name=$(awk -F = '{if(NR==2) print $NF}') /root/.bashrc
-               bios_version=$(awk -F = '{if(NR==3) print $NF}') /root/.bashrc
+               user=$(awk -F = '{if(NR==1) print $NF}') /root/.bashrc )
+               host_name=$(awk -F = '{if(NR==2) print $NF}') /root/.bashrc )
+               bios_version=$(awk -F = '{if(NR==3) print $NF}' /root/.bashrc )
                
                              
                if [ "$bios_version" = "u" -o "$bios_version" = "U" ] ; then

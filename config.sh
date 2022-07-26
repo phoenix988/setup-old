@@ -10,18 +10,19 @@
 
 
                read -p  "What name do you want on the user account?: " user
+               printf "\n"
                read -p  "What Hostname do you want?: " host_name
                
                until [ "$bios_version" = "u" -o "$bios_version" = "U" -o "$bios_version" = "B" -o "$bios_version" = "b" ] ; 
                              
                do
                                
-               read -p "Do you want UEFI or BIOS Install?[U/B]: " bios_version
+               read -p "Do you want UEFI or BIOS Install? [U/B]: " bios_version
               
                              
               if [ $bios_version = "u" -o $bios_version = "U" -o $bios_version = "B" -o $bios_version = "b" ] ; then
                              
-                   echo "" &> /dev/null
+                   printf "\n"
 
                else
                    
