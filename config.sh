@@ -6,8 +6,7 @@
        
       pacman -S --noconfirm --needed wget
     
-      wget https://github.com/phoenix988/setup/raw/main/files/arch-chroot.sh 
-
+      wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh
 
               
                while [ -z "$check_drive" ] ; do 
@@ -58,31 +57,31 @@
          else
    
    #adding some long paths to variables so it will be easier to use
-   fstab="/home/karl/setup/files/fstab"
-   pacman_conf="/home/karl/setup/files/pacman.conf"
-   pacman="/home/karl/setup/files/pacman"
-   dnf="/home/karl/setup/files/dnf"
-   apt="/home/karl/setup/files/apt"
+   fstab="/home/karl/dotfiles/files/fstab"
+   pacman_conf="/home/karl/dotfiles/files/pacman.conf"
+   pacman="/home/karl/dotfiles/files/pacman"
+   dnf="/home/karl/dotfiles/files/dnf"
+   apt="/home/karl/dotfiles/files/apt"
    
    #config path
-   config="$HOME/setup/config"
-   files="$HOME/setup/files"
+   config="$HOME/dotfiles/"
+   files="$HOME/dotfiles/setup-files"
 
    #config_files
    tmuxconflocal="$config/.tmux.conf.local"
    xmonad="$config/.xmonad"
    zshrc="$config/.zshrc"
-   fish="$config/fish"
-   kitty="$config/kitty"
-   nvim="$config/nvim"
+   fish="$config/.config/fish"
+   kitty="$config/.config/kitty"
+   nvim="$config/.config/nvim"
    myzsh="$config/myzsh/aliases.sh"
-   qtile="$config/qtile"
-   qutebrowser="$config/qutebrowser"
-   rofi="$config/rofi"
-   starship="$config/starship.toml"
-   lightdm="$config/lightdm"
-   archchroot="$files/arch-chroot.sh"
-   cronfile="$config/cron"
+   qtile="$config/.config/qtile"
+   qutebrowser="$config/.config/qutebrowser"
+   rofi="$config/.config/rofi"
+   starship="$config/starship..config/toml"
+   lightdm="$config/.config/lightdm"
+   archchroot="$config/.scripts/activated/arch-chroot.sh"
+   cronfile="$config/.config/cron"
 
    #checks the OS that you are running
    check_os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
@@ -193,7 +192,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
             
             if [ -e /etc/pacman.conf ] ; then 
 
-                     sudo pacman -S  --noconfirm git zsh  &> /dev/null
+                     sudo pacman -S  --noconfirm --needed git zsh  &> /dev/null
                      [ $? != "0" ] && printf "\nGIT failed to install....... aborting" && exit  
             fi
    
@@ -205,7 +204,8 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
                      #Will exit the script if for some reason the cloning fail
                      [ $? != "0" ] && printf "\n cloning repo failed......aborting" && exit
    fi 
-       
+      
+   [ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git &> /dev/null
 
    if [ -e /usr/bin/curl ] ; then
        
@@ -266,7 +266,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           [ -d $HOME/.config ] || mkdir $HOME/.config
           
           [ -d $HOME/.config/oh-my-zsh/ ] && sudo rm -rf $HOME/.config/oh-my-zsh/
-          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/files/ohmyzsh.sh)" "" --unattended > /dev/null
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/ohmyzsh.sh)" "" --unattended > /dev/null
 
           sudo chown karl:karl -R $HOME/.config/oh-my-zsh
           
@@ -293,7 +293,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
     
        printf "\nInstalls starship\n"
     
-      $HOME/setup/files/starship.sh --yes &> /dev/null 
+      $HOME/setup/starship.sh --yes &> /dev/null 
     
     fi 
    
@@ -478,7 +478,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    
                      printf "\nInstalling xorg\n"
                      
-                     sudo pacman -S xorg --needed --noconfirm &> /dev/null
+                     sudo pacman -S xorg lightdm --needed --noconfirm &> /dev/null
 
                      checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
            
@@ -578,7 +578,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
    check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
-   sudo cp -r $HOME/setup/files/grub-themes/* /boot/grub/themes
+   sudo cp -r $HOME/setup/dotfiles/grub-themes/* /boot/grub/themes
 
    if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
  
@@ -601,7 +601,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    [ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
    git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
    cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
-   cp $HOME/setup/config/.fehbg $HOME/ &> /dev/null
+   cp $HOME/setup/.fehbg $HOME/ &> /dev/null
    rm -rf $HOME/wallpapers &> /dev/null
 
   #Creates my personal scripts folder in usr/bin if it doesn't exis
@@ -612,8 +612,6 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
         sudo cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
        
         [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
-
-        rm -rf $HOME/dotfiles &> /dev/null
   
    fi 
 
