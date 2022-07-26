@@ -57,11 +57,11 @@
          else
    
    #adding some long paths to variables so it will be easier to use
-   fstab="/home/karl/dotfiles/files/fstab"
-   pacman_conf="/home/karl/dotfiles/files/pacman.conf"
-   pacman="/home/karl/dotfiles/files/pacman"
-   dnf="/home/karl/dotfiles/files/dnf"
-   apt="/home/karl/dotfiles/files/apt"
+   fstab="/home/karl/dotfiles/setup-files/fstab"
+   pacman_conf="/home/karl/dotfiles/setup-files/pacman.conf"
+   pacman="/home/karl/dotfiles/setup-files/pacman"
+   dnf="/home/karl/dotfiles/setup-files/dnf"
+   apt="/home/karl/dotfiles/setup-files/apt"
    
    #config path
    config="$HOME/dotfiles/"
