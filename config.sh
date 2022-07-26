@@ -86,14 +86,14 @@
          else
    
    #adding some long paths to variables so it will be easier to use
-   fstab="/home/karl/dotfiles/setup-files/fstab"
-   pacman_conf="/home/karl/dotfiles/setup-files/pacman.conf"
-   pacman="/home/karl/dotfiles/setup-files/pacman"
-   dnf="/home/karl/dotfiles/setup-files/dnf"
-   apt="/home/karl/dotfiles/setup-files/apt"
+   fstab="$HOME/dotfiles/setup-files/fstab"
+   pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
+   pacman="$HOME/dotfiles/setup-files/pacman"
+   dnf="$HOME/dotfiles/setup-files/dnf"
+   apt="$HOME/dotfiles/setup-files/apt"
    
    #config path
-   config="$HOME/dotfiles/"
+   config="$HOME/dotfiles"
    files="$HOME/dotfiles/setup-files"
 
    #config_files
@@ -234,7 +234,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
                      [ $? != "0" ] && printf "\n cloning repo failed......aborting" && exit
    fi 
       
-   [ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git &> /dev/null
+   [ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles &> /dev/null
 
    if [ -e /usr/bin/curl ] ; then
        
