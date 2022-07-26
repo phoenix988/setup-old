@@ -6,7 +6,7 @@
        
       pacman -S --noconfirm --needed wget
     
-      wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
+      [ -e $HOME/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
 
 
                read -p  "What name do you want on the user account?: " user
@@ -64,7 +64,7 @@
                
                fi
                
-               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat git
+               pacstrap /mnt archlinux-keyring base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat git
                
                [ "$check_fstype" = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
 
@@ -246,7 +246,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
           [ -d /etc/dnf ] && sudo dnf install -y  curl  &> /dev/null 
           [ -d /etc/apt ] && sudo apt install -y  curl  &> /dev/null 
           [ -e /etc/pacman.conf ] && sudo pacman -S curl --noconfirm --needed &> /dev/null 
-
+.config/
    fi
 
 
