@@ -1,12 +1,35 @@
 #!/bin/bash
    
-        hostname=$(hostname 2> /dev/null)
+        hostname=$(cat /etc/hostname)
    
       if [ "$hostname" = "archiso" ] ; then 
        
       pacman -S --noconfirm --needed wget
     
-      wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh
+      wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
+
+
+               read -p  "What name do you want on the user account?: " user
+               read -p  "What Hostname do you want?: " host_name
+               
+               until [ "$bios_version" = "u" -o "$bios_version" = "U" -o "$bios_version" = "B" -o "$bios_version" = "b" ] ; 
+                             
+               do
+                               
+               read -p "Do you want UEFI or BIOS Install?[U/B]: " bios_version
+              
+                             
+              if [ $bios_version = "u" -o $bios_version = "U" -o $bios_version = "B" -o $bios_version = "b" ] ; then
+                             
+                   echo "" &> /dev/null
+
+               else
+                   
+                   read -p "Invalid value please enter U/u or B/b"
+
+               fi 
+               
+               done
 
               
                while [ -z "$check_drive" ] ; do 
@@ -46,10 +69,14 @@
 
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
-               
+              
+               chmod 775 $HOME/arch-chroot.sh
                cp $HOME/arch-chroot.sh /mnt/root/ &> /dev/null
                printf "\nNow you need to run the script located in /root/arch-chroot.sh\n"
-               arch-chroot /mnt 
+               arch-chroot /mnt echo "user=$user" >> /mnt/root/.bashrc 
+               arch-chroot /mnt echo "host_name=$host_name" >> /mnt/root/.bashrc 
+               arch-chroot /mnt echo "bios_version=$bios_version" >> /mnt/root/.bashrc 
+               arch-chroot /mnt $HOME/arch-chroot.sh
                printf "chroot is done"
  
                exit

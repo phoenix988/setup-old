@@ -1,28 +1,7 @@
 #!/bin/bash              
 
-               read -p  "What name do you want on the user account?: " user
-               read -p  "What Hostname do you want?: " host_name
                
-
-               until [ "$bios_version" = "u" -o "$bios_version" = "U" -o "$bios_version" = "B" -o "$bios_version" = "b" ] ; 
-               
-               do
-                 
-                   read -p "Do you want UEFI or BIOS Install?[U/B]: " bios_version
-
-               
-               if [ $bios_version = "u" -o $bios_version = "U" -o $bios_version = "B" -o $bios_version = "b" ] ; then
-               
-                   echo "" &> /dev/null
-
-               else
-                   
-                   read -p "Invalid value please enter U/u or B/b"
-
-               fi 
-               
-               done
-               
+                             
                if [ $bios_version = "u" -o $bios_version = "U" ] ; then
 
                   while [ -z "$check_efidrive" ] ; do 
