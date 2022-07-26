@@ -646,5 +646,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
        rm -rf $HOME/fonts &> /dev/null
 
    fi
+   
+   rm -rf $HOME/dotfiles
 
    fi
