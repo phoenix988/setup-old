@@ -1,6 +1,9 @@
 #!/bin/bash
    
-        hostname=$(cat /etc/hostname)
+        
+
+
+       hostname=$(cat /etc/hostname)
    
       if [ "$hostname" = "archiso" ] ; then 
        
@@ -84,7 +87,35 @@
                exit
  
          else
-   
+ 
+    until [ $use_default = "y" -o $use_default = "Y" -o $use_default = "n" -o $use_default = "N" ] 
+    
+    do
+            
+             read -p "Do you want to Use default config or Customize? : " use_default         
+
+    if [ $use_default = "y" -o $use_default = "Y" -o $use_default = "n" -o $use_default = "N" ] ; then
+           
+            printf "\n"
+    
+    else
+            
+            printf "\nPlease type y or n\n"
+    
+    fi
+            
+
+    done
+
+   if [ $use_default = "y" -o $use_default = "Y" ] ; then
+          
+          install_docker="y"
+          install_portainer="n"
+          install_xorg="n"
+          install_fonts="n"
+          modify_fstab="n"
+   fi
+
    #adding some long paths to variables so it will be easier to use
    fstab="$HOME/dotfiles/setup-files/fstab"
    pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
