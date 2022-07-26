@@ -66,7 +66,7 @@
                
                pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat git
                
-               [ $check_fstype = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
+               [ "$check_fstype" = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
 
                printf "\nGenerating fstab\n"
                genfstab -U /mnt >> /mnt/etc/fstab
