@@ -607,7 +607,7 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
    #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
    check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
-   sudo cp -r $HOME/setup/dotfiles/grub-themes/* /boot/grub/themes
+   sudo cp -r $HOME/dotfiles/grub-themes/* /boot/grub/themes
 
    if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
  
