@@ -662,12 +662,12 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
    if [ -d $HOME/Pictures/Wallpapers/ ] ; then
    
       
-      printf "\nCloning my wallpaper repo and move them to $HOME/Pictures\n"
       
       printf "\n"
   
    else
 
+       printf "\nCloning my wallpaper repo and move them to $HOME/Pictures\n"
        git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
        cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
        cp $HOME/setup/.fehbg $HOME/ &> /dev/null
