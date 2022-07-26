@@ -657,13 +657,22 @@ You can check what will be added in the files folder [y/n]: " modify_fstab
 
 
    #Move my wallpapers to Pictures folder
-   printf "\nCloning my wallpaper repo and move them to $HOME/Pictures\n"
    [ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
-   git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
-   cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
-   cp $HOME/setup/.fehbg $HOME/ &> /dev/null
-   rm -rf $HOME/wallpapers &> /dev/null
+   
+   if [ -d $HOME/Pictures/Wallpapers/ ] ; then
+   
+      
+      printf "\nCloning my wallpaper repo and move them to $HOME/Pictures\n"
+      
+      printf "\n"
+  
+   else
 
+       git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
+       cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
+       cp $HOME/setup/.fehbg $HOME/ &> /dev/null
+       rm -rf $HOME/wallpapers &> /dev/null
+   fi
   #Creates my personal scripts folder in usr/bin if it doesn't exis
    if [ $modify_fstab = "n" ] ; then
 
