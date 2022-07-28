@@ -1,6 +1,11 @@
 #!/bin/bash
    
         
+echo "################################################################"
+echo "## Syncing the repos and installing 'dialog' if not installed ##"
+echo "################################################################"
+sudo pacman --noconfirm --needed -Syy dialog || error "Error syncing the repos."
+
 
 error() { \
     clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;
@@ -54,9 +59,10 @@ uefi() { \
  }
 
       
-pacman -S --noconfirm --needed wget archlinux-keyring
+pacman -S --noconfirm --needed wget archlinux-keyring  &> /dev/null
 
-[ -e $HOME/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
+
+[ -e $(pwd)/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
 
 while [ -z $user ] ; 
 
@@ -177,14 +183,19 @@ fi
                grub btrfs-progs networkmanager \
                systemd efibootmgr linux linux-firmware \
                arch-install-scripts systemd-sysvcompat git || error "Pacstrap Failed to install everything"
-               
+               sleep 2
+               clear
                [ "$check_fstype" = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
-
-               printf "\nGenerating fstab\n"
+               
+               echo "######################"
+               echo "## Generating fstab ##"
+               echo "######################"
                genfstab -U /mnt >> /mnt/etc/fstab
-              
+               sleep 2
+               clear
+
                chmod 775 $HOME/arch-chroot.sh
-               cp $HOME/arch-chroot.sh /mnt/root/ &> /dev/null
+               cp $HOME/arch-chroot.sh /mnt/root/ 
 
                #Runs everything in chroot mode to configure the rest
                arch-chroot /mnt echo "user=$user" >> /mnt/root/.bashrc 
@@ -193,11 +204,13 @@ fi
                arch-chroot /mnt echo "efidrive=$efidrive" >> /mnt/root/.bashrc 
                arch-chroot /mnt echo "biosdrive=$biosdrive" >> /mnt/root/.bashrc 
                arch-chroot /mnt sh $HOME/arch-chroot.sh
-               printf "chroot is done"
- 
+
+               echo "####################"              
+               echo "## Chroot is done ##"
+               echo "####################"              
+          
                exit
- 
-         else
+else
  
     
 
@@ -273,10 +286,10 @@ else
 
 fi
 
-clear
 
 Lastchance || error "User choose to exit"
 
+clear
 #adding some long paths to variables so it will be easier to use
 fstab="$HOME/dotfiles/setup-files/fstab"
 pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
@@ -305,165 +318,173 @@ archchroot="$config/.scripts/activated/arch-chroot.sh"
 cronfile="$config/.config/cron"
 
   
-   #Cloning my repo if its needed
-   if [ -d $HOME/setup ] ; then
-            printf "\nMy repo already exist in $HOME so no need to clone.....\n"
-
-            sleep 2
-   else
-
-            if [ -d /etc/dnf ] ; then  
-             
-                     sudo dnf -y install git zsh &> /dev/null
-                     [ $? != "0" ] && printf "\nGIT failed to install....... aborting" && exit  
-            fi
-            
-            if [ -d /etc/apt ] ; then 
-
-                     sudo apt -y install git zsh &> /dev/null
-                     [ $? != "0" ] && printf "\nGIT failed to install....... aborting" && exit  
-            fi  
-            
-            if [ -e /etc/pacman.conf ] ; then 
-
-                     sudo pacman -S  --noconfirm --needed git zsh  &> /dev/null
-                     [ $? != "0" ] && printf "\nGIT failed to install....... aborting" && exit  
-            fi
-   
-                     #Clones the git hub repo so we can access all the files we need
-                     printf "\nCloning My git repo to get all my config files ready"
-                     
-                     git clone https://github.com/phoenix988/setup $HOME/setup > /dev/null 
-                     
-                     #Will exit the script if for some reason the cloning fail
-                     [ $? != "0" ] && printf "\n cloning repo failed......aborting" && exit
-   fi 
-      
-   [ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles &> /dev/null
-
-   if [ -e /usr/bin/curl ] ; then
-       
-          printf "\ncurl already Installed\n"
-          sleep 2
-   
-   else 
-
-          [ -d /etc/dnf ] && sudo dnf install -y  curl  &> /dev/null 
-          [ -d /etc/apt ] && sudo apt install -y  curl  &> /dev/null 
-          [ -e /etc/pacman.conf ] && sudo pacman -S curl --noconfirm --needed &> /dev/null 
-.config/
-   fi
-
-
-
-   if [ -e /usr/bin/wget ] ; then
-       
-          printf "\nwget already Installed\n"
-          sleep 2
-   
-   else 
-
-          [ -d /etc/dnf ] && sudo dnf install -y wget &> /dev/null 
-          [ -d /etc/apt ] && sudo apt install -y wget &> /dev/null 
-          [ -e /etc/pacman.conf ] && sudo pacman -S wget --noconfirm --needed &> /dev/null 
-
-   fi
-
-    
-   if [ -e /usr/bin/zsh ] ; then
-       
-          printf "\nzsh already Installed\n"
-          sleep 2
-   
-   else 
-
-          [ -d /etc/dnf ] && sudo dnf install -y zsh  &> /dev/null 
-          [ -d /etc/apt ] && sudo apt install -y zsh  &> /dev/null 
-          [ -e /etc/pacman.conf ] && sudo pacman -S zsh  --noconfirm --needed &> /dev/null 
-
-   fi
-
-   
-          if [ -e $HOME/.config/oh-my-zsh/oh-my-zsh.sh ] ; then
-
-               printf "\nOH my zsh already installed\n"
-
-
-          else
-
-          
-          #Installs oh my zsh
-          printf "\nInstalls oh my zsh\n"
-          
-          sleep 2
-          
-          [ -d $HOME/.config ] || mkdir $HOME/.config
-          
-          [ -d $HOME/.config/oh-my-zsh/ ] && sudo rm -rf $HOME/.config/oh-my-zsh/
-          sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/ohmyzsh.sh)" "" --unattended > /dev/null
-
-          sudo chown karl:karl -R $HOME/.config/oh-my-zsh
-          
-          #Install some zsh plugins     
-          git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.config/oh-my-zsh/zsh-autosuggestions &> /dev/null
-
-          git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/oh-my-zsh/zsh-syntax-highlighting &> /dev/null
-
-   
-          printf "\nChanging default shell to ZSH\n"
-          usermod=$(sudo usermod -s /bin/zsh $USER)       
-          
-          fi
-
-    #Installs the starship prompt if its not installed   
-    #This will print the version of starship Installed 
-    #But if it's not installed this script will go ahead and install it
-
-    if [ -e /usr/local/bin/starship ] ; then
-
-       printf "\nStarship already Installed\n"
-    
-    else 
-    
-       printf "\nInstalls starship\n"
-    
-      $HOME/setup/starship.sh --yes &> /dev/null 
-    
-    fi 
-   
-   #Clones oh my tmux
-   [ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux &> /dev/null
-
-   #Only links .tmux.conf if it doesnt exist already
-   printf "\nLinkink $HOME/.tmux/.tmux.conf if needed\n"
-   
-   sleep 2
-   
-   [ -e $HOME/.tmux.conf ] || ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf 
-
-   
-
-   #Edits the fstab if needed to add my script folder
-   #Temporarily change ownership on fstab
-   #And checks your fstab to see if you already have the correct entries
-   #and also if you can reach my NFS share if its offline and unavailable
-   #and if its unavailable it won't modify the fstab
-   if [ $modify_fstab = "y" ] ; then 
-   
-   printf "\nCreating script folders in $HOME if they doesnt exist already\n"
-   sleep 2
-   #This will create .dmenu and .scripts in $HOME if they dont exist
-   [ -d $HOME/.scripts ] || mkdir $HOME/.scripts
-   [ -d $HOME/.dmenu ] || mkdir $HOME/.dmenu
-  
-   #Checks if I need to modify the fstab
-   check_script=$(cat /etc/fstab | awk '/.scripts/ {print $1}')
-   check_dmenu=$(cat /etc/fstab | awk '/.dmenu/ {print $1}')
-   ping 192.168.1.10 -c 1 &> /dev/null 
-   
-   if [ $? = "0" ] ; then 
+#Cloning my repo if its needed
+if [ -d $HOME/setup ] ; then
          
-            printf "\nPing succeded , Modifying your fstab if needed\n"  
+         echo "#############################################################"
+         echo "## My repo already exist in $HOME so no need to clone..... ##"
+         echo "#############################################################"
+
+         sleep 2
+else
+
+         if [ -d /etc/dnf ] ; then  
+          
+                  sudo dnf -y install git zsh
+                  [ $? != "0" ] && error "GIT failed to install....... aborting"   
+                  
+         fi
+         
+         if [ -d /etc/apt ] ; then 
+
+                  sudo apt -y install git zsh &> /dev/null
+                  [ $? != "0" ] && error "GIT failed to install....... aborting"   
+         fi  
+         
+         if [ -e /etc/pacman.conf ] ; then 
+
+                  sudo pacman -S  --noconfirm --needed git zsh
+                  [ $? != "0" ] && error "GIT failed to install....... aborting"  
+         fi
+
+                  #Clones the git hub repo so we can access all the files we need
+                  echo "##########################################################"
+                  echo "## Cloning My git repo to get all my config files ready ##"
+                  echo "##########################################################"
+                  
+                  git clone https://github.com/phoenix988/setup $HOME/setup 
+                  
+                  #Will exit the script if for some reason the cloning fail
+                  [ $? != "0" ] && error "Cloning repo failed......aborting" 
+fi 
+   
+[ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles 
+
+       
+echo "################################################################"
+echo "######### Installing curl zsh wget if its not installed ########"
+echo "################################################################"
+[ -d /etc/dnf ] && sudo dnf install -y  curl zsh wget  
+[ -d /etc/apt ] && sudo apt install -y  curl  zsh wget  
+[ -e /etc/pacman.conf ] && sudo pacman -Sy curl zsh wget --noconfirm --needed  
+
+sleep 2
+clear
+
+
+
+if [ -e $HOME/.config/oh-my-zsh/oh-my-zsh.sh ] ; then
+
+     echo "################################################################"
+     echo "############ OH-MY-ZSH is already Installed ####################"
+     echo "################################################################"
+     
+     sleep 2
+     clear
+else
+
+     echo "####################################################"
+     echo "############ Installs OH-MY-ZSH ####################"
+     echo "####################################################"
+     
+     [ -d $HOME/.config ] || mkdir $HOME/.config
+     
+     [ -d $HOME/.config/oh-my-zsh/ ] && sudo rm -rf $HOME/.config/oh-my-zsh/
+     
+     sh -c "$(curl -fsSL https://raw.githubusercontent.com/phoenix988/setup/main/ohmyzsh.sh)" "" --unattended 
+     
+     sudo chown karl:karl -R $HOME/.config/oh-my-zsh
+     
+     sleep 2 
+     clear 
+    
+     #Installs ZSH plugins
+     echo "############################################################"
+     echo "############ Installs OH-MY-ZSH Plugins ####################"
+     echo "############################################################"
+     
+     git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.config/oh-my-zsh/zsh-autosuggestions  
+     
+     git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/oh-my-zsh/zsh-syntax-highlighting 
+     
+     sleep 2 
+     clear     
+     
+     echo "################################################################"
+     echo "############# Changing Default Shell to ZSH ####################"
+     echo "################################################################"
+     usermod=$(sudo usermod -s /bin/zsh $USER)       
+     
+     sleep 2
+     clear
+fi
+
+#Installs the starship prompt if its not installed   
+#This will print the version of starship Installed 
+#But if it's not installed this script will go ahead and install it
+
+if [ -e /usr/local/bin/starship ] ; then
+
+     echo "################################################################"
+     echo "############# StarShip is already Installed ####################"
+     echo "################################################################"
+     
+     sleep 2
+     clear
+
+else 
+
+
+  $HOME/setup/starship.sh --yes  
+
+  sleep 2
+  clear
+
+fi 
+   
+#Clones oh my tmux
+[ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux &> /dev/null
+
+#Only links .tmux.conf if it doesnt exist already
+echo "################################################################"
+echo "########### Creates $HOME/.tmux/.tmux.conf if needed ###########"
+echo "################################################################"
+
+sleep 2
+
+[ -e $HOME/.tmux.conf ] || ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf 
+
+clear   
+
+#Edits the fstab if needed to add my script folder
+#Temporarily change ownership on fstab
+#And checks your fstab to see if you already have the correct entries
+#and also if you can reach my NFS share if its offline and unavailable
+#and if its unavailable it won't modify the fstab
+if [ $modify_fstab = "y" ] ; then 
+
+       echo "##################################################################"
+       echo "## Creates script folder in $HOME if they doesn't exist already ##"
+       echo "##################################################################"
+
+       sleep 2
+       
+       clear
+       #This will create .dmenu and .scripts in $HOME if they dont exist
+       [ -d $HOME/.scripts ] || mkdir $HOME/.scripts
+       [ -d $HOME/.dmenu ] || mkdir $HOME/.dmenu
+       
+       #Checks if I need to modify the fstab
+       check_script=$(cat /etc/fstab | awk '/.scripts/ {print $1}')
+       check_dmenu=$(cat /etc/fstab | awk '/.dmenu/ {print $1}')
+       ping 192.168.1.10 -c 1 &> /dev/null 
+       
+      if [ $? = "0" ] ; then 
+         
+            echo "##################################################################"
+            echo "################ Ping Succeded, Modifying your fstab #############"
+            echo "##################################################################"
+            
             sleep 2
             
             #Modifying the fstab but this is temporaily and it will change back to default permissions
@@ -479,317 +500,445 @@ cronfile="$config/.config/cron"
             sudo chown root:root /etc/fstab
             
             #mounting everything from fstab
-            printf "\nRunning mount -a to mount all entris from the fstab\n"
+            echo "##################################################################"
+            echo "################ Running mount -a on all entries #################"
+            echo "##################################################################"
             sudo mount -a
-         
-   else 
-       
-            printf "\nPing failed Nothing will be done\n"  
-   
-   fi
-
-   fi
-   
-   #Checks what package manager you have and then install some packages
-   #also it will do some other things based on what distro you have
-   
-   #This is for apt or ubuntu/debian based distros
-   if [ -d /etc/apt ] ; then
-   
-            #Installs packages from the apt file
-            #just add the package name to that list if you want 
-            #this script to install it for you
-            printf "\nInstalling apt packages from my package list if needed\n"
-            sudo apt install $(cat $apt) -y &> /dev/null
             
-            #This will check if nano is installed or not 
-            remove_nano=$(dpkg -l | grep nano )
-
-            #We dont ever wanna use nano
-            #so lets remove it if its installed
-            [ -z "$remove_nano" ] || sudo apt purge nano &> /dev/null
-            
-            #This will link nanos binary to neovim so even if you 
-            #type nano it will open neovim
-            [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
-            sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
-            
-            if [ $install_docker = "y" ] ; then
+            else 
                    
-                   #Installs docker 
-                   sudo apt install docker.io -y
+            echo "##################################################################"
+            echo "################ Ping failed nothing will be done ################"
+            echo "##################################################################"
+               
+      fi
 
-                   #this will start the docker daemon if its not running
-                   sudo systemctl enable --now docker &> /dev/null
-
-                   #adds the user to the docker group
-                   sudo usermod -aG docker $USER &> /dev/null
-            fi     
-   fi
-
-   #This is for dnf or fedora based distros
-   if [ -d /etc/dnf ] ; then
+fi
    
-            #checks if its fedora you are running 
-            fedora=$(cat /etc/os-release | awk -F = '$1 =="ID" {print $2}' )
-            
-            #Installs packages from the dnf file
-            #just add the package name to that list if you want 
-            #this script to install it for you
-            printf "\nInstalling dnf packages from my package list if needed\n"
-            sudo dnf install $(cat $dnf) -y > /dev/null 2> $HOME/.dnf.error
-            
-            [ -e $HOME/.dnf.error ] && errordnf=$(cat $HOME/.dnf.error)
-            [ -z $errordnf ] || printf "\n You got some error installing packages here is the log \n\n $HOME/.dnf.error"
-            
+#Checks what package manager you have and then install some packages
+#also it will do some other things based on what distro you have
 
-            #This will install docker if you are running fedora
-            #it will check for the distro id and if the id is fedora
-            #this script will install docker
-            if [ $install_docker = "y" ] ; then
+#This is for apt or ubuntu/debian based distros
+if [ -d /etc/apt ] ; then
+
+         #Installs packages from the apt file
+         #just add the package name to that list if you want 
+         #this script to install it for you
+         echo "##################################################################"
+         echo "#### Installing apt packages from my package list if needed ######"
+         echo "##################################################################"
+         sudo apt install $(cat $apt) -y &> /dev/null
+         
+         #This will check if nano is installed or not 
+         remove_nano=$(dpkg -l | grep nano )
+
+         #We dont ever wanna use nano
+         #so lets remove it if its installed
+         [ -z "$remove_nano" ] || sudo apt purge nano &> /dev/null
+         
+         #This will link nanos binary to neovim so even if you 
+         #type nano it will open neovim
+         [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
+         sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
+         
+         if [ $install_docker = "y" ] ; then
+                
+                #Installs docker 
+                sudo apt install docker.io -y
+
+                #this will start the docker daemon if its not running
+                sudo systemctl enable --now docker &> /dev/null
+
+                #adds the user to the docker group
+                sudo usermod -aG docker $USER &> /dev/null
+         fi     
+fi
+
+#This is for dnf or fedora based distros
+if [ -d /etc/dnf ] ; then
+
+         #checks if its fedora you are running 
+         fedora=$(cat /etc/os-release | awk -F = '$1 =="ID" {print $2}' )
+         
+         #Installs packages from the dnf file
+         #just add the package name to that list if you want 
+         #this script to install it for you
+         echo "##################################################################"
+         echo "#### Installing DNF packages from my package list if needed ######"
+         echo "##################################################################"
+         sudo dnf install $(cat $dnf) -y > /dev/null 2> $HOME/.dnf.error
+         dnferror(){
+         echo "########################################################################################"
+         echo "#### You got some error installing packages here is the log \n\n $HOME/.dnf.error ######"
+         echo "########################################################################################"
+         }            
+         [ -e $HOME/.dnf.error ] && errordnf=$(cat $HOME/.dnf.error)
+         [ -z $errordnf ] || dnferror
+
+         sleep 2
+         clear
+
+         #This will install docker if you are running fedora
+         #it will check for the distro id and if the id is fedora
+         #this script will install docker
+         if [ $install_docker = "y" ] ; then
 
                      [ "$fedora" = "fedora" ] && 
-                     printf "\n I see you're using fedora ... so adding docker repo and installs it....\n"
+                      echo "########################################################################################"
+                      echo "###### I see you're using fedora ... so adding docker repo and installs it.... #########"
+                      echo "########################################################################################"
                      sudo dnf config-manager \
                      --add-repo \
-                     https://download.docker.com/linux/fedora/docker-ce.repo > /dev/null && \
-                     sudo dnf install docker-ce docker-ce-cli containerd.io -y &> /dev/null && \
-                     sudo systemctl enable --now docker &> /dev/null && sudo usermod -aG docker $USER &> /dev/null
-            
+                     https://download.docker.com/linux/fedora/docker-ce.repo  && \
+                     sudo dnf install docker-ce docker-ce-cli containerd.io -y  && \
+                     sudo systemctl enable --now docker &> /dev/null && sudo usermod -aG docker $USER                      
+                     
+                     sleep 2
+                     clear
+                     
             fi 
             #We dont ever wanna use nano
             #so lets remove it if its installed
-            printf "\n Removing nano if its installed\n"
+            echo "####################################"
+            echo "## Removing nano if its installed ##"
+            echo "####################################"
             [ -e /usr/bin/nano ] && sudo dnf remove nano &> /dev/null 
             
             #This will link nanos binary to neovim so even if you 
             #type nano it will open neovim
-            printf "\n Linking neovim to nano.. even if you type nano neovim will be used\nCause well... I dont know how to use nano\n"
+            echo "#########################################################################"
+            echo "## Linking neovim to nano.. even if you type nano neovim will be used. ##"
+            echo "## Cause well... I dont know how to use nano                           ##"
+            echo "#########################################################################"
             [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
             sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
-                
+               
+               sleep 2 
+               clear
    fi
 
-   #This is for pacman or arch based distors
-   if [ -e /etc/pacman.conf ] ; then
+#This is for pacman or arch based distors
+if [ -e /etc/pacman.conf ] ; then
+    
+         echo "####################################"
+         echo "## Adding Pacman Repo if neeeded ##"
+         echo "####################################"
+         #This will check if you already have andonties repo in your pacman.conf 
+         check_pacman=$(cat /etc/pacman.conf | awk '/andontie-aur/' | \
+         sed -e 's/\[//g' -e 's/\]//g')
+         #modifying pacman.conf if needed 
+         #Temporarily change ownership on pacman.conf
+         sudo chown $USER:$USER /etc/pacman.conf
+         #If check_pacman is empty then it will add the repos to pacman.conf
+         [ -z $check_pacman ] && cat $pacman_conf >> /etc/pacman.conf
+         #Change the ownsership back to root on pacman.conf
+         sudo chown root:root /etc/pacman.conf
+        
+         sleep 2
+         clear
+         
+         #Installs packages from the pacman file
+         #just add the package name to that list if you want 
+         #this script to install it for you
+         echo "###############################################################"
+         echo "## Installing pacman packages from my package list if needed ##"
+         echo "###############################################################"
+         sudo pacman -Sy $(cat $pacman) --needed --noconfirm  2> $HOME/.pacman.error
+
+         pacmanerror(){ \
+         echo "##################################################################################"
+         echo "## \nYou got some error installing packages here is the log $HOME/.pacman.error ##"
+         echo "##################################################################################"
+         }
+         
+         [ -e $HOME/.pacman.error ] && errorpacman=$(cat $HOME/.pacman.error) 
+         [ -z "$errorpacman" ] ||  pacmanerror   
+
+         sleep 2
+         clear
+         
+         #Installs Docker if you said yes 
+         if [ $install_docker = "y" ] ; then 
+
+                  echo "#########################################################################"
+                  echo "## Installing Docker and configuring usergroups and enabling autostart ##"
+                  echo "#########################################################################"
+                  sudo pacman -S docker --needed --noconfirm 
+
+                  #adds the user to the docker group
+                  sudo usermod -aG docker $USER 
+
+                  #this will start the docker daemon if its not running
+                  sudo systemctl enable --now docker 
+         fi
+
+         sleep 2
+         clear
+
+
+         #installs xorg if you said yes 
+         if [ "$install_xorg"  = "y" ] ; then
+
+                  echo "#####################"
+                  echo "## Installing xorg ##"
+                  echo "#####################"
+                  
+                  sudo pacman -S xorg lightdm --needed --noconfirm &> /dev/null
+
+                  checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
+        
+         if [ "$checks_gpu" = "NVIDIA" ] ; then 
+
+                  sudo pacman -S nvidia --noconfirm --needed   
+
+         fi
+
+
+         
+         fi
+         
+         echo "##################################################################################"
+         echo "## Installing pfetch,autofs,mutt-wizard and lightdm themes if needed using paru ##" 
+         echo "##################################################################################"
+         paru -S pfetch --needed --noconfirm 
+         paru -S autofs --needed --noconfirm 
+         paru -S mutt-wizard --needed --noconfirm 
+         paru -S lightdm-webkit2-greeter --needed --noconfirm 
+         paru -S lightdm-webkit2-theme-glorious --needed --noconfirm 
        
-            printf "\nAdding Pacman Repos if needed\n"
-            #This will check if you already have andonties repo in your pacman.conf 
-            check_pacman=$(cat /etc/pacman.conf | awk '/andontie-aur/' | \
-            sed -e 's/\[//g' -e 's/\]//g')
-            #modifying pacman.conf if needed 
-            #Temporarily change ownership on pacman.conf
-            sudo chown $USER:$USER /etc/pacman.conf
-            #If check_pacman is empty then it will add the repos to pacman.conf
-            [ -z $check_pacman ] && cat $pacman_conf >> /etc/pacman.conf
-            #Change the ownsership back to root on pacman.conf
-            sudo chown root:root /etc/pacman.conf
-            
-            #Installs packages from the pacman file
-            #just add the package name to that list if you want 
-            #this script to install it for you
-            printf "\nInstalling pacman packages from my package list if needed\n"
-            sudo pacman -Sy $(cat $pacman) --needed --noconfirm > /dev/null 2> $HOME/.pacman.error
-            [ -e $HOME/.pacman.error ] && errorpacman=$(cat $HOME/.pacman.error) 
-            [ -z "$errorpacman" ] || printf "\nYou got some error installing packages here is the log \n$HOME/.pacman.error\n"
-       
-            #Installs Docker if you said yes 
-            if [ $install_docker = "y" ] ; then 
+         clear 
+        
+         #This will deactivate logins for root
+         echo "#####################################################################"
+         echo "##  Deactivating root account for security reasons , if its needed ##" 
+         echo "#####################################################################"
+         check_root_if_activated=$(grep "root" /etc/passwd | awk -F : '{print $NF}' | awk -F / '{print $NF}')
+         [ $check_root_if_activated != "nologin" ] && usermod_root=$(sudo usermod -s /usr/bin/nologin root | awk '{print $3}')       
 
-                     printf "\nInstalling Docker\n"
-                     sudo pacman -S docker --noconfirm &> /dev/null
-
-                     #adds the user to the docker group
-                     sudo usermod -aG docker $USER &> /dev/null
-
-                     #this will start the docker daemon if its not running
-                     sudo systemctl enable --now docker &> /dev/null
-
-            fi
-   
-            #installs xorg if you said yes 
-            if [ "$install_xorg"  = "y" ] ; then
-   
-                     printf "\nInstalling xorg\n"
-                     
-                     sudo pacman -S xorg lightdm --needed --noconfirm &> /dev/null
-
-                     checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
-           
-            if [ "$checks_gpu" = "NVIDIA" ] ; then 
-
-                     sudo pacman -S nvidia --noconfirm --needed   
-
-            fi
-
-
-            
-            fi
-            #Installs pfetch
-            printf "\nInstalling pfetch,autofs,mutt-wizard and lightdm themes if needed using paru\n" 
-            paru -S pfetch --needed --noconfirm &> /dev/null
-            paru -S autofs --needed --noconfirm &> /dev/null
-            paru -S mutt-wizard --needed --noconfirm &> /dev/null
-            paru -S lightdm-webkit2-greeter --needed --noconfirm &> /dev/null
-            paru -S lightdm-webkit2-theme-glorious --needed --noconfirm &> /dev/null
-           
-            #This will deactivate logins for root
-            printf "\nDeactivating root account for security reasons , if its needed\n"
-            check_root_if_activated=$(grep "root" /etc/passwd | awk -F : '{print $NF}' | awk -F / '{print $NF}')
-            [ $check_root_if_activated != "nologin" ] && usermod_root=$(sudo usermod -s /usr/bin/nologin root | awk '{print $3}')       
-
-               fi
+         sleep 2
+         clear
+fi
       
    
-   #Copying all my config files from the git repo I cloned to your
-   #Personal config folder 
-   printf "\nMoving all my config files to the right folders\n" 
-   
-   printf "\ntmux_conf.local"
-   cp -r $tmuxconflocal $HOME/
-   printf "\nxmonad"
-   cp -r $xmonad $HOME/
-   printf "\n.zshrc"
-   cp -r $zshrc $HOME/
-   printf "\nfish"
-   cp -r $fish $HOME/.config/
-   printf "\nkitty"
-   cp -r $kitty $HOME/.config/
-   printf "\nnvim"
-   cp -r $nvim $HOME/.config/
-   printf "\naliases.sh"
-   cp -r $myzsh $HOME/.config/oh-my-zsh/
-   printf "\nqtile"
-   cp -r $qtile $HOME/.config/
-   printf "\nqutebrowser"
-   cp -r $qutebrowser $HOME/.config/
-   printf "\nrofi"
-   cp -r $rofi $HOME/.config/
-   printf "\nstarship.toml\n"
-   cp -r $starship $HOME/.config/
+#Copying all my config files from the git repo I cloned to your
+#Personal config folder 
+echo "#####################################################"
+echo "## Moving all my config files to the right folders ##" 
+echo "#####################################################"
 
-   #Copy files that requrie sudo permission
-   sudo cp -r $lightdm /etc
+echo "#####################"
+echo "## tmux.conf.local ##" 
+echo "#####################"
+cp -r $tmuxconflocal $HOME/
+printf "\n"
+echo "############"
+echo "## xmonad ##" 
+echo "############"
+cp -r $xmonad $HOME/
+printf "\n"
+echo "###########"
+echo "## zshrc ##" 
+echo "###########"
+cp -r $zshrc $HOME/
+printf "\n"
+echo "##########"
+echo "## fish ##" 
+echo "##########"
+cp -r $fish $HOME/.config/
+printf "\n"
+echo "###########"
+echo "## kitty ##" 
+echo "###########"
+cp -r $kitty $HOME/.config/
+printf "\n"
+echo "##########"
+echo "## nvim ##" 
+echo "##########"
+cp -r $nvim $HOME/.config/
+printf "\n"
+echo "################"
+echo "## aliases.sh ##" 
+echo "################"
+cp -r $myzsh $HOME/.config/oh-my-zsh/
+printf "\n"
+echo "###########"
+echo "## qtile ##" 
+echo "###########"
+cp -r $qtile $HOME/.config/
+printf "\n"
+echo "#################"
+echo "## qutebrowser ##" 
+echo "#################"
+cp -r $qutebrowser $HOME/.config/
+printf "\n"
+echo "##########"
+echo "## rofi ##" 
+echo "##########"
+cp -r $rofi $HOME/.config/
+printf "\n"
+echo "##############"
+echo "## starship ##" 
+echo "##############"
+cp -r $starship $HOME/.config/
+printf "\n"
 
-   #copying cron files if you said yes to it
-   if [ "$cron_install" = "y" ] ; then
+#Copy files that requrie sudo permission
+echo "#############"
+echo "## lightdm ##" 
+echo "#############"
+sudo cp -r $lightdm /etc
+printf "\n"
 
-        sudo cp -r $cronfile/* /var/spool/cron
+#copying cron files if you said yes to it
+if [ "$cron_install" = "y" ] ; then
 
-   fi
+     echo "##########"
+     echo "## cron ##" 
+     echo "##########"
+     sudo cp -r $cronfile/* /var/spool/cron
+
+fi
 
 
+sleep 2
+clear
 
 
-   #only link neovim to vim if neovim is installed 
-   if [ -e /usr/bin/nvim ] ; then
+#only link neovim to vim if neovim is installed 
+if [ -e /usr/bin/nvim ] ; then
+        
 
-                #This will link vim to neovim
-                #so even if you run vim it will open in neovim
-                [ -e /usr/bin/vim ] && sudo rm /usr/bin/vim
-                     sudo ln -s /usr/bin/nvim /usr/bin/vim
-                 
-                #This will link vi to neovim
-                #so even if you run vi it will open in neovim
-                [ -e /usr/bin/vi ] && sudo rm /usr/bin/vi
-                     
-                     sudo ln -s /usr/bin/nvim /usr/bin/vi
+
+        echo "##################################"
+        echo "## Linking neovim to vi and vim ##"
+        echo "##################################"
+        #This will link vim to neovim
+        #so even if you run vim it will open in neovim
+        [ -e /usr/bin/vim ] && sudo rm /usr/bin/vim
+         sudo ln -s /usr/bin/nvim /usr/bin/vim
+         
+        #This will link vi to neovim
+        #so even if you run vi it will open in neovim
+        [ -e /usr/bin/vi ] && sudo rm /usr/bin/vi
+         sudo ln -s /usr/bin/nvim /usr/bin/vi
                 
-   fi
-   
-   sleep 2
+fi
 
-   #This will create .config folder for root
-   printf "\n\nCreates config folder for root if it doesnt exist\n"
-   [ -d /root/.config ] || sudo mkdir /root/.config &> /dev/null
+sleep 2
 
-   #This will link the neovim config to the root USER
-   #so neovim will have the same config even if you edit something as root
-   printf "\nLinking neovim config to root so it uses the same neovim config as the user\n"
-   
-   [ -d $HOME/.config/nvim ] && sudo ln -s $HOME/.config/nvim /root/.config/nvim &> /dev/null && \
-   sleep 2
+#This will create .config folder for root
+echo "#######################################################"
+echo "## Creates config folder for root if it doesnt exist ##"
+echo "#######################################################"
+[ -d /root/.config ] || sudo mkdir /root/.config &> /dev/null
 
-   #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
-   check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
-   sudo cp -r $HOME/dotfiles/grub-themes/* /boot/grub/themes
+#This will link the neovim config to the root USER
+#so neovim will have the same config even if you edit something as root
+echo "#################################################################################"
+echo "## Linking neovim config to root so it uses the same neovim config as the user ##"
+echo "#################################################################################"
 
-   if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
+[ -d $HOME/.config/nvim ] && sudo ln -s $HOME/.config/nvim /root/.config/nvim &> /dev/null && \
+
+sleep 2
+
+#Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
+check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
+sudo cp -r $HOME/dotfiles/grub-themes/* /boot/grub/themes
+
+if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
+          echo "#########################"
+          echo "## Updating grub theme ##" 
+          echo "#########################"
+          sudo sed -i 's/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt\"/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt/g' /etc/default/grub &> /dev/null
+
+else 
  
-             printf "\nUpdating grub theme\n" 
-             sudo sed -i 's/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt\"/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt/g' /etc/default/grub &> /dev/null
-   
-   else 
-    
-             printf "\nUpdating grub theme\n" 
-             sudo chown karl:karl /etc/default/grub
-             echo "GRUB_THEME=/boot/grub/themes/CyberRe/theme.txt" >> /etc/default/grub
-             sudo chown root:root /etc/default/grub
-   fi
+          echo "#########################"
+          echo "## Updating grub theme ##" 
+          echo "#########################"
+          sudo chown karl:karl /etc/default/grub
+          echo "GRUB_THEME=/boot/grub/themes/CyberRe/theme.txt" >> /etc/default/grub
+          sudo chown root:root /etc/default/grub
+fi
 
-      sudo  grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
+sudo  grub-mkconfig -o /boot/grub/grub.cfg 
+sleep 2
+clear
 
+#Move my wallpapers to Pictures folder
+[ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
 
-   #Move my wallpapers to Pictures folder
-   [ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
-   
-   if [ -d $HOME/Pictures/Wallpapers/ ] ; then
+if [ -d $HOME/Pictures/Wallpapers/ ] ; then
    
       
       
       printf "\n"
   
-   else
+else
 
-       printf "\nCloning my wallpaper repo and move them to $HOME/Pictures\n"
+       echo "###############################################################"
+       echo "## Cloning my wallpaper repo and move them to $HOME/Pictures ##"
+       echo "###############################################################"
        git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
        cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
        cp $HOME/setup/.fehbg $HOME/ &> /dev/null
        rm -rf $HOME/wallpapers &> /dev/null
    fi
-  #Creates my personal scripts folder in usr/bin if it doesn't exis
-   if [ $modify_fstab = "n" ] ; then
 
-        git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles &> /dev/null
+#Creates my personal scripts folder in usr/bin if it doesn't exis
+if [ $modify_fstab = "n" ] ; then
 
-        sudo cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
        
-        [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
+
+       echo "################################"
+       echo "## Moving My scripts to $HOME ##"
+       echo "################################"
+
+       sudo cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
+       
+       [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
   
-   fi 
+fi 
 
-   #This will install portainer agent on the host
-   #only if choose to install docker on the system
-   if [ "$install_portainer" = "y" ] ; then
-          
-       docker -v &> /dev/null 
-
-          if [ $? = "0" ] ; then
-             
-                 printf "\nInstalling Portainer agent so you can use this server\nFor docker containers only if its needed\n"
-                 
-                 portainer_agent=$(sudo docker ps | awk '$NF == "portainer_agent" {print $NF}' 2> /dev/null)
-                 
-                 sudo docker volume create portainer_data_agent &> /dev/null
-                 
-                 [ "$portainer_agent" != "portainer_agent" ] && \
-                 sudo docker run -d -p 9001:9001 --name portainer_agent --restart=always \
-                 -v /var/run/docker.sock:/var/run/docker.sock  \
-                 -v portainer_data_agent:/var/lib/docker/volumes portainer/agent &> /dev/null 
-          fi
-   fi
-
-
-   if [ $install_fonts = "y" ] ; then
-
-       git clone https://github.com/phoenix988/fonts.git $HOME/fonts &> /dev/null
+#This will install portainer agent on the host
+#only if choose to install docker on the system
+if [ "$install_portainer" = "y" ] ; then
        
-       sudo cp -r $HOME/fonts/fonts/* /usr/share/fonts
+    docker -v &> /dev/null 
 
-       rm -rf $HOME/fonts &> /dev/null
+       if [ $? = "0" ] ; then
+              echo "#####################################################################################################" 
+              echo "## Installing Portainer agent so you can use this server\nFor docker containers only if its needed ##"
+              echo "#####################################################################################################" 
+              
+              portainer_agent=$(sudo docker ps | awk '$NF == "portainer_agent" {print $NF}' 2> /dev/null)
+              
+              sudo docker volume create portainer_data_agent 
+              
+              [ "$portainer_agent" != "portainer_agent" ] && \
+              sudo docker run -d -p 9001:9001 --name portainer_agent --restart=always \
+              -v /var/run/docker.sock:/var/run/docker.sock  \
+              -v portainer_data_agent:/var/lib/docker/volumes portainer/agent  
+       fi
+fi
 
-   fi
-   
-   rm -rf $HOME/dotfiles
+sleep 2
+clear
 
-   fi
+if [ $install_fonts = "y" ] ; then
+
+    echo "#####################"
+    echo "## Moving my fonts ##"
+    echo "#####################"   
+    git clone https://github.com/phoenix988/fonts.git $HOME/fonts 
+    
+    sudo cp -r $HOME/fonts/fonts/* /usr/share/fonts
+
+    rm -rf $HOME/fonts &> /dev/null
+
+fi
+
+rm -rf $HOME/dotfiles
+
+fi
