@@ -2,49 +2,9 @@
                user=$(awk -F = '{if(NR==1) print $NF}' /root/.bashrc )
                host_name=$(awk -F = '{if(NR==2) print $NF}' /root/.bashrc )
                bios_version=$(awk -F = '{if(NR==3) print $NF}' /root/.bashrc )
+               efidrive=$(awk -F = '{if(NR==4) print $NF}' /root/.bashrc )
+               biosdrive=$(awk -F = '{if(NR==5) print $NF}' /root/.bashrc )
                
-                             
-               if [ "$bios_version" = "u" -o "$bios_version" = "U" ] ; then
-
-                  while [ -z "$check_efidrive" ] ; do 
-              
-                      read -p "What Partition do you want to be your EFI drive?: " efidrive
-                      check_efidrive=$(lsblk $drive 2> /dev/null)
-                     
-                  if [ -z "$check_efidrive" ] ; then
-
-                      printf "\nPlease type a proper drive..Cant find the drive you specified\n"
-
-                  else
-                   
-                      echo "" &> /dev/null
-
-                  fi
-
-                  done
-               
-               else
-
-                  while [ -z "$check_biosdrive" ] ; do 
-              
-                      read -p "What Partition do you want to be your BIOS drive?: " biosdrive
-                      check_biosdrive=$(lsblk $biosdrive 2> /dev/null)
-                     
-                  if [ -z "$check_biosdrive" ] ; then
-
-                      printf "\nPlease type a proper drive..Cant find the drive you specified\n"
-
-                  else
-                   
-                      echo "" &> /dev/null
-
-                  fi
-
-                  done
-
-
-               fi
-
                 
                printf "\nUpdating locales\n"
                sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/g' /etc/locale.gen
@@ -75,6 +35,9 @@
 
                    [ -d /boot/EFI ] || mkdir /boot/EFI
                    
+                   efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
+                   [ $efifstype = "vfat" ] || mkfs -t vfat $efidrive
+
                    mount $efidrive /boot/EFI &> /dev/null
                    grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB > /dev/null 
                   

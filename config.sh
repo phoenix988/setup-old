@@ -2,57 +2,163 @@
    
         
 
+error() { \
+    clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;
+}
 
-       hostname=$(cat /etc/hostname)
-   
-      if [ "$hostname" = "archiso" ] ; then 
-       
-      pacman -S --noconfirm --needed wget archlinux-keyring
+      
+welcome() { \
+    dialog --colors --title "\Z7\ZbConfigure your Desktop!" --msgbox "\Z4This is a script that will install everythinging I personally use on a daily basis, This script will run using your Normal User account but sometimes it will need root privleges so then its gonna prompt you for a password to make sure to be near your computer. Me personally tho deactivate sudo password prompts but that comes with a security risk hehe. And also if you run this script when you are installing arch linux then it will install everything you need to get started with a base install. But you will need to run this script again when you have installed the base installation of arch \\n\\n-Karl" 16 60
+    }
+
+partitionerror() { \
+    dialog --colors --title "\Z7\ZbError!" --msgbox "\Z4The partition doesn't exist please write a valid one" 16 60
+    }
+errormsg() { \
+    dialog --colors --title "\Z7\ZbError!" --msgbox "\Z4Invalid Value" 16 60
+    }
+Lastchance() { \
+        dialog --colors --title "\Z7\ZbPoint of no Return" --yes-label "Yes Continue with the install" --no-label "No" --yesno "\Z4Up to this point No changes Have been Made. But now the installation will begin if you click yes there will be no going back. Are you sure you want to do this?" 8 60 && use_default=y 
+    }
+
+
+
+
+     welcome || error "user choose to exist"
+
+     os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
+     hostname=$(cat /etc/hostname)
+     availabledisks=$(sudo fdisk -l | grep ^/dev | awk '{print $1}')
+     availablebiosdisk=$(sudo fdisk -l | grep ^/dev | awk '{print $1}' | sed 's/[1-9]*//g')
+
+if [ "$hostname" = "archiso" ] ; then 
+
+
+user() { \
+   user=$(dialog --colors --title "\Z7\ZbUsername" --inputbox "\Z4What name do you want on your user?" --output-fd 1 8 60  ) 
+ }
+host_name() { \
+   host_name=$(dialog --colors --title "\Z7\ZbHostname" --inputbox "\Z4Choose your hostname" --output-fd 1 8 60  ) 
+ }
+driveinstall() { \
+  drive=$(dialog --colors --title "\Z7\ZbDiskdrive" --inputbox "\Z4What partition do you want to use for the Install?                                                             These disks are available:$availabledisks" --output-fd 1 8 60  ) 
+ }
+uefiorbios() { \
+   bios_version=$(dialog --colors --title "\Z7\ZbBios or UEFI" --inputbox "\Z4Do you want UEFI or BIOS Install" --output-fd 1 8 60  ) 
+ }
+bios() { \
+   biosdrive=$(dialog --colors --title "\Z7\ZbBIOS or UEFI" --inputbox "\Z4Choose Bios Drive. These disks are available:$availablebiosdisk" --output-fd 1 8 60  ) 
+ }
+uefi() { \
+   efidrive=$(dialog --colors --title "\Z7\ZbUEFI" --inputbox "\Z4Choose EFI partition.  These disks are available:$availabledisks" --output-fd 1 8 60  ) 
+ }
+
+      
+pacman -S --noconfirm --needed wget archlinux-keyring
+
+[ -e $HOME/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
+
+while [ -z $user ] ; 
+
+do
     
-      [ -e $HOME/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
+    user     
 
+done
 
-               read -p  "What name do you want on the user account?: " user
-               printf "\n"
-               read -p  "What Hostname do you want?: " host_name
+while [ -z $host_name ] ;
+
+do
+    
+   host_name
+
+done
+ 
+
+until [ "$bios_version" = "u" -o "$bios_version" = "U" -o "$bios_version" = "B" -o "$bios_version" = "b" ] ; 
+              
+do
+                 
+     uefiorbios 
                
-               until [ "$bios_version" = "u" -o "$bios_version" = "U" -o "$bios_version" = "B" -o "$bios_version" = "b" ] ; 
-                             
-               do
-                               
-               read -p "Do you want UEFI or BIOS Install? [U/B]: " bios_version
-              
-                             
-              if [ $bios_version = "u" -o $bios_version = "U" -o $bios_version = "B" -o $bios_version = "b" ] ; then
-                             
-                   printf "\n"
-
-               else
-                   
-                   printf "\nInvalid value please enter U/u or B/b\n"
-
-               fi 
+if [ $bios_version = "u" -o $bios_version = "U" -o $bios_version = "B" -o $bios_version = "b" ] ; then
                
-               done
+     printf "\n"
 
+else
+     
+     errormsg
+ 
+fi 
+
+done
+
+
+while [ -z "$check_drive" ] ; do 
+
+      driveinstall
+      check_drive=$(lsblk $drive 2> /dev/null)
+      check_drive=$(echo "$drive" | grep "[1-9]" )
+      
+      if [ -z "$check_drive" ] ; then
+      
+         partitionerror 
+      
+      else
+       
+         check_fstype=$(lsblk -f $drive | head -n2 | tail -n1 | awk '{print $2}' ) 
+         
+      
+      fi
+
+done
+
+
+if [ "$bios_version" = "u" -o "$bios_version" = "U" ] ; then
+   
+          while [ -z "$check_efidrive" ] ; do 
+       
+              uefi
               
-               while [ -z "$check_drive" ] ; do 
-               read -p "Which Partition do you want to use for the Install?: " drive
-               check_drive=$(lsblk $drive 2> /dev/null)
-               
-               if [ -z "$check_drive" ] ; then
-
-                  printf "\nPlease type a proper drive..Can't find the drive you specified\n"
-
-               else
-                
-                  check_fstype=$(lsblk -f $drive | head -n2 | tail -n1 | awk '{print $2}' ) 
-                  printf "\nChecks the filesystem"
-
-               fi
+              check_efidrive=$(lsblk $efidrive 2> /dev/null)
+              check_efidrive=$(echo "$efidrive" | grep "[1-9]")
+             
+          if [ -z "$check_efidrive" ] ; then
+       
+              partitionerror
+          
+          else
+           
+              echo "" &> /dev/null
+       
+          fi
+       
+          done
+       
+else
+       
+          while [ -z "$check_biosdrive" ] ; do 
+       
+              bios 
               
-               done
-              
+              check_biosdrive=$(lsblk $biosdrive 2> /dev/null)
+              biosdrive=$(echo "$biosdrive" | sed 's/[1-9]*//g') 
+          
+          if [ -z "$check_biosdrive" ] ; then
+       
+              partitionerror
+       
+          else
+           
+              echo "" &> /dev/null
+       
+          fi
+       
+          done
+    
+Lastchance || error "User choose to exit"
+
+fi
                if [ $check_fstype = "btrfs" ] ; then
                    
                    sudo mount $drive /mnt &> /dev/null   
@@ -67,7 +173,10 @@
                
                fi
                
-               pacstrap /mnt base-devel grub btrfs-progs networkmanager systemd efibootmgr linux linux-firmware arch-install-scripts systemd-sysvcompat git
+               pacstrap /mnt base-devel \
+               grub btrfs-progs networkmanager \
+               systemd efibootmgr linux linux-firmware \
+               arch-install-scripts systemd-sysvcompat git || error "Pacstrap Failed to install everything"
                
                [ "$check_fstype" = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
 
@@ -81,6 +190,8 @@
                arch-chroot /mnt echo "user=$user" >> /mnt/root/.bashrc 
                arch-chroot /mnt echo "host_name=$host_name" >> /mnt/root/.bashrc 
                arch-chroot /mnt echo "bios_version=$bios_version" >> /mnt/root/.bashrc 
+               arch-chroot /mnt echo "efidrive=$efidrive" >> /mnt/root/.bashrc 
+               arch-chroot /mnt echo "biosdrive=$biosdrive" >> /mnt/root/.bashrc 
                arch-chroot /mnt sh $HOME/arch-chroot.sh
                printf "chroot is done"
  
@@ -88,148 +199,111 @@
  
          else
  
-    until [ "$use_default" = "y" -o "$use_default" = "Y" -o "$use_default" = "n" -o "$use_default" = "N" ] 
     
-    do
-            
-             read -p "Do you want to Use default config or Customize? : " use_default         
-
-    if [ $use_default = "y" -o $use_default = "Y" -o $use_default = "n" -o $use_default = "N" ] ; then
-           
-            printf "\n"
-    
-    else
-            
-            printf "\nPlease type y or n\n"
-    
-    fi
-            
-
-    done
-
-   if [ $use_default = "y" -o $use_default = "Y" ] ; then
-          
-          install_docker="y"
-          install_portainer="n"
-          install_xorg="n"
-          install_fonts="n"
-          modify_fstab="n"
-   fi
-
-   #adding some long paths to variables so it will be easier to use
-   fstab="$HOME/dotfiles/setup-files/fstab"
-   pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
-   pacman="$HOME/dotfiles/setup-files/pacman"
-   dnf="$HOME/dotfiles/setup-files/dnf"
-   apt="$HOME/dotfiles/setup-files/apt"
-   
-   #config path
-   config="$HOME/dotfiles"
-   files="$HOME/dotfiles/setup-files"
-
-   #config_files
-   tmuxconflocal="$config/.tmux.conf.local"
-   xmonad="$config/.xmonad"
-   zshrc="$config/.zshrc"
-   fish="$config/.config/fish"
-   kitty="$config/.config/kitty"
-   nvim="$config/.config/nvim"
-   myzsh="$config/.config/myzsh/aliases.sh"
-   qtile="$config/.config/qtile"
-   qutebrowser="$config/.config/qutebrowser"
-   rofi="$config/.config/rofi"
-   starship="$config/.config/starship.toml"
-   lightdm="$config/.config/lightdm"
-   archchroot="$config/.scripts/activated/arch-chroot.sh"
-   cronfile="$config/.config/cron"
-
-   #checks the OS that you are running
-   check_os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
-   
-   #Asks if you want to install docker
-   until [ "$install_docker" = "y" -o "$install_docker" = "n"  ]
-   do
-            read -p "do you want to install docker? [y/n]: " install_docker 
-   
-   if [ "$install_docker" = "y" -o "$install_docker" = "n" ] ; then 
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
-
-   done
-   
-   if [ $install_docker = "y" ] ; then
-  
-         #Asks if you want to configure portainer agent but only if you choose to install docker   
-         until [ "$install_portainer" = "y" -o "$install_portainer" = "n"  ]
-         do
-                  read -p "Do you want to configure portainer agent? [y/n]: " install_portainer 
-         
-         if [ "$install_portainer" = "y" -o "$install_portainer" = "n" ] ; then 
-                  
-                  printf "\n"
-         else
-                  printf "\nPlease type y or n\n"
-         fi 
-         done
-   fi  
-
-   if [ $check_os = "Arch" ] ; then
-  
-   #Asks if you want to install Xorg if you run arch   
-         until [ "$install_xorg" = "y" -o "$install_xorg" = "n"  ]
-         
-         do
-          
-                  read -p "Do you want to install Xorg? [y/n]: " install_xorg 
-         
-         if [ "$install_xorg" = "y" -o "$install_xorg" = "n" ] ; then 
-                  
-                  printf "\n"
-         else
-                  printf "\nPlease type y or n\n"
-         fi 
-         
-         done 
-   
-
-   fi 
-   
-   
-   until [ "$modify_fstab" = "y" -o "$modify_fstab" = "n"  ]
-   
-   do
-    
-            read -p "Do you want to add my NFS shares to your fstab?
-You can check what will be added in the files folder [y/n]: " modify_fstab 
-   
-   if [ "$modify_fstab" = "y" -o "$modify_fstab" = "n" ] ; then 
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
-   
-   done 
-   
-   until [ "$install_fonts" = "y" -o "$install_fonts" = "n"  ]
-   do
-            read -p "Do you want to get all my fonts [y/n]?: " install_fonts 
-   
-   if [ "$install_fonts" = "y" -o "$install_fonts" = "n" ] ; then 
-            printf "\n"
-   else
-            printf "\nPlease type y or n\n"
-   fi 
-
-   done
-
-   
-   clear
 
 
-   #Will exit the script if you are root since I dont recommend running this as root
-   [ $UID = "0" ] && printf "Don't run this script as root ..... aborting" && exit
+            if [ "$(id -u)" = 0  ]; then
+           echo "##################################################################"
+           echo "This script MUST NOT be run as root user since it makes changes"
+           echo "to the \$HOME directory of the \$USER executing this script."
+           echo "The \$HOME directory of the root user is, of course, '/root'."
+           echo "We don't want to mess around in there. So run this script as a"
+           echo "normal user. You will be asked for a sudo password when necessary."
+           echo "##################################################################"
+           exit 1
+            fi
+
+defaultsettings() { \
+        dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to use Default Settings?" 8 60 && use_default=y 
+    }
+
+
+installdocker() { \
+        dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to InstallDocker?" 8 60 && install_docker=y 
+    }
+
+installportainer() { \
+        dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to configure a portainer agent?" 8 60 && install_portainer=y 
+    }
+
+installfonts() { \
+   dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Move all my fonts to /usr/share/fonts? (Note this can cause some problems)" 8 60 && install_fonts=y 
+    }
+
+installxorg() { \
+   dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Install Xorg? (Only if you use arch)" 8 60 && install_xorg=y 
+    }
+
+modifyfstab() { \
+   dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Modify fstab and add my NFS shares this is mostly for my personal use so most should say no here" 8 60 && modify_fstab=y 
+    }
+
+
+defaultsettings
+
+
+ 
+
+if [ $use_default = "y" -o $use_default = "Y" ] ; then
+       
+       install_docker="y"
+       install_portainer="n"
+       install_xorg="n"
+       install_fonts="n"
+       modify_fstab="n"
+else 
+
+       installdocker 
+       
+       if [ $install_docker = "y" ] ; then
+       
+          installportainer 
+       fi
+       
+       if [ $os = "Arch" ] ; then      
+
+          installxorg 
+       
+       fi
+       
+       installfonts 
+
+       modifyfstab 
+       
+
+fi
+
+clear
+
+Lastchance || error "User choose to exit"
+
+#adding some long paths to variables so it will be easier to use
+fstab="$HOME/dotfiles/setup-files/fstab"
+pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
+pacman="$HOME/dotfiles/setup-files/pacman"
+dnf="$HOME/dotfiles/setup-files/dnf"
+apt="$HOME/dotfiles/setup-files/apt"
+
+#config path
+config="$HOME/dotfiles"
+files="$HOME/dotfiles/setup-files"
+
+#config_files
+tmuxconflocal="$config/.tmux.conf.local"
+xmonad="$config/.xmonad"
+zshrc="$config/.zshrc"
+fish="$config/.config/fish"
+kitty="$config/.config/kitty"
+nvim="$config/.config/nvim"
+myzsh="$config/.config/myzsh/aliases.sh"
+qtile="$config/.config/qtile"
+qutebrowser="$config/.config/qutebrowser"
+rofi="$config/.config/rofi"
+starship="$config/.config/starship.toml"
+lightdm="$config/.config/lightdm"
+archchroot="$config/.scripts/activated/arch-chroot.sh"
+cronfile="$config/.config/cron"
+
   
    #Cloning my repo if its needed
    if [ -d $HOME/setup ] ; then
