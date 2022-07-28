@@ -58,9 +58,9 @@ uefi() { \
    efidrive=$(dialog --colors --title "\Z7\ZbUEFI" --inputbox "\Z4Choose EFI partition.  These disks are available:$availabledisks" --output-fd 1 8 60  ) 
  }
 
-      
-pacman -S --noconfirm --needed wget archlinux-keyring  &> /dev/null
-
+clear      
+pacman -S --noconfirm --needed wget archlinux-keyring  
+clear
 
 [ -e $(pwd)/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
 
