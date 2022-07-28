@@ -161,8 +161,9 @@ else
           fi
        
           done
-    
+clear   
 Lastchance || error "User choose to exit"
+clear
 
 fi
                if [ $check_fstype = "btrfs" ] ; then
