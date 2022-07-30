@@ -406,7 +406,8 @@ else
      echo "####################################################"
      echo "############ Installs OH-MY-ZSH ####################"
      echo "####################################################"
-     
+     sleep 2
+
      [ -d $HOME/.config ] || mkdir $HOME/.config
      
      [ -d $HOME/.config/oh-my-zsh/ ] && sudo rm -rf $HOME/.config/oh-my-zsh/
@@ -423,6 +424,8 @@ else
      echo "############ Installs OH-MY-ZSH Plugins ####################"
      echo "############################################################"
      
+     sleep 2 
+
      git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.config/oh-my-zsh/zsh-autosuggestions  
      
      git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/oh-my-zsh/zsh-syntax-highlighting 
@@ -678,7 +681,7 @@ if [ -e /etc/pacman.conf ] ; then
          clear
          
          #Installs Docker if you said yes 
-         if [ $install_docker = "y" ] ; then 
+         if [ "$install_docker" = "y" ] ; then 
 
                   echo "#########################################################################"
                   echo "## Installing Docker and configuring usergroups and enabling autostart ##"
@@ -952,7 +955,7 @@ fi
 sleep 2
 clear
 
-if [ $install_fonts = "y" ] ; then
+if [ "$install_fonts" = "y" ] ; then
 
     echo "#####################"
     echo "## Moving my fonts ##"
