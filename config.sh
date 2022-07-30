@@ -341,9 +341,9 @@ cronfile="$config/.config/cron"
 #Cloning my repo if its needed
 if [ -d $HOME/setup ] ; then
          
-         echo "#############################################################"
-         echo "## My repo already exist in $HOME so no need to clone..... ##"
-         echo "#############################################################"
+         echo "##################################################################"
+         echo "## My repo already exist in HOMEFOLDER so no need to clone..... ##"
+         echo "##################################################################"
 
          sleep 2
 else
@@ -469,9 +469,9 @@ fi
 [ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux &> /dev/null
 
 #Only links .tmux.conf if it doesnt exist already
-echo "################################################################"
-echo "########### Creates $HOME/.tmux/.tmux.conf if needed ###########"
-echo "################################################################"
+echo "#############################################"
+echo "## Creates HOME/.tmux/.tmux.conf if needed ##"
+echo "#############################################"
 
 sleep 2
 
@@ -486,9 +486,9 @@ clear
 #and if its unavailable it won't modify the fstab
 if [ "$modify_fstab" = "y" ] ; then 
 
-       echo "##################################################################"
-       echo "## Creates script folder in $HOME if they doesn't exist already ##"
-       echo "##################################################################"
+       echo "######################################################################"
+       echo "## Creates script folder in HOMEFOLDER if they dont't exist already ##"
+       echo "######################################################################"
 
        sleep 2
        
@@ -590,14 +590,7 @@ if [ -d /etc/dnf ] ; then
          echo "#### Installing DNF packages from my package list if needed ######"
          echo "##################################################################"
          sudo dnf install $(cat $dnf) -y > /dev/null 2> $HOME/.dnf.error
-         dnferror(){
-         echo "########################################################################################"
-         echo "#### You got some error installing packages here is the log \n\n $HOME/.dnf.error ######"
-         echo "########################################################################################"
-         }            
-         [ -e $HOME/.dnf.error ] && errordnf=$(cat $HOME/.dnf.error)
-         [ -z $errordnf ] || dnferror
-
+         
          sleep 2
          clear
 
@@ -643,9 +636,9 @@ if [ -d /etc/dnf ] ; then
 #This is for pacman or arch based distors
 if [ -e /etc/pacman.conf ] ; then
     
-         echo "####################################"
+         echo "###################################"
          echo "## Adding Pacman Repo if neeeded ##"
-         echo "####################################"
+         echo "###################################"
          #This will check if you already have andonties repo in your pacman.conf 
          check_pacman=$(cat /etc/pacman.conf | awk '/andontie-aur/' | \
          sed -e 's/\[//g' -e 's/\]//g')
@@ -667,15 +660,6 @@ if [ -e /etc/pacman.conf ] ; then
          echo "## Installing pacman packages from my package list if needed ##"
          echo "###############################################################"
          sudo pacman -Sy $(cat $pacman) --needed --noconfirm  2> $HOME/.pacman.error
-
-         pacmanerror(){ \
-         echo "##################################################################################"
-         echo "## \nYou got some error installing packages here is the log $HOME/.pacman.error ##"
-         echo "##################################################################################"
-         }
-         
-         [ -e $HOME/.pacman.error ] && errorpacman=$(cat $HOME/.pacman.error) 
-         [ -z "$errorpacman" ] ||  pacmanerror   
 
          sleep 2
          clear
@@ -749,7 +733,7 @@ fi
 echo "#####################################################"
 echo "## Moving all my config files to the right folders ##" 
 echo "#####################################################"
-
+sleep 4
 echo "#####################"
 echo "## tmux.conf.local ##" 
 echo "#####################"
@@ -903,9 +887,9 @@ if [ -d $HOME/Pictures/Wallpapers/ ] ; then
   
 else
 
-       echo "###############################################################"
-       echo "## Cloning my wallpaper repo and move them to $HOME/Pictures ##"
-       echo "###############################################################"
+       echo "##############################################################"
+       echo "## Cloning my wallpaper repo and move them to HOME/Pictures ##"
+       echo "##############################################################"
        sleep 2
        clear
        git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
@@ -919,9 +903,9 @@ if [ "$modify_fstab" = "n" ] ; then
 
        
 
-       echo "################################"
-       echo "## Moving My scripts to $HOME ##"
-       echo "################################"
+       echo "###############################"
+       echo "## Moving My scripts to HOME ##"
+       echo "###############################"
        sleep 2
        clear
        sudo cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
@@ -937,9 +921,9 @@ if [ "$install_portainer" = "y" ] ; then
     docker -v &> /dev/null 
 
        if [ $? = "0" ] ; then
-              echo "#####################################################################################################" 
-              echo "## Installing Portainer agent so you can use this server\nFor docker containers only if its needed ##"
-              echo "#####################################################################################################" 
+              echo "####################################################################################################" 
+              echo "## Installing Portainer agent so you can use this server,For docker containers only if its needed ##"
+              echo "####################################################################################################" 
               sleep 2    
               portainer_agent=$(sudo docker ps | awk '$NF == "portainer_agent" {print $NF}' 2> /dev/null)
               
