@@ -310,18 +310,49 @@ fi
 Lastchance || error "User choose to exit"
 
 clear
-#adding some long paths to variables so it will be easier to use
+
+config="$HOME/dotfiles"
+files="$HOME/dotfiles/setup-files"
+
+
 fstab="$HOME/dotfiles/setup-files/fstab"
 pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
 pacman="$HOME/dotfiles/setup-files/pacman"
 dnf="$HOME/dotfiles/setup-files/dnf"
 apt="$HOME/dotfiles/setup-files/apt"
 
-#config path
-config="$HOME/dotfiles"
-files="$HOME/dotfiles/setup-files"
 
-#config_files
+
+declare -a config_config=(
+
+"$config/.config/fish"
+"$config/.config/kitty"
+"$config/.config/nvim"
+"$config/.config/myzsh/aliases.sh"
+"$config/.config/qtile"
+"$config/.config/qutebrowser"
+"$config/.config/rofi"
+"$config/.config/starship.toml"
+
+)
+
+declare -a config_home=(
+
+"$config/.tmux.conf.local"
+"$config/.xmonad"
+"$config/.zshrc"
+
+
+)
+declare -a config_sudo=(
+
+"$config/.config/lightdm"
+
+)
+
+
+
+#config_files default
 tmuxconflocal="$config/.tmux.conf.local"
 xmonad="$config/.xmonad"
 zshrc="$config/.zshrc"
@@ -334,14 +365,31 @@ qutebrowser="$config/.config/qutebrowser"
 rofi="$config/.config/rofi"
 starship="$config/.config/starship.toml"
 lightdm="$config/.config/lightdm"
-archchroot="$config/.scripts/activated/arch-chroot.sh"
+
+
+#Optional
 cronfile="$config/.config/cron"
 
 moveconfig(){ \
-       cp -r $rofi $starship $fish $kitty $nvim $qtile $qutebrowser $HOME/.config 
-       cp -r $xmonad $tmuxconflocal $zshrc 
-       cp -r $myzsh /home/karl/.config/oh-my-zsh/ 
-       sudo cp -r $lightdm /etc/
+            
+        for cc in "${config_config[@]}" ; do
+        
+              cp -r $cc $HOME/.config/
+
+        done
+        
+        for ca in "${config_home[@]}" ; do
+        
+              cp -r $ca $HOME/
+       
+        done
+        for cs in "${config_sudo[@]}" ; do
+        
+              sudo cp -r $cs /etc 
+        done
+
+
+
 }
 
 
@@ -869,7 +917,7 @@ if [ "$modify_fstab" = "n" ] ; then
        echo "###############################"
        sleep 2
        clear
-       sudo cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
+       cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
        
        [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
   
