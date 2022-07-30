@@ -13,7 +13,7 @@ SCRIPT="$SCRIPTCONTENT"
 
 for HOSTNAME in ${HOSTS} ; do
 
-    ssh -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
+    TERM=xterm-256color ssh -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
 
 done
 
