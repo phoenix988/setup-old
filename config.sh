@@ -328,7 +328,7 @@ declare -a config_config=(
 "$config/.config/fish"
 "$config/.config/kitty"
 "$config/.config/nvim"
-"$config/.config/oh-my-zsh/aliases.sh"
+"$config/.config/oh-my-zsh/"
 "$config/.config/qtile"
 "$config/.config/qutebrowser"
 "$config/.config/rofi"
