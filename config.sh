@@ -58,8 +58,7 @@ uefi() { \
    efidrive=$(dialog --colors --title "\Z7\ZbUEFI" --inputbox "\Z4Choose EFI partition.  These disks are available:$availabledisks" --output-fd 1 8 60  ) 
  }
 
-clear      
-pacman -S --noconfirm --needed wget archlinux-keyring  
+      
 clear
 
 [ -e $(pwd)/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
@@ -187,6 +186,18 @@ clear
                efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
                [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
                
+               
+               echo "#####################################################"
+               echo "## Installing archlinux-keyring and wget if needed ##"
+               echo "#####################################################"
+               pacman -S --noconfirm --needed wget archlinux-keyring  
+              
+               clear
+               
+               echo "#######################################################"
+               echo "## Running pacstrap to install the base of archlinux ##"
+               echo "#######################################################"
+               sleep 2
                pacstrap /mnt base-devel \
                grub btrfs-progs networkmanager \
                systemd efibootmgr linux linux-firmware \
@@ -216,7 +227,8 @@ clear
                echo "####################"              
                echo "## Chroot is done ##"
                echo "####################"              
-          
+               
+               clear 
                exit
 else
  
@@ -256,7 +268,7 @@ installxorg() { \
     }
 
 modifyfstab() { \
-   dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Modify fstab and add my NFS shares this is mostly for my personal use so most should say no here" 8 60 && modify_fstab=y 
+   dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Modify fstab and add my NFS shares this is mostly for my personal use so most should say no here" 8 60 && modify_fstab="y" || modify_fstab="n" 
     }
 
 
@@ -469,7 +481,7 @@ clear
 #And checks your fstab to see if you already have the correct entries
 #and also if you can reach my NFS share if its offline and unavailable
 #and if its unavailable it won't modify the fstab
-if [ $modify_fstab = "y" ] ; then 
+if [ "$modify_fstab" = "y" ] ; then 
 
        echo "##################################################################"
        echo "## Creates script folder in $HOME if they doesn't exist already ##"
@@ -687,11 +699,11 @@ if [ -e /etc/pacman.conf ] ; then
          #installs xorg if you said yes 
          if [ "$install_xorg"  = "y" ] ; then
 
-                  echo "#####################"
-                  echo "## Installing xorg ##"
-                  echo "#####################"
-                  
-                  sudo pacman -S xorg lightdm --needed --noconfirm &> /dev/null
+                  echo "########################################"
+                  echo "## Installing xorg and display manager##"
+                  echo "########################################"
+                  sleep 2 
+                  sudo pacman -S xorg lightdm --needed --noconfirm 
 
                   checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
         
@@ -708,6 +720,7 @@ if [ -e /etc/pacman.conf ] ; then
          echo "##################################################################################"
          echo "## Installing pfetch,autofs,mutt-wizard and lightdm themes if needed using paru ##" 
          echo "##################################################################################"
+         sleep 2 
          paru -S pfetch --needed --noconfirm 
          paru -S autofs --needed --noconfirm 
          paru -S mutt-wizard --needed --noconfirm 
@@ -833,13 +846,15 @@ if [ -e /usr/bin/nvim ] ; then
 fi
 
 sleep 2
+clear
 
 #This will create .config folder for root
 echo "#######################################################"
 echo "## Creates config folder for root if it doesnt exist ##"
 echo "#######################################################"
 [ -d /root/.config ] || sudo mkdir /root/.config &> /dev/null
-
+sleep 2
+clear
 #This will link the neovim config to the root USER
 #so neovim will have the same config even if you edit something as root
 echo "#################################################################################"
@@ -849,7 +864,7 @@ echo "##########################################################################
 [ -d $HOME/.config/nvim ] && sudo ln -s $HOME/.config/nvim /root/.config/nvim &> /dev/null && \
 
 sleep 2
-
+clear
 #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
 check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
 sudo cp -r $HOME/dotfiles/grub-themes/* /boot/grub/themes
@@ -888,6 +903,8 @@ else
        echo "###############################################################"
        echo "## Cloning my wallpaper repo and move them to $HOME/Pictures ##"
        echo "###############################################################"
+       sleep 2
+       clear
        git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
        cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
        cp $HOME/setup/.fehbg $HOME/ &> /dev/null
@@ -895,14 +912,15 @@ else
    fi
 
 #Creates my personal scripts folder in usr/bin if it doesn't exis
-if [ $modify_fstab = "n" ] ; then
+if [ "$modify_fstab" = "n" ] ; then
 
        
 
        echo "################################"
        echo "## Moving My scripts to $HOME ##"
        echo "################################"
-
+       sleep 2
+       clear
        sudo cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
        
        [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
@@ -919,7 +937,7 @@ if [ "$install_portainer" = "y" ] ; then
               echo "#####################################################################################################" 
               echo "## Installing Portainer agent so you can use this server\nFor docker containers only if its needed ##"
               echo "#####################################################################################################" 
-              
+              sleep 2    
               portainer_agent=$(sudo docker ps | awk '$NF == "portainer_agent" {print $NF}' 2> /dev/null)
               
               sudo docker volume create portainer_data_agent 

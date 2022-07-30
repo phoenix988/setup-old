@@ -125,4 +125,7 @@ echo "#########################"
 echo "## Generating grub.cfg ##"
 echo "#########################"
 
-grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
+grub-mkconfig -o /boot/grub/grub.cfg 
+
+sleep 2
+clear
