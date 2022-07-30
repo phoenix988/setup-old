@@ -337,7 +337,15 @@ lightdm="$config/.config/lightdm"
 archchroot="$config/.scripts/activated/arch-chroot.sh"
 cronfile="$config/.config/cron"
 
-  
+moveconfig(){ \
+       cp -r $rofi $starship $fish $kitty $nvim $qtile $qutebrowser $HOME/.config 
+       cp -r $xmonad $tmuxconflocal $zshrc 
+       cp -r $myzsh /home/karl/.config/oh-my-zsh/ 
+       sudo cp -r $lightdm /etc/
+}
+
+
+
 #Cloning my repo if its needed
 if [ -d $HOME/setup ] ; then
          
@@ -346,6 +354,7 @@ if [ -d $HOME/setup ] ; then
          echo "##################################################################"
 
          sleep 2
+         clear
 else
 
          if [ -d /etc/dnf ] ; then  
@@ -374,12 +383,17 @@ else
                   
                   git clone https://github.com/phoenix988/setup $HOME/setup 
                   
+                  sleep 2 
+                  clear
+                  
                   #Will exit the script if for some reason the cloning fail
                   [ $? != "0" ] && error "Cloning repo failed......aborting" 
 fi 
    
 [ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles 
 
+sleep 2
+clear
        
 echo "################################################################"
 echo "######### Installing curl zsh wget if its not installed ########"
@@ -458,15 +472,24 @@ if [ -e /usr/local/bin/starship ] ; then
 else 
 
 
-  $HOME/setup/starship.sh --yes  
+     echo "####################################################"
+     echo "############# Installs Starship ####################"
+     echo "####################################################"
+     sleep 2
+     $HOME/setup/starship.sh --yes  
 
-  sleep 2
-  clear
+     sleep 2
+     clear
 
 fi 
    
 #Clones oh my tmux
-[ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux &> /dev/null
+echo "####################################################"
+echo "############# Installs OH-MY-TMUX ##################"
+echo "####################################################"
+sleep 2
+[ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux 
+clear
 
 #Only links .tmux.conf if it doesnt exist already
 echo "#############################################"
@@ -730,73 +753,14 @@ fi
    
 #Copying all my config files from the git repo I cloned to your
 #Personal config folder 
-echo "#####################################################"
-echo "## Moving all my config files to the right folders ##" 
-echo "#####################################################"
+echo "################################"
+echo "## Installing my config files ##" 
+echo "################################"
+
+moveconfig
+
 sleep 4
-echo "#####################"
-echo "## tmux.conf.local ##" 
-echo "#####################"
-cp -r $tmuxconflocal $HOME/
-printf "\n"
-echo "############"
-echo "## xmonad ##" 
-echo "############"
-cp -r $xmonad $HOME/
-printf "\n"
-echo "###########"
-echo "## zshrc ##" 
-echo "###########"
-cp -r $zshrc $HOME/
-printf "\n"
-echo "##########"
-echo "## fish ##" 
-echo "##########"
-cp -r $fish $HOME/.config/
-printf "\n"
-echo "###########"
-echo "## kitty ##" 
-echo "###########"
-cp -r $kitty $HOME/.config/
-printf "\n"
-echo "##########"
-echo "## nvim ##" 
-echo "##########"
-cp -r $nvim $HOME/.config/
-printf "\n"
-echo "################"
-echo "## aliases.sh ##" 
-echo "################"
-cp -r $myzsh $HOME/.config/oh-my-zsh/
-printf "\n"
-echo "###########"
-echo "## qtile ##" 
-echo "###########"
-cp -r $qtile $HOME/.config/
-printf "\n"
-echo "#################"
-echo "## qutebrowser ##" 
-echo "#################"
-cp -r $qutebrowser $HOME/.config/
-printf "\n"
-echo "##########"
-echo "## rofi ##" 
-echo "##########"
-cp -r $rofi $HOME/.config/
-printf "\n"
-echo "##############"
-echo "## starship ##" 
-echo "##############"
-cp -r $starship $HOME/.config/
-printf "\n"
-
-#Copy files that requrie sudo permission
-echo "#############"
-echo "## lightdm ##" 
-echo "#############"
-sudo cp -r $lightdm /etc
-printf "\n"
-
+clear
 #copying cron files if you said yes to it
 if [ "$cron_install" = "y" ] ; then
 
@@ -804,12 +768,9 @@ if [ "$cron_install" = "y" ] ; then
      echo "## cron ##" 
      echo "##########"
      sudo cp -r $cronfile/* /var/spool/cron
-
+     sleep 2 
+     clear
 fi
-
-
-sleep 2
-clear
 
 
 #only link neovim to vim if neovim is installed 
