@@ -328,7 +328,7 @@ declare -a config_config=(
 "$config/.config/fish"
 "$config/.config/kitty"
 "$config/.config/nvim"
-"$config/.config/myzsh/aliases.sh"
+"$config/.config/oh-my-zsh/aliases.sh"
 "$config/.config/qtile"
 "$config/.config/qutebrowser"
 "$config/.config/rofi"
@@ -350,21 +350,6 @@ declare -a config_sudo=(
 
 )
 
-
-
-#config_files default
-tmuxconflocal="$config/.tmux.conf.local"
-xmonad="$config/.xmonad"
-zshrc="$config/.zshrc"
-fish="$config/.config/fish"
-kitty="$config/.config/kitty"
-nvim="$config/.config/nvim"
-myzsh="$config/.config/myzsh/aliases.sh"
-qtile="$config/.config/qtile"
-qutebrowser="$config/.config/qutebrowser"
-rofi="$config/.config/rofi"
-starship="$config/.config/starship.toml"
-lightdm="$config/.config/lightdm"
 
 
 #Optional
