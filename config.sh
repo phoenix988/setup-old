@@ -161,11 +161,15 @@ else
           fi
        
           done
-clear   
-Lastchance || error "User choose to exit"
-clear
+
+
 
 fi
+
+Lastchance || error "User choose to exit"
+clear
+      
+
                if [ $check_fstype = "btrfs" ] ; then
                    
                    sudo mount $drive /mnt &> /dev/null   
@@ -179,6 +183,9 @@ fi
                   sudo mount $drive /mnt 
                
                fi
+               
+               efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
+               [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
                
                pacstrap /mnt base-devel \
                grub btrfs-progs networkmanager \

@@ -1,4 +1,9 @@
 #!/bin/bash              
+
+error() { \
+    clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;
+}
+
 user=$(awk -F = '{if(NR==1) print $NF}' /root/.bashrc )
 host_name=$(awk -F = '{if(NR==2) print $NF}' /root/.bashrc )
 bios_version=$(awk -F = '{if(NR==3) print $NF}' /root/.bashrc )
@@ -55,7 +60,7 @@ clear
 echo "#########################"
 echo "## Setting up Hostname ##"
 echo "#########################"
-echo "$host_name" > /etc/hostname
+echo "$host_name" > /etc/hostname 
 
 sleep 2
 clear
@@ -65,8 +70,6 @@ if [ "$bios_version" = "U" -o "$bios_version" = "u" ] ; then
 
         [ -d /boot/EFI ] || mkdir /boot/EFI
         
-        efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
-        [ $efifstype = "vfat" ] || mkfs -t vfat $efidrive
     
         mount $efidrive /boot/EFI &> /dev/null
       
@@ -75,7 +78,7 @@ if [ "$bios_version" = "U" -o "$bios_version" = "u" ] ; then
         echo "#####################"
 
 
-        grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB 
+        grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB || error "Failed to install grub"
        
     
         genfstab -U / > /etc/fstab
@@ -99,7 +102,8 @@ else
         echo "## Installing Grub ##"
         echo "#####################"
          
-        grub-install --target=i386-pc $biosdrive 
+        grub-install --target=i386-pc $biosdrive || error "Failed to install grub"
+
         
         sleep 2
         clear 
