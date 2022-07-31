@@ -275,7 +275,13 @@ installxorg() { \
 modifyfstab() { \
    dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Modify fstab and add my NFS shares this is mostly for my personal use so most should say no here" 8 60 && modify_fstab="y" || modify_fstab="n" 
     }
-
+browser() { \
+read -p "Which Browser do you want to use as your default? 
+[1]Qutebrowser
+[2]Brave
+[3]Chromium
+[4]Firefox" browser
+    }
 
 defaultsettings
 
