@@ -184,10 +184,13 @@ clear
                   sudo mount $drive /mnt 
                
                fi
-               
-               efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
-               [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
-               
+              
+              if [ $bios_version "U" -o $bios_version = "u" ] ; then
+
+                    efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
+                    [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
+
+              fi 
                
                echo "#####################################################"
                echo "## Installing archlinux-keyring and wget if needed ##"
@@ -334,6 +337,7 @@ declare -a config_config=(
 "$config/.config/qtile"
 "$config/.config/qutebrowser"
 "$config/.config/bash"
+"$config/.config/alacritty"
 "$config/.config/rofi"
 "$config/.config/starship.toml"
 
@@ -748,9 +752,9 @@ if [ -e /etc/pacman.conf ] ; then
          #installs xorg if you said yes 
          if [ "$install_xorg"  = "y" ] ; then
 
-                  echo "########################################"
+                  echo "#########################################"
                   echo "## Installing xorg and display manager ##"
-                  echo "########################################"
+                  echo "#########################################"
                   sleep 2 
                   sudo pacman -S xorg lightdm --needed --noconfirm 
 
@@ -772,6 +776,7 @@ if [ -e /etc/pacman.conf ] ; then
          sleep 2 
          paru -S pfetch --needed --noconfirm 
          paru -S autofs --needed --noconfirm 
+         paru -S uwufetch --needed --noconfirm 
          paru -S mutt-wizard --needed --noconfirm 
          paru -S lightdm-webkit2-greeter --needed --noconfirm 
          paru -S lightdm-webkit2-theme-glorious --needed --noconfirm 
@@ -915,10 +920,12 @@ if [ "$modify_fstab" = "n" ] ; then
        sleep 2
        clear
        cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
-       chmod 775 $HOME/.dmenu 
-       chmod 775 $HOME/.scripts 
+       chmod 775 -R $HOME/.dmenu 
+       chmod 775 -R $HOME/.scripts 
        
        [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
+       #check_browser=$(grep "^browser" $HOME/dotfiles/.dmenu/dm-openweb_fullscreen)
+       #sed -i -e "s|$check_browser|$mybrowser|g"
   
 fi 
 
