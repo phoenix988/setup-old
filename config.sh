@@ -872,7 +872,9 @@ else
           sudo chown root:root /etc/default/grub
 fi
 
-sudo  grub-mkconfig -o /boot/grub/grub.cfg 
+sudo  grub-mkconfig -o /boot/grub/grub.cfg 2> /dev/null
+sudo  grub2-mkconfig -o /boot/grub2/grub.cfg 2> /dev/null
+
 sleep 2
 clear
 
