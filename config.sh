@@ -333,6 +333,7 @@ declare -a config_config=(
 "$config/.config/oh-my-zsh/"
 "$config/.config/qtile"
 "$config/.config/qutebrowser"
+"$config/.config/bash"
 "$config/.config/rofi"
 "$config/.config/starship.toml"
 
@@ -343,6 +344,7 @@ declare -a config_home=(
 "$config/.tmux.conf.local"
 "$config/.xmonad"
 "$config/.zshrc"
+"$config/.bashrc"
 
 
 )
@@ -444,17 +446,17 @@ clear
 
 if [ -e $HOME/.config/oh-my-zsh/oh-my-zsh.sh ] ; then
 
-     echo "################################################################"
-     echo "############ OH-MY-ZSH is already Installed ####################"
-     echo "################################################################"
+     echo "####################################"
+     echo "## OH-MY-ZSH is already Installed ##"
+     echo "####################################"
      
      sleep 2
      clear
 else
 
-     echo "####################################################"
-     echo "############ Installs OH-MY-ZSH ####################"
-     echo "####################################################"
+     echo "########################"
+     echo "## Installs OH-MY-ZSH ##"
+     echo "########################"
      sleep 2
 
      [ -d $HOME/.config ] || mkdir $HOME/.config
@@ -469,9 +471,9 @@ else
      clear 
     
      #Installs ZSH plugins
-     echo "############################################################"
-     echo "############ Installs OH-MY-ZSH Plugins ####################"
-     echo "############################################################"
+     echo "################################"
+     echo "## Installs OH-MY-ZSH Plugins ##"
+     echo "################################"
      
      sleep 2 
 
@@ -482,9 +484,9 @@ else
      sleep 2 
      clear     
      
-     echo "################################################################"
-     echo "############# Changing Default Shell to ZSH ####################"
-     echo "################################################################"
+     echo "###################################"
+     echo "## Changing Default Shell to ZSH ##"
+     echo "###################################"
      usermod=$(sudo usermod -s /bin/zsh $USER)       
      
      sleep 2
@@ -497,9 +499,9 @@ fi
 
 if [ -e /usr/local/bin/starship ] ; then
 
-     echo "################################################################"
-     echo "############# StarShip is already Installed ####################"
-     echo "################################################################"
+     echo "###################################"
+     echo "## StarShip is already Installed ##"
+     echo "###################################"
      
      sleep 2
      clear
@@ -507,9 +509,9 @@ if [ -e /usr/local/bin/starship ] ; then
 else 
 
 
-     echo "####################################################"
-     echo "############# Installs Starship ####################"
-     echo "####################################################"
+     echo "#######################"
+     echo "## Installs Starship ##"
+     echo "#######################"
      sleep 2
      $HOME/setup/starship.sh --yes  
 
@@ -519,9 +521,9 @@ else
 fi 
    
 #Clones oh my tmux
-echo "####################################################"
-echo "############# Installs OH-MY-TMUX ##################"
-echo "####################################################"
+echo "#########################"
+echo "## Installs OH-MY-TMUX ##"
+echo "#########################"
 sleep 2
 [ -d $HOME/.tmux ] || git clone https://github.com/gpakosz/.tmux.git  $HOME/.tmux 
 clear
