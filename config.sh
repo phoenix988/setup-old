@@ -676,7 +676,7 @@ if [ -d /etc/dnf ] ; then
             echo "####################################"
             echo "## Removing nano if its installed ##"
             echo "####################################"
-            [ -e /usr/bin/nano ] && sudo dnf remove nano &> /dev/null 
+            [ -e /usr/bin/nano ] && sudo dnf remove nano 
             
             sleep 1
             
@@ -853,13 +853,14 @@ clear
 #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
 check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
 grub=$(ls /boot | grep grub)
+[ -d /boot/$grub/themes ] || sudo mkdir /boot/$grub/themes
 sudo cp -r $HOME/dotfiles/grub-themes/* /boot/$grub/themes
 
 if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
           echo "#########################"
           echo "## Updating grub theme ##" 
           echo "#########################"
-          sudo sed -i 's/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt\"/GRUB_THEME=\"\/boot\/grub\/themes\/CyberRe\/theme.txt/g' /etc/default/grub &> /dev/null
+          sudo sed -i -e "s|GRUB_THEME=\"\/boot\/$grub\/themes\/CyberRe\/theme.txt\"|GRUB_THEME=\"\/boot\/$grub\/themes\/CyberRe\/theme.txt|g" /etc/default/grub &> /dev/null
 
 else 
  
