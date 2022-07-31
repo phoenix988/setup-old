@@ -254,7 +254,7 @@ defaultsettings() { \
 
 
 installdocker() { \
-        dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to InstallDocker?" 8 60 && install_docker=y 
+        dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Install Docker?" 8 60 && install_docker=y 
     }
 
 installportainer() { \
@@ -749,13 +749,13 @@ if [ -e /etc/pacman.conf ] ; then
          if [ "$install_xorg"  = "y" ] ; then
 
                   echo "########################################"
-                  echo "## Installing xorg and display manager##"
+                  echo "## Installing xorg and display manager ##"
                   echo "########################################"
                   sleep 2 
                   sudo pacman -S xorg lightdm --needed --noconfirm 
 
                   checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
-        
+                  sudo systemctl enable lightdm 
          if [ "$checks_gpu" = "NVIDIA" ] ; then 
 
                   sudo pacman -S nvidia --noconfirm --needed   
