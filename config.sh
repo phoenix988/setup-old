@@ -6,6 +6,7 @@ echo "## Syncing the repos and installing 'dialog' if not installed ##"
 echo "################################################################"
 [ -e /etc/pacman.conf ] && sudo pacman --noconfirm --needed -Syy dialog || error "Error syncing the repos."
 [ -d /etc/dnf ] && sudo dnf install -y dialog || error "Error syncing the repos."
+[ -d /etc/apt ] && sudo apt install -y dialog || error "Error syncing the repos."
 
 
 error() { \
@@ -851,7 +852,8 @@ sleep 2
 clear
 #Change grub theme to CyberRE or you can chnage to whatever theme that you prefer 
 check_grub_theme=$(cat /etc/default/grub | grep GRUB_THEME | awk -F = '{print $1}' | grep -v "^#")
-sudo cp -r $HOME/dotfiles/grub-themes/* /boot/grub/themes
+grub=$(ls /boot | grep grub)
+sudo cp -r $HOME/dotfiles/grub-themes/* /boot/$grub/themes
 
 if [ "$check_grub_theme" = "GRUB_THEME" ] ; then
           echo "#########################"
