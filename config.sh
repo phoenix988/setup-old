@@ -606,7 +606,7 @@ if [ -d /etc/apt ] ; then
          echo "############################################################"
          echo "## Installing apt packages from my package list if needed ##"
          echo "############################################################"
-         sudo apt install $(cat $apt) -y &> /dev/null
+         sudo apt install $(cat $apt) -y 2> $HOME/.apt.error
          
          #This will check if nano is installed or not 
          remove_nano=$(dpkg -l | grep nano )
@@ -645,7 +645,7 @@ if [ -d /etc/dnf ] ; then
          echo "############################################################"
          echo "## Installing DNF packages from my package list if needed ##"
          echo "############################################################"
-         sudo dnf install $(cat $dnf) -y > /dev/null 2> $HOME/.dnf.error
+         sudo dnf install $(cat $dnf) -y 2> $HOME/.dnf.error
          
          sleep 2
          clear
