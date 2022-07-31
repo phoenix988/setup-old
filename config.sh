@@ -414,13 +414,13 @@ else
                   echo "## Cloning My git repo to get all my config files ready ##"
                   echo "##########################################################"
                   
-                  git clone https://github.com/phoenix988/setup $HOME/setup 
+                  git clone https://github.com/phoenix988/setup $HOME/setup || error "Cloning repo failed......aborting" 
+
                   
                   sleep 2 
                   clear
                   
                   #Will exit the script if for some reason the cloning fail
-                  [ $? != "0" ] && error "Cloning repo failed......aborting" 
 fi 
    
 [ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles 
@@ -560,9 +560,9 @@ if [ "$modify_fstab" = "y" ] ; then
        
       if [ $? = "0" ] ; then 
          
-            echo "##################################################################"
-            echo "################ Ping Succeded, Modifying your fstab #############"
-            echo "##################################################################"
+            echo "#########################################"
+            echo "## Ping Succeded, Modifying your fstab ##"
+            echo "#########################################"
             
             sleep 2
             
@@ -579,16 +579,16 @@ if [ "$modify_fstab" = "y" ] ; then
             sudo chown root:root /etc/fstab
             
             #mounting everything from fstab
-            echo "##################################################################"
-            echo "################ Running mount -a on all entries #################"
-            echo "##################################################################"
+            echo "#####################################"
+            echo "## Running mount -a on all entries ##"
+            echo "#####################################"
             sudo mount -a
             
             else 
                    
-            echo "##################################################################"
-            echo "################ Ping failed nothing will be done ################"
-            echo "##################################################################"
+            echo "######################################"
+            echo "## Ping failed nothing will be done ##"
+            echo "######################################"
                
       fi
 
@@ -603,9 +603,9 @@ if [ -d /etc/apt ] ; then
          #Installs packages from the apt file
          #just add the package name to that list if you want 
          #this script to install it for you
-         echo "##################################################################"
-         echo "#### Installing apt packages from my package list if needed ######"
-         echo "##################################################################"
+         echo "############################################################"
+         echo "## Installing apt packages from my package list if needed ##"
+         echo "############################################################"
          sudo apt install $(cat $apt) -y &> /dev/null
          
          #This will check if nano is installed or not 
@@ -642,9 +642,9 @@ if [ -d /etc/dnf ] ; then
          #Installs packages from the dnf file
          #just add the package name to that list if you want 
          #this script to install it for you
-         echo "##################################################################"
-         echo "#### Installing DNF packages from my package list if needed ######"
-         echo "##################################################################"
+         echo "############################################################"
+         echo "## Installing DNF packages from my package list if needed ##"
+         echo "############################################################"
          sudo dnf install $(cat $dnf) -y > /dev/null 2> $HOME/.dnf.error
          
          sleep 2
@@ -656,9 +656,9 @@ if [ -d /etc/dnf ] ; then
          if [ $install_docker = "y" ] ; then
 
                      [ "$fedora" = "fedora" ] && 
-                      echo "########################################################################################"
-                      echo "###### I see you're using fedora ... so adding docker repo and installs it.... #########"
-                      echo "########################################################################################"
+                      echo "#############################################################################"
+                      echo "## I see you're using fedora ... so adding docker repo and installs it.... ##"
+                      echo "#############################################################################"
                      sudo dnf config-manager \
                      --add-repo \
                      https://download.docker.com/linux/fedora/docker-ce.repo  && \
@@ -676,6 +676,8 @@ if [ -d /etc/dnf ] ; then
             echo "####################################"
             [ -e /usr/bin/nano ] && sudo dnf remove nano &> /dev/null 
             
+            sleep 1
+            
             #This will link nanos binary to neovim so even if you 
             #type nano it will open neovim
             echo "#########################################################################"
@@ -687,7 +689,7 @@ if [ -d /etc/dnf ] ; then
                
                sleep 2 
                clear
-   fi
+fi
 
 #This is for pacman or arch based distors
 if [ -e /etc/pacman.conf ] ; then
@@ -890,6 +892,8 @@ else
        cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
        cp $HOME/setup/.fehbg $HOME/ &> /dev/null
        rm -rf $HOME/wallpapers &> /dev/null
+       [ -d /var/pictures ] || sudo mkdir /var/pictures
+       sudo ln -s $HOME/pictures/Wallpapers /var/pictures/Wallpapers
    fi
 
 #Creates my personal scripts folder in usr/bin if it doesn't exis
@@ -903,6 +907,8 @@ if [ "$modify_fstab" = "n" ] ; then
        sleep 2
        clear
        cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
+       chmod 775 $HOME/.dmenu 
+       chmod 775 $HOME/.scripts 
        
        [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
   
