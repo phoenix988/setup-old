@@ -276,12 +276,35 @@ modifyfstab() { \
    dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Modify fstab and add my NFS shares this is mostly for my personal use so most should say no here" 8 60 && modify_fstab="y" || modify_fstab="n" 
     }
 browser() { \
-read -p "Which Browser do you want to use as your default? 
-[1]Qutebrowser
-[2]Brave
-[3]Chromium
-[4]Firefox" browser
-    }
+
+declare -A browser_number 
+
+browser_number[Qutebrowser]=1
+browser_number[Brave]=2
+browser_number[Chromium]=3
+browser_number[Firefox]=4
+
+until [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; do
+
+        browser=$(dialog --colors --title "\Z7\ZbBrowser" --inputbox "\Z4Which Browser do you want to use as your default?" --output-fd 1 8 60  ) 
+
+
+       if [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; then
+           
+            echo " &> /dev/null" 
+       else
+       
+       errormsg
+       
+       fi
+
+
+
+done
+
+browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]*//g")
+
+}
 
 defaultsettings
 
@@ -295,6 +318,7 @@ if [ $use_default = "y" -o $use_default = "Y" ] ; then
        install_xorg="n"
        install_fonts="n"
        modify_fstab="n"
+       browser="Qutebrowser"
 else 
 
        installdocker 
@@ -313,6 +337,8 @@ else
        installfonts 
 
        modifyfstab 
+
+       browser
        
 
 fi
