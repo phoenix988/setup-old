@@ -968,10 +968,10 @@ echo "##############################"
 sleep 2
 clear
 check_browser=$(grep "^browser" $HOME/.dmenu/dm-openweb_fullscreen)
-sed -i -e "s|$check_browser|$browser|g"  $HOME/.dmenu/dm-openweb_fullscreen
+sed -i -e "s|$check_browser|$browser|g" $HOME/.dmenu/dm-openweb_fullscreen
 
 check_browser=$(grep -i "^#BROWSER" $HOME/.config/qtile/config.py | awk '{print $3}')
-sed -i -e "s|$check_browser|$browser|g "$HOME/.config/qtile/config.py
+sed -i -e "s|$check_browser|$browser|g" $HOME/.config/qtile/config.py
 #This will install portainer agent on the host
 #only if choose to install docker on the system
 if [ "$install_portainer" = "y" ] ; then
