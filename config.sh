@@ -279,10 +279,10 @@ browser() { \
 
 declare -a browser_number=( 
 
-"Qutebrowser 1"
-"Brave 2"
-"Chromium 3"
-"Firefox 4"
+"qutebrowser 1"
+"brave 2"
+"chromium 3"
+"firefox 4"
 )
 until [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; do
         browser_list=$(printf '%s\n' "${browser_number[@]}")
@@ -319,7 +319,7 @@ if [ $use_default = "y" -o $use_default = "Y" ] ; then
        install_xorg="n"
        install_fonts="n"
        modify_fstab="n"
-       browser="Qutebrowser"
+       browser="qutebrowser"
 else 
 
        installdocker 
@@ -469,9 +469,9 @@ fi
 sleep 2
 clear
        
-echo "################################################################"
-echo "######### Installing curl zsh wget if its not installed ########"
-echo "################################################################"
+echo "###################################################"
+echo "## Installing curl zsh wget if its not installed ##"
+echo "###################################################"
 [ -d /etc/dnf ] && sudo dnf install -y  curl zsh wget  
 [ -d /etc/apt ] && sudo apt install -y  curl  zsh wget  
 [ -e /etc/pacman.conf ] && sudo pacman -Sy curl zsh wget --noconfirm --needed  
@@ -803,9 +803,10 @@ if [ -e /etc/pacman.conf ] ; then
          
          fi
          
-         echo "##################################################################################"
-         echo "## Installing pfetch,autofs,mutt-wizard and lightdm themes if needed using paru ##" 
-         echo "##################################################################################"
+         echo "###########################################"
+         echo "# Installing pfetch,autofs,mutt-wizard and#" 
+         echo "# lightdm themes if needed using paru     #" 
+         echo "###########################################"
          sleep 2 
          paru -S pfetch --needed --noconfirm 
          paru -S autofs --needed --noconfirm 
@@ -953,15 +954,24 @@ if [ "$modify_fstab" = "n" ] ; then
        sleep 2
        clear
        cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
-       chmod 775 -R $HOME/.dmenu 
-       chmod 775 -R $HOME/.scripts 
+       chmod +x -R $HOME/.dmenu 
+       chmod +x -R $HOME/.scripts 
        
        [ -d /usr/bin/myscripts ] || sudo ln -s $HOME/.scripts/activated /usr/bin/myscripts
-       #check_browser=$(grep "^browser" $HOME/dotfiles/.dmenu/dm-openweb_fullscreen)
-       #sed -i -e "s|$check_browser|$mybrowser|g"
   
 fi 
 
+
+echo "##############################"
+echo "## Updating default browser ##"
+echo "##############################"
+sleep 2
+clear
+check_browser=$(grep "^browser" $HOME/.dmenu/dm-openweb_fullscreen)
+sed -i -e "s|$check_browser|$browser|g"  $HOME/.dmenu/dm-openweb_fullscreen
+
+check_browser=$(grep -i "^#BROWSER" $HOME/.config/qtile/config.py | awk '{print $3}')
+sed -i -e "s|$check_browser|$browser|g "$HOME/.config/qtile/config.py
 #This will install portainer agent on the host
 #only if choose to install docker on the system
 if [ "$install_portainer" = "y" ] ; then
