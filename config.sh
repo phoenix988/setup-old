@@ -277,16 +277,17 @@ modifyfstab() { \
     }
 browser() { \
 
-declare -A browser_number 
+declare -a browser_number=( 
 
-browser_number[Qutebrowser]=1
-browser_number[Brave]=2
-browser_number[Chromium]=3
-browser_number[Firefox]=4
-
+"Qutebrowser 1"
+"Brave 2"
+"Chromium 3"
+"Firefox 4"
+)
 until [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; do
-
-        browser=$(dialog --colors --title "\Z7\ZbBrowser" --inputbox "\Z4Which Browser do you want to use as your default?" --output-fd 1 8 60  ) 
+        browser_list=$(printf '%s\n' "${browser_number[@]}")
+        
+        browser=$(dialog --colors --title "\Z7\ZbBrowser" --inputbox "\Z4Which Browser do you want to use as your default?\nAnswer with a number between 1-4\n$browser_list" --output-fd 1 8 60  ) 
 
 
        if [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; then
