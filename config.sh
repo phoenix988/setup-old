@@ -967,7 +967,7 @@ echo "## Updating default browser ##"
 echo "##############################"
 sleep 2
 clear
-check_browser=$(grep "^browser" dotfiles/.dmenu//dm-openweb_fullscreen  | awk -F "=" '{print $2}' | sed -e 's/"//g')
+check_browser=$(grep "^browser" $HOME/dotfiles/.dmenu//dm-openweb_fullscreen  | awk -F "=" '{print $2}' | sed -e 's/"//g')
 sed -i -e "s|$check_browser|$browser|g" $HOME/.dmenu/dm-openweb_fullscreen
 
 check_browser=$(grep -i "^#BROWSER" $HOME/.config/qtile/config.py | awk '{print $3}')
