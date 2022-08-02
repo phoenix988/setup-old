@@ -758,7 +758,7 @@ if [ -e /etc/pacman.conf ] ; then
          echo "###############################################################"
          echo "## Installing pacman packages from my package list if needed ##"
          echo "###############################################################"
-         sudo pacman -Sy $(cat $pacman) --needed --noconfirm  2> $HOME/.pacman.error
+         sudo pacman -Sy --overwrite "*" $(cat $pacman) --needed --noconfirm  2> $HOME/.pacman.error
 
          sleep 2
          clear
