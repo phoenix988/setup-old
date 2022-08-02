@@ -185,7 +185,7 @@ clear
                
                fi
               
-              if [ $bios_version "U" -o $bios_version = "u" ] ; then
+              if [ "$bios_version" = "U"  -o "$bios_version" = "u" ] ; then
 
                     efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
                     [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
@@ -808,12 +808,12 @@ if [ -e /etc/pacman.conf ] ; then
          echo "# lightdm themes if needed using paru     #" 
          echo "###########################################"
          sleep 2 
-         paru -S pfetch --needed --noconfirm 
-         paru -S autofs --needed --noconfirm 
-         paru -S uwufetch --needed --noconfirm 
-         paru -S mutt-wizard --needed --noconfirm 
-         paru -S lightdm-webkit2-greeter --needed --noconfirm 
-         paru -S lightdm-webkit2-theme-glorious --needed --noconfirm 
+         paru -S --overwrite "*" pfetch --needed --noconfirm 
+         paru -S --overwrite "*" autofs --needed --noconfirm 
+         paru -S --overwrite "*" uwufetch --needed --noconfirm 
+         paru -S --overwrite "*" mutt-wizard --needed --noconfirm 
+         paru -S --overwrite "*" lightdm-webkit2-greeter --needed --noconfirm 
+         paru -S --overwrite "*" lightdm-webkit2-theme-glorious --needed --noconfirm 
        
          clear 
         
@@ -941,13 +941,13 @@ else
        rm -rf $HOME/wallpapers &> /dev/null
        [ -d /var/pictures ] || sudo mkdir /var/pictures
        sudo ln -s $HOME/pictures/Wallpapers /var/pictures/Wallpapers
+       
    fi
 
 #Creates my personal scripts folder in usr/bin if it doesn't exis
 if [ "$modify_fstab" = "n" ] ; then
 
-       
-
+       clear
        echo "###############################"
        echo "## Moving My scripts to HOME ##"
        echo "###############################"
