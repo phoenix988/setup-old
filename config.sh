@@ -4,14 +4,17 @@
 echo "################################################################"
 echo "## Syncing the repos and installing 'dialog' if not installed ##"
 echo "################################################################"
-[ -e /etc/pacman.conf ] && sudo pacman --noconfirm --needed -Syy dialog 2> /dev/null || error "Error syncing the repos."
-[ -d /etc/dnf ] && sudo dnf install -y dialog 2> /dev/null || error "Error syncing the repos."
-[ -d /etc/apt ] && sudo apt install -y dialog 2> /dev/null || error "Error syncing the repos."
-
 
 error() { \
     clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;
 }
+
+[ -e /etc/pacman.conf ] && sudo pacman --noconfirm --needed -Syy dialog || error "Error syncing the repos."
+[ $? = "0" ] || error "Error syncing repos"
+[ -d /etc/dnf ] && sudo dnf install -y dialog || error "Error syncing the repos."
+[ $? = "0" ] || error "Error syncing repos"
+[ -d /etc/apt ] && sudo apt install -y dialog || error "Error syncing the repos."
+[ $? = "0" ] || error "Error syncing repos"
 
       
 welcome() { \
