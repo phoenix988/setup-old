@@ -874,7 +874,7 @@ fi
 
 
 
-check_sudoers=$(sudo grep -e '^%wheel\|^%sudo' /etc/sudoers )
+check_sudoers=$(sudo grep -e '^%wheel\|^%sudo' /etc/sudoers | awk '/NOPASSWD/' )
 
 if [ -z $check_sudoers ] ; then
 echo "############################"
