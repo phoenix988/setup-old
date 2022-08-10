@@ -226,12 +226,11 @@ else
 
 fi
 
-f [ "$bios_version" = "U"  -o "$bios_version" = "u" ] ; then
+if [ "$bios_version" = "U"  -o "$bios_version" = "u" ] ; then
 
      efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
      [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
 
-i 
 
 echo "#####################################################"
 echo "## Installing archlinux-keyring and wget if needed ##"
