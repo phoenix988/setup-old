@@ -9,13 +9,23 @@ error() { \
     clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;
 }
 
-[ -e /etc/pacman.conf ] && sudo pacman --noconfirm --needed -Syy dialog || error "Error syncing the repos."
-[ $? = "0" ] || error "Error syncing repos"
-[ -d /etc/dnf ] && sudo dnf install -y dialog || error "Error syncing the repos."
-[ $? = "0" ] || error "Error syncing repos"
-[ -d /etc/apt ] && sudo apt install -y dialog || error "Error syncing the repos."
-[ $? = "0" ] || error "Error syncing repos"
+if [ -e /etc/pacman.conf ] ; then 
+  
+  sudo pacman --noconfirm --needed -Syy dialog || error "Error syncing the repos."
 
+fi
+
+if [ -d /etc/dnf ] ; then
+
+  sudo dnf install -y dialog || error "Error syncing the repos."
+
+fi
+
+if [ -d /etc/apt ] ; then 
+
+  sudo apt install -y dialog || error "Error syncing the repos."
+
+fi
       
 welcome() { \
     dialog --colors --title "\Z7\ZbConfigure your Desktop!" --msgbox "\Z4This is a script that will install everythinging I personally use on a daily basis, This script will run using your Normal User account but sometimes it will need root privleges so then its gonna prompt you for a password to make sure to be near your computer. Me personally tho deactivate sudo password prompts but that comes with a security risk hehe. And also if you run this script when you are installing arch linux then it will install everything you need to get started with a base install. But you will need to run this script again when you have installed the base installation of arch \\n\\n-Karl" 16 60
