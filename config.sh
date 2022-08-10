@@ -683,7 +683,11 @@ if [ -d /etc/apt ] ; then
          echo "## Installing apt packages from my package list if needed ##"
          echo "############################################################"
          sudo apt install $(cat $apt) -y 2> $HOME/.apt.error
-         
+        
+         wget https://github.com/Peltoche/lsd/releases/download/0.22.0/lsd-musl_0.22.0_amd64.deb && sudo dpkg -i ./lsd-musl_0.22.0_amd64
+         rm -rf lsd-musl_0.22.0_amd64
+
+
          #This will check if nano is installed or not 
          remove_nano=$(dpkg -l | grep nano )
 
@@ -872,16 +876,18 @@ fi
 
 
 
-check_sudoers=$(sudo grep ^%wheel /etc/sudoers )
+check_sudoers=$(sudo grep -e '^%wheel\|^%sudo' /etc/sudoers )
 
 if [ -z $check_sudoers ] ; then
 echo "############################"
 echo "## Modifying Sudoers file ##"
 echo "############################"
 echo '%wheel ALL=(ALL:ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo &> /dev/null 
+echo '%sudo ALL=(ALL:ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo &> /dev/null 
 fi
 
-
+sleep 1
+clear
 
       
    
