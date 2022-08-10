@@ -41,6 +41,9 @@ Lastchance() { \
 if [ "$hostname" = "archiso" ] ; then 
 
 
+fs() { \
+   fs=$(dialog --colors --title "\Z7\ZbFilesystem" --inputbox "\Z4Choose your filesystem btrfs and ext4 supported?" --output-fd 1 8 60  ) 
+ }
 user() { \
    user=$(dialog --colors --title "\Z7\ZbUsername" --inputbox "\Z4What name do you want on your user?" --output-fd 1 8 60  ) 
  }
@@ -64,6 +67,25 @@ uefi() { \
 clear
 
 [ -e $(pwd)/arch-chroot.sh ] || wget https://raw.githubusercontent.com/phoenix988/setup/main/arch-chroot.sh &> /dev/null
+
+until [ "$fs" = "ext4" -o "$fs" = "btrfs"  ] ;
+do
+
+    fs
+    
+    if [ "$fs" = "ext4" -o "$fs" = "btrfs" ] ; then 
+
+         echo "" > /dev/null 
+
+       else
+
+         errormsg 
+    fi
+
+
+done
+
+
 
 while [ -z $user ] ; 
 
@@ -170,86 +192,95 @@ fi
 Lastchance || error "User choose to exit"
 clear
       
-
-               if [ $check_fstype = "btrfs" ] ; then
-                   
-                   sudo mount $drive /mnt &> /dev/null   
-                   sudo btrfs subvolume create /mnt/@ &> /dev/null
-                   sudo btrfs subvolume create /mnt/@home &> /dev/null
-                   sudo umount /mnt &> /dev/null
-                   sudo mount -o subvol=@ $drive /mnt &> /dev/null
-
-               else 
-               
-                  sudo mount $drive /mnt 
-               
-               fi
+echo "##########################"
+echo "## Creating file system ##"
+echo "##########################"
               
-              if [ "$bios_version" = "U"  -o "$bios_version" = "u" ] ; then
 
-                    efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
-                    [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
-
-              fi 
+mkfs -t $fs -f $drive || error "Failed to create filesystem"
                
-               echo "#####################################################"
-               echo "## Installing archlinux-keyring and wget if needed ##"
-               echo "#####################################################"
-               pacman -S --noconfirm --needed wget archlinux-keyring  
-              
-               clear
-               
-               echo "#######################################################"
-               echo "## Running pacstrap to install the base of archlinux ##"
-               echo "#######################################################"
-               sleep 2
-               pacstrap /mnt base-devel \
-               grub btrfs-progs networkmanager \
-               systemd efibootmgr linux linux-firmware \
-               arch-install-scripts systemd-sysvcompat git || error "Pacstrap Failed to install everything"
-               sleep 2
-               clear
-               [ "$check_fstype" = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
-               
-               echo "######################"
-               echo "## Generating fstab ##"
-               echo "######################"
-               genfstab -U /mnt >> /mnt/etc/fstab
-               sleep 2
-               clear
+if [ $check_fstype = "btrfs" ] ; then
+    
+    sudo mount $drive /mnt &> /dev/null   
+    sudo btrfs subvolume create /mnt/@ &> /dev/null
+    sudo btrfs subvolume create /mnt/@home &> /dev/null
+    sudo umount /mnt &> /dev/null
+    sudo mount -o subvol=@ $drive /mnt &> /dev/null
 
-               chmod 775 $HOME/arch-chroot.sh
-               cp $HOME/arch-chroot.sh /mnt/root/ 
+else 
 
-               #Runs everything in chroot mode to configure the rest
-               arch-chroot /mnt echo "user=$user" >> /mnt/root/.bashrc 
-               arch-chroot /mnt echo "host_name=$host_name" >> /mnt/root/.bashrc 
-               arch-chroot /mnt echo "bios_version=$bios_version" >> /mnt/root/.bashrc 
-               arch-chroot /mnt echo "efidrive=$efidrive" >> /mnt/root/.bashrc 
-               arch-chroot /mnt echo "biosdrive=$biosdrive" >> /mnt/root/.bashrc 
-               arch-chroot /mnt sh $HOME/arch-chroot.sh
+   sudo mount $drive /mnt 
 
-               echo "####################"              
-               echo "## Chroot is done ##"
-               echo "####################"              
-               
-               clear 
-               exit
+fi
+
+f [ "$bios_version" = "U"  -o "$bios_version" = "u" ] ; then
+
+     efifstype=$(lsblk -f $efidrive | awk '{print $2}' | grep -vi fstype) 
+     [ "$efifstype" = "vfat" ] || mkfs -t vfat $efidrive
+
+i 
+
+echo "#####################################################"
+echo "## Installing archlinux-keyring and wget if needed ##"
+echo "#####################################################"
+pacman -S --noconfirm --needed wget archlinux-keyring  
+
+clear
+
+echo "#######################################################"
+echo "## Running pacstrap to install the base of archlinux ##"
+echo "#######################################################"
+sleep 2
+pacstrap /mnt base-devel \
+grub btrfs-progs networkmanager \
+systemd efibootmgr linux linux-firmware \
+arch-install-scripts systemd-sysvcompat git || error "Pacstrap Failed to install everything"
+sleep 2
+clear
+[ "$check_fstype" = "btrfs" ] && sudo mount -o subvol=@home $drive /mnt/home
+
+echo "######################"
+echo "## Generating fstab ##"
+echo "######################"
+genfstab -U /mnt >> /mnt/etc/fstab
+sleep 2
+clear
+
+chmod 775 $HOME/arch-chroot.sh
+cp $HOME/arch-chroot.sh /mnt/root/ 
+
+#Runs everything in chroot mode to configure the rest
+arch-chroot /mnt echo "user=$user" >> /mnt/root/.bashrc 
+arch-chroot /mnt echo "host_name=$host_name" >> /mnt/root/.bashrc 
+arch-chroot /mnt echo "bios_version=$bios_version" >> /mnt/root/.bashrc 
+arch-chroot /mnt echo "efidrive=$efidrive" >> /mnt/root/.bashrc 
+arch-chroot /mnt echo "biosdrive=$biosdrive" >> /mnt/root/.bashrc 
+arch-chroot /mnt sh $HOME/arch-chroot.sh
+
+echo "####################"              
+echo "## Chroot is done ##"
+echo "####################"              
+
+clear 
+exit
 else
  
     
 
 
-            if [ "$(id -u)" = 0  ]; then
-           echo "##################################################################"
-           echo "This script MUST NOT be run as root user since it makes changes"
-           echo "to the \$HOME directory of the \$USER executing this script."
-           echo "The \$HOME directory of the root user is, of course, '/root'."
-           echo "We don't want to mess around in there. So run this script as a"
-           echo "normal user. You will be asked for a sudo password when necessary."
-           echo "##################################################################"
-           exit 1
-            fi
+ if [ "$(id -u)" = 0  ]; then
+echo "##################################################################"
+echo "This script MUST NOT be run as root user since it makes changes"
+echo "to the \$HOME directory of the \$USER executing this script."
+echo "The \$HOME directory of the root user is, of course, '/root'."
+echo "We don't want to mess around in there. So run this script as a"
+echo "normal user. You will be asked for a sudo password when necessary."
+echo "##################################################################"
+exit 1
+ fi
+
+
+
 
 defaultsettings() { \
         dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to use Default Settings?" 8 60 && use_default=y 
@@ -284,6 +315,7 @@ declare -a browser_number=(
 "chromium 3"
 "firefox 4"
 )
+
 until [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; do
         browser_list=$(printf '%s\n' "${browser_number[@]}")
         
@@ -423,11 +455,7 @@ moveconfig(){ \
 #Cloning my repo if its needed
 if [ -d $HOME/setup ] ; then
          
-         echo "##################################################################"
-         echo "## My repo already exist in HOMEFOLDER so no need to clone..... ##"
-         echo "##################################################################"
-
-         sleep 2
+         sleep 1 
          clear
 else
 
@@ -463,7 +491,10 @@ else
                   
                   #Will exit the script if for some reason the cloning fail
 fi 
-   
+echo "#########################################################"
+echo "## Cloning My dotfiles repo to get all my config files ##"
+echo "#########################################################"
+
 [ -d $HOME/dotfiles ] || git clone https://github.com/phoenix988/dotfiles.git $HOME/dotfiles 
 
 sleep 2
@@ -480,13 +511,8 @@ sleep 2
 clear
 
 
-
 if [ -e $HOME/.config/oh-my-zsh/oh-my-zsh.sh ] ; then
 
-     echo "####################################"
-     echo "## OH-MY-ZSH is already Installed ##"
-     echo "####################################"
-     
      sleep 2
      clear
 else
@@ -535,10 +561,6 @@ fi
 #But if it's not installed this script will go ahead and install it
 
 if [ -e /usr/local/bin/starship ] ; then
-
-     echo "###################################"
-     echo "## StarShip is already Installed ##"
-     echo "###################################"
      
      sleep 2
      clear
