@@ -785,15 +785,17 @@ if [ -e /etc/pacman.conf ] ; then
          #installs xorg if you said yes 
          if [ "$install_xorg"  = "y" ] ; then
 
-                  echo "#########################################"
-                  echo "## Installing xorg and display manager ##"
-                  echo "#########################################"
+                  echo "###################################################"
+                  echo "## Installing xorg and display manager if needed ##"
+                  echo "###################################################"
                   sleep 2 
                   sudo pacman -S xorg lightdm --needed --noconfirm 
 
                   checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
                   sudo systemctl enable lightdm 
+         
          if [ "$checks_gpu" = "NVIDIA" ] ; then 
+
 
                   sudo pacman -S nvidia --noconfirm --needed   
 
