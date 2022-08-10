@@ -712,8 +712,6 @@ if [ -d /etc/apt ] ; then
                 sudo usermod -aG docker $USER &> /dev/null
          fi     
 
-         sudo groupadd wheel
-         sudo usermod -aG wheel
 fi
 
 #This is for dnf or fedora based distros
@@ -1017,6 +1015,7 @@ if [ "$modify_fstab" = "n" ] ; then
        sleep 2
        clear
        cp -r $HOME/dotfiles/.scripts $HOME/dotfiles/.dmenu $HOME/ 
+       cp -r $HOME/dotfiles/Documents  $HOME/ 
        chmod +x -R $HOME/.dmenu 
        chmod +x -R $HOME/.scripts 
        
