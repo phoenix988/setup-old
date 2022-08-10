@@ -707,6 +707,9 @@ if [ -d /etc/apt ] ; then
                 #adds the user to the docker group
                 sudo usermod -aG docker $USER &> /dev/null
          fi     
+
+         sudo groupadd wheel
+         sudo usermod -aG wheel
 fi
 
 #This is for dnf or fedora based distros
@@ -864,6 +867,22 @@ if [ -e /etc/pacman.conf ] ; then
          sleep 2
          clear
 fi
+
+
+
+
+
+check_sudoers=$(sudo grep ^%wheel /etc/sudoers )
+
+if [ -z $check_sudoers ] ; then
+echo "############################"
+echo "## Modifying Sudoers file ##"
+echo "############################"
+echo '%wheel ALL=(ALL:ALL) NOPASSWD:ALL' | sudo EDITOR='tee -a' visudo &> /dev/null 
+fi
+
+
+
       
    
 #Copying all my config files from the git repo I cloned to your
@@ -920,9 +939,10 @@ sleep 2
 clear
 #This will link the neovim config to the root USER
 #so neovim will have the same config even if you edit something as root
-echo "#################################################################################"
-echo "## Linking neovim config to root so it uses the same neovim config as the user ##"
-echo "#################################################################################"
+echo "##############################################"
+echo "## Linking neovim config to root so it uses ##" 
+echo "## the same neovim config as the user       ##"
+echo "##############################################"
 
 [ -d $HOME/.config/nvim ] && sudo ln -s $HOME/.config/nvim /root/.config/nvim &> /dev/null && \
 
@@ -1016,9 +1036,10 @@ if [ "$install_portainer" = "y" ] ; then
     docker -v &> /dev/null 
 
        if [ $? = "0" ] ; then
-              echo "####################################################################################################" 
-              echo "## Installing Portainer agent so you can use this server,For docker containers only if its needed ##"
-              echo "####################################################################################################" 
+              echo "###########################################################" 
+              echo "## Installing Portainer agent so you can use this server ##"
+              echo "## For docker containers only if its needed              ##"
+              echo "###########################################################" 
               sleep 2    
               portainer_agent=$(sudo docker ps | awk '$NF == "portainer_agent" {print $NF}' 2> /dev/null)
               
