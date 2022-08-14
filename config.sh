@@ -331,7 +331,7 @@ declare -a browser_number=(
 
 
 
-until [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; do
+until [ "$browser" = "1" -o "$browser" = "2" -o "$browser" = "3" -o "$browser" = "4" ] ; do
         browser_list=$(printf '%s\n' "${browser_number[@]}")
         
         browser=$(dialog --colors --title "\Z7\ZbBrowser" --inputbox "\Z4Which Browser do you want to use as your default?\nAnswer with a number between 1-4\n$browser_list" --output-fd 1 8 60  ) 
@@ -361,7 +361,7 @@ pip install xffib
 pip install qtile
 
 
-ln -s $HOME/karl/.local/bin/qtile
+ln -s $HOME/.local/bin/qtile
 
 xsession_content=$(printf "[Desktop Entry]\n
 Name=qtile\n
@@ -370,7 +370,8 @@ Exec=/usr/bin/qtile start\n
 Type=Application"\n )
 
 
-printf '%s\n' "${xsession_content[@]}" | sed '/^ *$/d' > /usr/share/xsessions/qtile.desktop
+printf '%s\n' "${xsession_content[@]}" | sed '/^ *$/d' > $HOME/qtile.desktop
+sudo cp $HOME/qtile.desktop /usr/share/xsessions
 
 }
 
@@ -714,8 +715,12 @@ if [ -d /etc/apt ] ; then
          sudo dpkg -i ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
          rm -rf lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
          
+         clear 
+
          git clone --recursive https://github.com/thegamerhat/lightdm-glorious-webkit2  $HOME/lightdm-glorious-webkit2
          [ -d /usr/share/lightdm-webkit/themes ] || sudo mkdir -p /usr/share/lightdm-webkit/themes
+         
+         clear
          
          sudo cp -r $HOME/lightdm-glorious-webkit2 /usr/share/lightdm-webkit/themes/glorious
          sudo rm -rf $HOME/lightdm-glorious-webkit2 
@@ -723,12 +728,20 @@ if [ -d /etc/apt ] ; then
 
          if [ -e /usr/bin/lsd ] ; then
               
+              printf "\n" > /dev/null  
+
+              else
+
               wget https://github.com/Peltoche/lsd/releases/download/0.22.0/lsd-musl_0.22.0_amd64.deb && sudo dpkg -i ./lsd-musl_0.22.0_amd64.deb
               rm -rf lsd-musl_0.22.0_amd64.deb
-         
+              
+              clear
          fi 
 
          installqtile
+         
+         clear
+
 
 
 
@@ -920,7 +933,7 @@ fi
 
 check_sudoers=$(sudo grep -e '^%wheel\|^%sudo' /etc/sudoers | awk '/NOPASSWD/' )
 
-if [ -z $check_sudoers ] ; then
+if [ -z "$check_sudoers" ] ; then
 echo "############################"
 echo "## Modifying Sudoers file ##"
 echo "############################"
