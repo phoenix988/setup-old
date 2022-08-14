@@ -329,6 +329,8 @@ declare -a browser_number=(
 "firefox 4"
 )
 
+
+
 until [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; do
         browser_list=$(printf '%s\n' "${browser_number[@]}")
         
@@ -340,7 +342,7 @@ until [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ;
             echo " &> /dev/null" 
        else
        
-       errormsg
+            errormsg
        
        fi
 
@@ -351,6 +353,27 @@ done
 browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]*//g")
 
 }
+
+installqtile() { \
+       
+sudo apt install python3-pip python3-cairocffi
+pip install xffib
+pip install qtile
+
+
+ln -s $HOME/karl/.local/bin/qtile
+
+xsession_content=$(printf "[Desktop Entry]\n
+Name=qtile\n
+Comment=This will start qtile wm\n
+Exec=/usr/bin/qtile start\n
+Type=Application"\n )
+
+
+printf '%s\n' "${xsession_content[@]}" | sed '/^ *$/d' > /usr/share/xsessions/qtile.desktop
+
+}
+
 
 defaultsettings
 
@@ -683,9 +706,30 @@ if [ -d /etc/apt ] ; then
          echo "## Installing apt packages from my package list if needed ##"
          echo "############################################################"
          sudo apt install $(cat $apt) -y 2> $HOME/.apt.error
-        
-         wget https://github.com/Peltoche/lsd/releases/download/0.22.0/lsd-musl_0.22.0_amd64.deb && sudo dpkg -i ./lsd-musl_0.22.0_amd64.deb
-         rm -rf lsd-musl_0.22.0_amd64.deb
+       
+         
+         #Installs glorious theme for lightdm
+         #And also installs lightdm webkit2 greeter so the theme will work
+         [ -e ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb ] && wget https://download.opensuse.org/repositories/home:/antergos/xUbuntu_17.10/amd64/lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
+         sudo dpkg -i ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
+         rm -rf lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
+         
+         git clone --recursive https://github.com/thegamerhat/lightdm-glorious-webkit2  $HOME/lightdm-glorious-webkit2
+         [ -d /usr/share/lightdm-webkit/themes ] || sudo mkdir -p /usr/share/lightdm-webkit/themes
+         
+         sudo cp -r $HOME/lightdm-glorious-webkit2 /usr/share/lightdm-webkit/themes/glorious
+         sudo rm -rf $HOME/lightdm-glorious-webkit2 
+
+
+         if [ -e /usr/bin/lsd ] ; then
+              
+              wget https://github.com/Peltoche/lsd/releases/download/0.22.0/lsd-musl_0.22.0_amd64.deb && sudo dpkg -i ./lsd-musl_0.22.0_amd64.deb
+              rm -rf lsd-musl_0.22.0_amd64.deb
+         
+         fi 
+
+
+
 
 
          #This will check if nano is installed or not 
@@ -1067,7 +1111,8 @@ if [ "$install_fonts" = "y" ] ; then
     echo "#####################"   
     git clone https://github.com/phoenix988/fonts.git $HOME/fonts 
     
-    sudo cp -r $HOME/fonts/fonts/* /usr/share/fonts
+    [ -d $HOME/.local/share/fonts ] || mkdir $HOME/.local/share/fonts
+    sudo cp -r $HOME/fonts/fonts/* $HOME/.local/share/fonts
 
     rm -rf $HOME/fonts &> /dev/null
 
