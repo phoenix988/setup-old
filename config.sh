@@ -361,7 +361,7 @@ pip install xffib
 pip install qtile
 
 
-ln -s $HOME/.local/bin/qtile
+ln -s $HOME/.local/bin/qtile /usr/bin/qtile
 
 xsession_content=$(printf "[Desktop Entry]\n
 Name=qtile\n
