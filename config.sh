@@ -356,12 +356,11 @@ browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]
 
 installqtile() { \
        
-sudo apt install python3-pip python3-cairocffi
+[ -d /etc/apt ] && sudo apt install -y python3-pip python3-cairocffi
 pip install xffib
 pip install qtile
 
 
-ln -s $HOME/.local/bin/qtile /usr/bin/qtile
 
 xsession_content=$(printf "[Desktop Entry]\n
 Name=qtile\n
@@ -371,10 +370,27 @@ Type=Application"\n )
 
 
 printf '%s\n' "${xsession_content[@]}" | sed '/^ *$/d' > $HOME/qtile.desktop
-sudo cp $HOME/qtile.desktop /usr/share/xsessions
+sudo mv $HOME/qtile.desktop /usr/share/xsessions
 
+sudo ln -s $HOME/.local/bin/qtile /usr/bin/qtile
 }
 
+
+lightdmtheme() {\
+
+
+git clone --recursive https://github.com/thegamerhat/lightdm-glorious-webkit2  $HOME/lightdm-glorious-webkit2
+[ -d /usr/share/lightdm-webkit/themes ] || sudo mkdir -p /usr/share/lightdm-webkit/themes
+
+
+clear
+         
+sudo cp -r $HOME/lightdm-glorious-webkit2 /usr/share/lightdm-webkit/themes/glorious
+sudo rm -rf $HOME/lightdm-glorious-webkit2 
+
+
+}
+         
 
 defaultsettings
 
@@ -717,14 +733,7 @@ if [ -d /etc/apt ] ; then
          
          clear 
 
-         git clone --recursive https://github.com/thegamerhat/lightdm-glorious-webkit2  $HOME/lightdm-glorious-webkit2
-         [ -d /usr/share/lightdm-webkit/themes ] || sudo mkdir -p /usr/share/lightdm-webkit/themes
-         
-         clear
-         
-         sudo cp -r $HOME/lightdm-glorious-webkit2 /usr/share/lightdm-webkit/themes/glorious
-         sudo rm -rf $HOME/lightdm-glorious-webkit2 
-
+         lightdmtheme
 
          if [ -e /usr/bin/lsd ] ; then
               
@@ -783,9 +792,14 @@ if [ -d /etc/dnf ] ; then
          echo "############################################################"
          echo "## Installing DNF packages from my package list if needed ##"
          echo "############################################################"
+         sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:antergos/Fedora_27/home:antergos.repo
+         sudo dnf copr enable frostyx/qtile
          sudo dnf install $(cat $dnf) -y 2> $HOME/.dnf.error
          
          sleep 2
+         clear
+         
+         lightdmtheme
          clear
 
          #This will install docker if you are running fedora
