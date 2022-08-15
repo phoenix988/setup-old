@@ -353,7 +353,7 @@ until [ "$browser" = "1" -o "$browser" = "2" -o "$browser" = "3" -o "$browser" =
 
 done
 
-browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]*//g")
+browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]*//g" | awk '{print $1}')
 
 }
 
@@ -802,9 +802,9 @@ if [ -d /etc/apt ] ; then
 
          lightdmtheme
 
-         displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
-         sudo systemctl disable $displaymanager
-         sudo systemctl enable lightdm
+        # displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
+        # sudo systemctl disable $displaymanager
+        # sudo systemctl enable lightdm
          
 
          if [ -e /usr/bin/lsd ] ; then
