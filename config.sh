@@ -354,6 +354,44 @@ browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]
 
 }
 
+installchoosenbrowser(){ \
+  
+if [ -d /etc/dnf ] ; then
+
+  [ "$browser" = "brave" ] && sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/ && \
+                              sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc && \
+                              sudo dnf install brave-browser
+  [ "$browser" = "qutebrowser" ] && sudo dnf install qutebrowser
+  [ "$browser" = "chromium" ] && sudo dnf install chromium
+  [ "$browser" = "firefox" ] && sudo dnf install firefox
+  
+
+fi
+
+if [ -d /etc/apt ] ; then
+  [ "$browser" = "brave" ] && sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
+                              echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && \
+                              sudo apt update && sudo apt install brave-browser
+  [ "$browser" = "qutebrowser" ] && sudo apt install qutebrowser
+  [ "$browser" = "chromium" ] && sudo apt install chromium
+  [ "$browser" = "firefox" ] && sudo apt install firefox
+
+fi
+
+if [ -e /etc/pacman.conf ] ; then
+
+  [ "$browser" = "brave" ] && sudo pacman -S brave-bin
+  [ "$browser" = "qutebrowser" ] && sudo pacman -S qutebrowser
+  [ "$browser" = "chromium" ] && sudo pacman -S chromium
+  [ "$browser" = "firefox" ] && sudo pacman -S firefox
+
+
+fi
+
+}
+
+
+
 installqtile() { \
        
 [ -d /etc/apt ] && sudo apt install -y python3-pip python3-cairocffi
@@ -375,8 +413,18 @@ sudo mv $HOME/qtile.desktop /usr/share/xsessions
 sudo ln -s $HOME/.local/bin/qtile /usr/bin/qtile
 }
 
+uwufetchfromsource() { \
 
-lightdmtheme() {\
+git clone https://github.com/TheDarkBug/uwufetch.git
+cd uwufetch
+sudo make install
+cd .. 
+rm -rf uwufetch
+
+}
+
+
+lightdmtheme() { \
 
 
 git clone --recursive https://github.com/thegamerhat/lightdm-glorious-webkit2  $HOME/lightdm-glorious-webkit2
@@ -388,6 +436,21 @@ clear
 sudo cp -r $HOME/lightdm-glorious-webkit2 /usr/share/lightdm-webkit/themes/glorious
 sudo rm -rf $HOME/lightdm-glorious-webkit2 
 
+
+}
+
+sddminstall() { \
+
+theme=$(grep "Current" /etc/sddm.conf | grep -v "^#" | awk -F = '{print $2}')
+
+[ -z $theme ] && sudo sed -i 's/#Current/Current/g' /etc/sddm.conf && theme=$(grep "Current" /etc/sddm.conf | grep -v "^#" | awk -F = '{print $2}')
+
+sudo sed -i 's|$theme|materia-dark|g' /etc/sddm.conf
+
+displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
+
+sudo systemctl disable $displaymanager
+sudo systemctl enable sddm
 
 }
          
@@ -441,6 +504,7 @@ files="$HOME/dotfiles/setup-files"
 fstab="$HOME/dotfiles/setup-files/fstab"
 pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
 pacman="$HOME/dotfiles/setup-files/pacman"
+paru="$HOME/dotfiles/setup-files/paru"
 dnf="$HOME/dotfiles/setup-files/dnf"
 apt="$HOME/dotfiles/setup-files/apt"
 
@@ -747,11 +811,19 @@ if [ -d /etc/apt ] ; then
               clear
          fi 
 
-         installqtile
-         
-         clear
+        installqtile
+        clear
+        installchoosenbrowser
+        clear
 
 
+
+        if [ -e /usr/bin/bat ] ; then
+
+            wget https://github.com/sharkdp/bat/releases/download/v0.21.0/bat-musl_0.21.0_amd64.deb && sudo dpkg -i ./bat-musl_0.21.0_amd64.deb
+            rm -rf bat-musl_0.21.0_amd64.deb
+
+        fi
 
 
          #This will check if nano is installed or not 
@@ -801,7 +873,13 @@ if [ -d /etc/dnf ] ; then
          
          lightdmtheme
          clear
-
+         uwufetchfromsource
+         clear
+         installchoosenbrowser
+         clear
+         sddminstall
+         clear
+         
          #This will install docker if you are running fedora
          #it will check for the distro id and if the id is fedora
          #this script will install docker
@@ -891,7 +969,8 @@ if [ -e /etc/pacman.conf ] ; then
 
          sleep 2
          clear
-
+         installchoosenbrowser 
+         clear
 
          #installs xorg if you said yes 
          if [ "$install_xorg"  = "y" ] ; then
@@ -916,18 +995,11 @@ if [ -e /etc/pacman.conf ] ; then
          
          fi
          
-         echo "###########################################"
-         echo "# Installing pfetch,autofs,mutt-wizard and#" 
-         echo "# lightdm themes if needed using paru     #" 
-         echo "###########################################"
+         echo "######################################"
+         echo "# Installing aur packages using paru #" 
+         echo "######################################"
          sleep 2 
-         paru -S --overwrite "*" pfetch --needed --noconfirm 
-         paru -S --overwrite "*" autofs --needed --noconfirm 
-         paru -S --overwrite "*" uwufetch --needed --noconfirm 
-         paru -S --overwrite "*" mutt-wizard --needed --noconfirm 
-         paru -S --overwrite "*" lightdm-webkit2-greeter --needed --noconfirm 
-         paru -S --overwrite "*" lightdm-webkit2-theme-glorious --needed --noconfirm 
-       
+         paru -S --overwrite "*" $(cat $paru) --needed --noconfirm                           
          clear 
         
          #This will deactivate logins for root
