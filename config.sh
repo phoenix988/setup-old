@@ -465,9 +465,9 @@ if [ $use_default = "y" -o $use_default = "Y" ] ; then
        install_docker="y"
        install_portainer="n"
        install_xorg="n"
-       install_fonts="n"
+       install_fonts="y"
        modify_fstab="n"
-       browser="qutebrowser"
+       browser="brave"
 else 
 
        installdocker 
