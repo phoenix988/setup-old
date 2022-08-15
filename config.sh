@@ -802,6 +802,11 @@ if [ -d /etc/apt ] ; then
 
          lightdmtheme
 
+         displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
+         sudo systemctl disable $displaymanager
+         sudo systemctl enable lightdm
+         
+
          if [ -e /usr/bin/lsd ] ; then
               
               printf "\n" > /dev/null  
@@ -817,6 +822,8 @@ if [ -d /etc/apt ] ; then
         installqtile
         clear
         installchoosenbrowser
+        clear
+        uwufetchfromsource
         clear
 
 
@@ -1217,9 +1224,11 @@ if [ "$install_fonts" = "y" ] ; then
     sudo cp -r $HOME/fonts/fonts/* $HOME/.local/share/fonts
 
     rm -rf $HOME/fonts &> /dev/null
-
+    sleep 1
 fi
 
 rm -rf $HOME/dotfiles
 
 fi
+
+clear
