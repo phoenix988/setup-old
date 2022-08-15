@@ -17,6 +17,9 @@ fi
 
 if [ -d /etc/dnf ] ; then
 
+  echo "max_parallel_downloads=10"  | sudo tee -a /etc/dnf/dnf.conf
+  echo "fastestmirror=True" | sudo tee -a /etc/dnf/dnf.conf
+
   sudo dnf install -y dialog || error "Error syncing the repos."
 
 fi
