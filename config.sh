@@ -360,10 +360,10 @@ if [ -d /etc/dnf ] ; then
 
   [ "$browser" = "brave" ] && sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/ && \
                               sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc && \
-                              sudo dnf install brave-browser
-  [ "$browser" = "qutebrowser" ] && sudo dnf install qutebrowser
-  [ "$browser" = "chromium" ] && sudo dnf install chromium
-  [ "$browser" = "firefox" ] && sudo dnf install firefox
+                              sudo dnf install -y brave-browser && sudo ln -s /usr/bin/brave-browser /usr/bin/brave
+  [ "$browser" = "qutebrowser" ] && sudo dnf install -y qutebrowser
+  [ "$browser" = "chromium" ] && sudo dnf install -y chromium
+  [ "$browser" = "firefox" ] && sudo dnf install -y firefox
   
 
 fi
@@ -371,19 +371,19 @@ fi
 if [ -d /etc/apt ] ; then
   [ "$browser" = "brave" ] && sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
                               echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && \
-                              sudo apt update && sudo apt install brave-browser
-  [ "$browser" = "qutebrowser" ] && sudo apt install qutebrowser
-  [ "$browser" = "chromium" ] && sudo apt install chromium
-  [ "$browser" = "firefox" ] && sudo apt install firefox
+                              sudo apt update && sudo apt install -y brave-browser && sudo ln -s /usr/bin/brave-browser /usr/bin/brave
+  [ "$browser" = "qutebrowser" ] && sudo apt install -y qutebrowser
+  [ "$browser" = "chromium" ] && sudo apt install -y chromium
+  [ "$browser" = "firefox" ] && sudo apt install -y firefox
 
 fi
 
 if [ -e /etc/pacman.conf ] ; then
 
-  [ "$browser" = "brave" ] && sudo pacman -S brave-bin
-  [ "$browser" = "qutebrowser" ] && sudo pacman -S qutebrowser
-  [ "$browser" = "chromium" ] && sudo pacman -S chromium
-  [ "$browser" = "firefox" ] && sudo pacman -S firefox
+  [ "$browser" = "brave" ] && sudo pacman -S brave-bin --needed --noconfirm && sudo ln -s /usr/bin/brave-browser /usr/bin/brave
+  [ "$browser" = "qutebrowser" ] && sudo pacman -S qutebrowser --needed --noconfirm
+  [ "$browser" = "chromium" ] && sudo pacman -S chromium --needed --noconfirm
+  [ "$browser" = "firefox" ] && sudo pacman -S firefox --needed --noconfirm
 
 
 fi
@@ -445,7 +445,7 @@ theme=$(grep "Current" /etc/sddm.conf | grep -v "^#" | awk -F = '{print $2}')
 
 [ -z $theme ] && sudo sed -i 's/#Current/Current/g' /etc/sddm.conf && theme=$(grep "Current" /etc/sddm.conf | grep -v "^#" | awk -F = '{print $2}')
 
-sudo sed -i 's|$theme|materia-dark|g' /etc/sddm.conf
+sudo sed -i "s|$theme|materia-dark|g" /etc/sddm.conf
 
 displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
 
@@ -1139,10 +1139,10 @@ else
        echo "##############################################################"
        sleep 2
        clear
-       git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers &> /dev/null
-       cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures &> /dev/null
-       cp $HOME/setup/.fehbg $HOME/ &> /dev/null
-       rm -rf $HOME/wallpapers &> /dev/null
+       git clone https://github.com/phoenix988/wallpapers.git $HOME/wallpapers 
+       cp -r $HOME/wallpapers/Wallpapers $HOME/Pictures 
+       cp $HOME/setup/.fehbg $HOME/ 2> /dev/null
+       rm -rf $HOME/wallpapers 2> /dev/null
        [ -d /var/pictures ] || sudo mkdir /var/pictures
        sudo ln -s $HOME/pictures/Wallpapers /var/pictures/Wallpapers
        
