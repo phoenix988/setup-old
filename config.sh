@@ -811,7 +811,7 @@ if [ -d /etc/apt ] ; then
               
               printf "\n" > /dev/null  
 
-              else
+          else
 
               wget https://github.com/Peltoche/lsd/releases/download/0.22.0/lsd-musl_0.22.0_amd64.deb && sudo dpkg -i ./lsd-musl_0.22.0_amd64.deb
               rm -rf lsd-musl_0.22.0_amd64.deb
@@ -829,6 +829,12 @@ if [ -d /etc/apt ] ; then
 
 
         if [ -e /usr/bin/bat ] ; then
+
+
+          printf "\n" > /dev/null  
+
+        
+        else
 
             wget https://github.com/sharkdp/bat/releases/download/v0.21.0/bat-musl_0.21.0_amd64.deb && sudo dpkg -i ./bat-musl_0.21.0_amd64.deb
             rm -rf bat-musl_0.21.0_amd64.deb
@@ -848,7 +854,7 @@ if [ -d /etc/apt ] ; then
          [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
          sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
          
-         if [ $install_docker = "y" ] ; then
+         if [ "$install_docker" = "y" ] ; then
                 
                 #Installs docker 
                 sudo apt install docker.io -y
