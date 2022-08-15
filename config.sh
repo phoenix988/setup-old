@@ -826,7 +826,7 @@ if [ -d /etc/dnf ] ; then
             echo "####################################"
             echo "## Removing nano if its installed ##"
             echo "####################################"
-            [ -e /usr/bin/nano ] && sudo dnf remove nano 
+            [ -e /usr/bin/nano ] && sudo dnf -y remove nano 
             
             sleep 1
             
