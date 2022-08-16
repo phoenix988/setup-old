@@ -786,12 +786,34 @@ if [ -d /etc/apt ] ; then
          #Installs packages from the apt file
          #just add the package name to that list if you want 
          #this script to install it for you
+    while [ $loop = "yes" ] ; do
+
+        [ -e $HOME/.apt_error.txt ] && rm $HOME/.apt_error.txt 
+
          echo "############################################################"
          echo "## Installing apt packages from my package list if needed ##"
          echo "############################################################"
-         sudo apt install $(cat $apt) -y 2> $HOME/.apt.error
-       
-         
+         sudo apt install $(cat $apt) -y |& tee $HOME/.apt_error.txt
+
+         check_apt_error=$(cat $HOME/.apt_error.txt | grep -i unable | awk '{print $NF}' )
+
+         if [ -z $check_apt_error ] ; then  
+
+                loop="no"
+         else
+                loop="yes"
+
+                for errors in $check_apt_error ; do
+
+                     sed -i "/$errors/d" $apt 
+
+                done
+                     
+                     sudo apt --fix-broken install -y
+         fi
+
+
+    done 
          #Installs glorious theme for lightdm
          #And also installs lightdm webkit2 greeter so the theme will work
          [ -e ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb ] || wget https://download.opensuse.org/repositories/home:/antergos/xUbuntu_17.10/amd64/lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
