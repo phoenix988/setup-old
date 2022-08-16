@@ -819,6 +819,7 @@ if [ -d /etc/apt ] ; then
     done 
          #Installs glorious theme for lightdm
          #And also installs lightdm webkit2 greeter so the theme will work
+         sudo apt install -y lightdm
          [ -e ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb ] || wget https://download.opensuse.org/repositories/home:/antergos/xUbuntu_17.10/amd64/lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
          sudo dpkg -i ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
          rm -rf lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
