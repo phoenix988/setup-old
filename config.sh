@@ -802,7 +802,6 @@ if [ -d /etc/apt ] ; then
 
                 loop="no"
          else
-           sleep 10
                 loop="yes"
 
                 for errors in $check_apt_error ; do
