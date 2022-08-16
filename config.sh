@@ -782,10 +782,11 @@ fi
 
 #This is for apt or ubuntu/debian based distros
 if [ -d /etc/apt ] ; then
-
          #Installs packages from the apt file
          #just add the package name to that list if you want 
          #this script to install it for you
+
+         loop="yes"
     while [ $loop = "yes" ] ; do
 
         [ -e $HOME/.apt_error.txt ] && rm $HOME/.apt_error.txt 
