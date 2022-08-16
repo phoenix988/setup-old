@@ -620,6 +620,8 @@ echo "#########################################################"
 sleep 2
 clear
        
+
+
 echo "###################################################"
 echo "## Installing curl zsh wget if its not installed ##"
 echo "###################################################"
@@ -1251,7 +1253,7 @@ if [ "$install_fonts" = "y" ] ; then
     echo "#####################"   
     git clone https://github.com/phoenix988/fonts.git $HOME/fonts 
     
-    [ -d $HOME/.local/share/fonts ] || mkdir $HOME/.local/share/fonts
+    [ -d $HOME/.local/share/fonts ] || mkdir -p $HOME/.local/share/fonts
     sudo cp -r $HOME/fonts/fonts/* $HOME/.local/share/fonts
 
     rm -rf $HOME/fonts &> /dev/null
