@@ -456,7 +456,99 @@ sudo systemctl disable $displaymanager
 sudo systemctl enable sddm
 
 }
+   
+
+
+aptinstall(){ \
+  
+
+   loop="yes"
+   while [ $loop = "yes" ] ; do
+
+        [ -e $HOME/.apt_error.txt ] && rm $HOME/.apt_error.txt 
+
+                  sudo apt install $(/usr/bin/cat $apt) -y |& tee $HOME/.apt_error.txt
+
+         check_apt_error=$(/usr/bin/cat $HOME/.apt_error.txt | grep -i unable | awk '{print $NF}' )
+
+         if [ -z "$check_apt_error" ] ; then  
+
+                loop="no"
+                rm $HOME/.apt_error.txt
+         else
+                loop="yes"
+
+                for errors in $check_apt_error ; do
+
+                     sed -i "/$errors/d" $apt 
+
+                done
+                     
+                     sudo apt --fix-broken install -y
+                     sudo apt update
+                     sudo apt --fix-missing
+         fi
+          
+
+    done         
+  }
+
+dnfinstall(){\
          
+
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:antergos/Fedora_27/home:antergos.repo
+sudo dnf copr enable frostyx/qtile
+sudo dnf install $(cat $dnf) -y 2> $HOME/.dnf.error
+         
+      
+}
+      
+
+nanonuke(){
+
+if [ -d /etc/apt ] ; then
+#This will check if nano is installed or not 
+remove_nano=$(dpkg -l | grep nano )
+
+#We dont ever wanna use nano
+#so lets remove it if its installed
+[ -z "$remove_nano" ] || sudo apt purge nano &> /dev/null
+
+#This will link nanos binary to neovim so even if you 
+#type nano it will open neovim
+[ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
+sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
+
+fi
+
+if [ -d /etc/dnf ] ;then
+
+
+[ -e /usr/bin/nano ] && sudo dnf -y remove nano 
+            
+            sleep 1
+            
+            [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
+            sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
+
+
+
+
+fi
+
+  
+}
+
+homefolders() {\
+
+  [ -d $HOME/Documents ] && mkdir $HOME/Documents
+  [ -d $HOME/Videos ] && mkdir $HOME/Videos
+  [ -d $HOME/Downloads ] && mkdir $HOME/Downloads
+  [ -d $HOME/Pictures ] && mkdir $HOME/Pictures
+
+
+}
+
 
 defaultsettings
 
@@ -787,38 +879,12 @@ if [ -d /etc/apt ] ; then
          #Installs packages from the apt file
          #just add the package name to that list if you want 
          #this script to install it for you
-         loop="yes"
-    while [ $loop = "yes" ] ; do
-
-        [ -e $HOME/.apt_error.txt ] && rm $HOME/.apt_error.txt 
-
          echo "############################################################"
          echo "## Installing apt packages from my package list if needed ##"
          echo "############################################################"
-         sudo apt install $(/usr/bin/cat $apt) -y |& tee $HOME/.apt_error.txt
+         
+         aptinstall
 
-         check_apt_error=$(/usr/bin/cat $HOME/.apt_error.txt | grep -i unable | awk '{print $NF}' )
-
-         if [ -z $check_apt_error ] ; then  
-
-                loop="no"
-                rm $HOME/.apt_error.txt
-         else
-                loop="yes"
-
-                for errors in $check_apt_error ; do
-
-                     sed -i "/$errors/d" $apt 
-
-                done
-                     
-                     sudo apt --fix-broken install -y
-                     sudo apt update
-                     sudo apt --fix-missing
-         fi
-          
-
-    done 
          #Installs glorious theme for lightdm
          #And also installs lightdm webkit2 greeter so the theme will work
          sudo apt install -y lightdm
@@ -868,19 +934,15 @@ if [ -d /etc/apt ] ; then
             rm -rf bat-musl_0.21.0_amd64.deb
 
         fi
+            
 
-
-         #This will check if nano is installed or not 
-         remove_nano=$(dpkg -l | grep nano )
-
-         #We dont ever wanna use nano
-         #so lets remove it if its installed
-         [ -z "$remove_nano" ] || sudo apt purge nano &> /dev/null
+         echo "####################################"
+         echo "## Removing nano if its installed ##"
+         echo "####################################"
+         sleep 1
          
-         #This will link nanos binary to neovim so even if you 
-         #type nano it will open neovim
-         [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
-         sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
+         nanonuke         
+         clear
          
          if [ "$install_docker" = "y" ] ; then
                 
@@ -908,10 +970,9 @@ if [ -d /etc/dnf ] ; then
          echo "############################################################"
          echo "## Installing DNF packages from my package list if needed ##"
          echo "############################################################"
-         sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:antergos/Fedora_27/home:antergos.repo
-         sudo dnf copr enable frostyx/qtile
-         sudo dnf install $(cat $dnf) -y 2> $HOME/.dnf.error
-         
+          
+         dnfinstall
+
          sleep 2
          clear
          
@@ -948,21 +1009,19 @@ if [ -d /etc/dnf ] ; then
             echo "####################################"
             echo "## Removing nano if its installed ##"
             echo "####################################"
-            [ -e /usr/bin/nano ] && sudo dnf -y remove nano 
+            
+            nanonuke
             
             sleep 1
+            clear
             
-            #This will link nanos binary to neovim so even if you 
-            #type nano it will open neovim
             echo "#########################################################################"
             echo "## Linking neovim to nano.. even if you type nano neovim will be used. ##"
             echo "## Cause well... I dont know how to use nano                           ##"
             echo "#########################################################################"
-            [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
-            sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
-               
-               sleep 2 
-               clear
+            
+            sleep 2 
+            clear
 fi
 
 #This is for pacman or arch based distors
