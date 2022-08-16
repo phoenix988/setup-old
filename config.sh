@@ -794,14 +794,15 @@ if [ -d /etc/apt ] ; then
          echo "############################################################"
          echo "## Installing apt packages from my package list if needed ##"
          echo "############################################################"
-         sudo apt install $(cat $apt) -y |& tee $HOME/.apt_error.txt
+         sudo apt install $(/usr/bin/cat $apt) -y |& tee $HOME/.apt_error.txt
 
-         check_apt_error=$(cat $HOME/.apt_error.txt | grep -i unable | awk '{print $NF}' )
+         check_apt_error=$(/usr/bin/cat $HOME/.apt_error.txt | grep -i unable | awk '{print $NF}' )
 
          if [ -z $check_apt_error ] ; then  
 
                 loop="no"
          else
+           sleep 10
                 loop="yes"
 
                 for errors in $check_apt_error ; do
@@ -812,7 +813,7 @@ if [ -d /etc/apt ] ; then
                      
                      sudo apt --fix-broken install -y
          fi
-
+          
 
     done 
          #Installs glorious theme for lightdm
