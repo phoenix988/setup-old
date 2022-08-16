@@ -812,6 +812,8 @@ if [ -d /etc/apt ] ; then
                 done
                      
                      sudo apt --fix-broken install -y
+                     sudo apt update
+                     sudo apt --fix-missing
          fi
           
 
