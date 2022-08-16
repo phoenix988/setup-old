@@ -785,7 +785,6 @@ if [ -d /etc/apt ] ; then
          #Installs packages from the apt file
          #just add the package name to that list if you want 
          #this script to install it for you
-         DEBIAN_FRONTEND=noninteractive apt-get install lightdm
          loop="yes"
     while [ $loop = "yes" ] ; do
 
