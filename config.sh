@@ -46,13 +46,13 @@ Lastchance() { \
 
 
 
+welcome || error "user choose to exist"
 
-     welcome || error "user choose to exist"
+os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
+hostname=$(cat /etc/hostname)
+availabledisks=$(sudo fdisk -l | grep ^/dev | awk '{print $1}')
+availablebiosdisk=$(sudo fdisk -l | grep ^/dev | awk '{print $1}' | sed 's/[1-9]*//g')
 
-     os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
-     hostname=$(cat /etc/hostname)
-     availabledisks=$(sudo fdisk -l | grep ^/dev | awk '{print $1}')
-     availablebiosdisk=$(sudo fdisk -l | grep ^/dev | awk '{print $1}' | sed 's/[1-9]*//g')
 
 if [ "$hostname" = "archiso" ] ; then 
 
@@ -215,6 +215,7 @@ echo "##########################"
 
 mkfs -t $fs -f $drive || error "Failed to create filesystem"
                
+
 if [ $check_fstype = "btrfs" ] ; then
     
     sudo mount $drive /mnt &> /dev/null   
@@ -506,7 +507,7 @@ sudo systemctl enable sddm
 
 aptinstall(){ \
   
-
+   sudo dpkg-reconfigure debconf
    loop="yes"
    while [ $loop = "yes" ] ; do
 
