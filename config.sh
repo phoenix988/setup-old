@@ -445,7 +445,7 @@ tar -jxf goneovim-v0.6.2linux.tar.bz2
 
 sudo cp -r goneovim-v0.6.2linux /opt/goneovim
 rm -rf goneovim-v0.6.2linux 
-sudo ln -s /opt/goneovim /usr/bin/goneovim
+sudo ln -s /opt/goneovim/goneovim /usr/bin/goneovim
 
 desktop_content=$(printf "[Desktop Entry]\n
 Name=Neovide\n
@@ -456,7 +456,7 @@ Type=Application"\n )
 
 printf '%s\n' "${desktop_content[@]}" | sed '/^ *$/d' > $HOME/neovide.desktop
 
-sudo mv $HOME/neovide.desktop /usr/share/Application/
+sudo mv $HOME/neovide.desktop /usr/share/Applications/
 sudo ln -s /usr/bin/goneovim /usr/bin/neovide
 
 }
@@ -558,12 +558,12 @@ remove_nano=$(dpkg -l | grep nano )
 
 #We dont ever wanna use nano
 #so lets remove it if its installed
-[ -z "$remove_nano" ] || sudo apt purge nano &> /dev/null
+[ -z "$remove_nano" ] || sudo apt purge -y nano 
 
 #This will link nanos binary to neovim so even if you 
 #type nano it will open neovim
 [ -e /usr/bin/nano ] && sudo rm /usr/bin/nano
-sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
+sudo ln -s /usr/bin/nvim /usr/bin/nano  
 
 fi
 
@@ -587,10 +587,10 @@ fi
 
 homefolders() { \
 
-  [ -d $HOME/Documents ] && mkdir $HOME/Documents
-  [ -d $HOME/Videos ] && mkdir $HOME/Videos
-  [ -d $HOME/Downloads ] && mkdir $HOME/Downloads
-  [ -d $HOME/Pictures ] && mkdir $HOME/Pictures
+  [ -d $HOME/Documents ] || mkdir $HOME/Documents
+  [ -d $HOME/Videos ] || mkdir $HOME/Videos
+  [ -d $HOME/Downloads ] || mkdir $HOME/Downloads
+  [ -d $HOME/Pictures ] || mkdir $HOME/Pictures
 
 
 }
@@ -997,7 +997,6 @@ if [ -d /etc/apt ] ; then
         echo "####################################"
         echo "## Removing nano if its installed ##"
         echo "####################################"
-        sleep 1
          
          nanonuke         
          clear
@@ -1366,6 +1365,7 @@ clear
 
 homefolders
 
+clear
 
 if [ "$install_fonts" = "y" ] ; then
 
