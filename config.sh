@@ -404,7 +404,7 @@ pip install qtile
 
 
 xsession_content=$(printf "[Desktop Entry]\n
-Name=qtile\n
+Name=Qtile\n
 Comment=This will start qtile wm\n
 Exec=/usr/bin/qtile start\n
 Type=Application"\n )
@@ -426,6 +426,51 @@ rm -rf uwufetch
 
 }
 
+neomuttfromsource() { \
+
+git clone https://github.com/neomutt/neomutt
+cd neomutt
+./configure --disable-nls && sudo make install
+cd .. 
+rm -rf neomutt
+
+}
+
+editorgui() { \
+
+wget https://github.com/akiyosi/goneovim/releases/download/v0.6.2/goneovim-v0.6.2linux.tar.bz2
+
+tar -jxf goneovim-v0.6.2linux.tar.bz2
+
+sudo cp -r goneovim-v0.6.2linux /opt/goneovim
+rm -rf goneovim-v0.6.2linux 
+sudo ln -s /opt/goneovim /usr/bin/goneovim
+
+desktop_content=$(printf "[Desktop Entry]\n
+Name=Neovide\n
+Comment=Start your gui neovim editor\n
+Exec=/usr/bin/neovide\n
+Type=Application"\n )
+
+
+printf '%s\n' "${desktop_content[@]}" | sed '/^ *$/d' > $HOME/neovide.desktop
+
+sudo mv $HOME/neovide.desktop /usr/share/Application/
+sudo ln -s /usr/bin/goneovim /usr/bin/neovide
+
+}
+
+btopfromsource() { \
+
+git clone https://github.com/aristocratos/btop.git
+cd btop
+make && sudo make install
+cd ..
+rm -rf btop
+
+
+
+}
 
 lightdmtheme() { \
 
@@ -539,7 +584,7 @@ fi
   
 }
 
-homefolders() {\
+homefolders() { \
 
   [ -d $HOME/Documents ] && mkdir $HOME/Documents
   [ -d $HOME/Videos ] && mkdir $HOME/Videos
@@ -896,12 +941,21 @@ if [ -d /etc/apt ] ; then
 
          lightdmtheme
 
-        # displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
-        # sudo systemctl disable $displaymanager
-        # sudo systemctl enable lightdm
+         displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
+         
+        if [ $displaymanager = "lightdm.service" ] ; then 
+
+            echo "" &> /dev/null
+        
+        else
+
+            sudo systemctl disable $displaymanager
+            sudo systemctl enable lightdm
+         
+        fi
          
 
-         if [ -e /usr/bin/lsd ] ; then
+        if [ -e /usr/bin/lsd ] ; then
               
               printf "\n" > /dev/null  
 
@@ -912,17 +966,8 @@ if [ -d /etc/apt ] ; then
               
               clear
          fi 
-
-        installqtile
-        clear
-        installchoosenbrowser
-        clear
-        uwufetchfromsource
-        clear
-
-
-
-        if [ -e /usr/bin/bat ] ; then
+         
+         if [ -e /usr/bin/bat ] ; then
 
 
           printf "\n" > /dev/null  
@@ -934,12 +979,24 @@ if [ -d /etc/apt ] ; then
             rm -rf bat-musl_0.21.0_amd64.deb
 
         fi
-            
+         
+        installqtile
+        clear
+        installchoosenbrowser
+        clear
+        uwufetchfromsource
+        clear
+        btopfromsource
+        clear
+        neomuttfromsource
+        clear
+        editorgui
+        clear
 
-         echo "####################################"
-         echo "## Removing nano if its installed ##"
-         echo "####################################"
-         sleep 1
+        echo "####################################"
+        echo "## Removing nano if its installed ##"
+        echo "####################################"
+        sleep 1
          
          nanonuke         
          clear
@@ -1305,6 +1362,9 @@ fi
 
 sleep 2
 clear
+
+homefolders
+
 
 if [ "$install_fonts" = "y" ] ; then
 
