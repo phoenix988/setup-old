@@ -607,6 +607,21 @@ homefolders() { \
 
 }
 
+startxconf() { \
+
+echo "exec /usr/bin/qtile start" > $HOME/.xinitrc
+echo "startx" >> $HOME/.zshrc
+
+zshrc_content=$(printf 'if [ -z $DISPLAY ] ; then\n' 
+printf "startx\n"
+printf "fi\n" )
+
+
+printf '%s\n' "${zshrc_content[@]}" | sed '/^ *$/d' >> $HOME/.zshrc
+
+
+}
+
 
 defaultsettings
 
@@ -1011,6 +1026,7 @@ if [ -d /etc/apt ] ; then
          
          nanonuke         
          clear
+         startxconf
          
          if [ "$install_docker" = "y" ] ; then
                 
@@ -1162,7 +1178,7 @@ if [ -e /etc/pacman.conf ] ; then
 
                   checks_gpu=$(neofetch | grep GPU | awk '{print $2}') 
                   sudo systemctl enable lightdm 
-         
+                  clear 
          if [ "$checks_gpu" = "NVIDIA" ] ; then 
 
 
