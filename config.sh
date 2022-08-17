@@ -278,6 +278,8 @@ echo "####################"
 echo "## Chroot is done ##"
 echo "####################"              
 
+
+
 clear 
 exit
 else
@@ -457,7 +459,8 @@ Type=Application"\n )
 
 printf '%s\n' "${desktop_content[@]}" | sed '/^ *$/d' > $HOME/neovide.desktop
 
-sudo mv $HOME/neovide.desktop /usr/share/Applications/
+sudo cp -r $HOME/neovide.desktop /usr/share/applications
+rm $HOME/neovide.desktop
 sudo ln -s /usr/bin/goneovim /usr/bin/neovide
 
 }
@@ -471,6 +474,14 @@ cd ..
 rm -rf btop
 
 
+
+}
+
+mwfromsource() {\
+
+git clone https://github.com/LukeSmithxyz/mutt-wizard
+cd mutt-wizard
+sudo make install
 
 }
 
@@ -681,8 +692,6 @@ declare -a config_sudo=(
 "$config/.config/lightdm"
 
 )
-
-
 
 #Optional
 cronfile="$config/.config/cron"
@@ -986,14 +995,15 @@ if [ -d /etc/apt ] ; then
         clear
         installchoosenbrowser
         clear
-        uwufetchfromsource
+        [ -e /usr/bin/uwufetch ] || uwufetchfromsource
         clear
-        btopfromsource
+        [ -e /usr/bin/btop ] || btopfromsource
         clear
         neomuttfromsource
         clear
         editorgui
         clear
+        mwfromsource
 
         echo "####################################"
         echo "## Removing nano if its installed ##"
@@ -1041,6 +1051,14 @@ if [ -d /etc/dnf ] ; then
          installchoosenbrowser
          clear
          sddminstall
+         clear
+         neomuttfromsource
+         clear
+         btopfromsource
+         clear
+         mwfromsource
+         clear
+         editorgui
          clear
          
          #This will install docker if you are running fedora
@@ -1171,6 +1189,8 @@ if [ -e /etc/pacman.conf ] ; then
          [ $check_root_if_activated != "nologin" ] && usermod_root=$(sudo usermod -s /usr/bin/nologin root | awk '{print $3}')       
 
          sleep 2
+         clear
+         editorgui
          clear
 fi
 
