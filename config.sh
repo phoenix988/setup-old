@@ -445,6 +445,7 @@ tar -jxf goneovim-v0.6.2linux.tar.bz2
 
 sudo cp -r goneovim-v0.6.2linux /opt/goneovim
 rm -rf goneovim-v0.6.2linux 
+rm -rf goneovim-v0.6.2linux.tar.bz2 
 sudo ln -s /opt/goneovim/goneovim /usr/bin/goneovim
 
 desktop_content=$(printf "[Desktop Entry]\n
