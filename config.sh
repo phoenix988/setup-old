@@ -621,6 +621,9 @@ printf '%s\n' "${zshrc_content[@]}" | sed '/^ *$/d' >> $HOME/.zshrc
 
 gtktheme() { \
 
+theme_icon="Dracula"
+theme_gtk="Dracula"
+
 
 [ -d "$HOME/.config/gtk-3.0" ] || mkdir -p $HOME/.config/gtk-3.0  
 
@@ -628,9 +631,29 @@ wget https://github.com/dracula/gtk/archive/master.zip
 unzip master.zip && sudo mv gtk-master /usr/share/themes/Dracula
 wget https://github.com/dracula/gtk/files/5214870/Dracula.zip
 unzip Dracula.zip && sudo mv Dracula /usr/share/icons/Dracula
-echo "gtk-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
-echo "gtk-icon-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
 
+check_icon=$(grep "gtk-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
+check_gtk= $(grep "gtk-icon-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
+
+if [ -z $check_icon ] ; then
+
+   echo "gtk-icon-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
+
+else
+   
+   sed -e -i "s|$check_icon|$theme_icon|g" "$HOME/.config/gtk-3.0/settings.ini"
+
+fi
+
+if [ -z $check_gtk ] ; then
+
+   echo "gtk-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
+
+else
+   
+   sed -e -i "s|$check_gtk|$theme_gtk|g" "$HOME/.config/gtk-3.0/settings.ini"
+
+fi
 
 
 }
