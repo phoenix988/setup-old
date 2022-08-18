@@ -622,12 +622,14 @@ printf '%s\n' "${zshrc_content[@]}" | sed '/^ *$/d' >> $HOME/.zshrc
 gtktheme() { \
 
 
+[ -d "$HOME/.config/gtk-3.0" ] && mkdir -p $HOME/.config/gtk-3.0  
+
 wget https://github.com/dracula/gtk/archive/master.zip
 unzip master.zip && sudo mv master.zip /usr/share/themes/Dracula
 wget https://github.com/dracula/gtk/files/5214870/Dracula.zip
 unzip master.zip && sudo mv master.zip /usr/share/icons/Dracula
-echo "gtk-theme-name=Dracula" >> "$HOME/.config/gtk-3.o/settings.ini"
-echo "gtk-icon-theme-name=Dracula" >> "$HOME/.config/gtk-3.o/settings.ini"
+echo "gtk-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
+echo "gtk-icon-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
 
 
 
