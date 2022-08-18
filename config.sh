@@ -686,6 +686,9 @@ declare -a config_config=(
 "$config/.config/bash"
 "$config/.config/alacritty"
 "$config/.config/rofi"
+"$config/.config/vifm"
+"$config/.config/conky"
+"$config/.config/dunst"
 "$config/.config/starship.toml"
 
 )
@@ -696,6 +699,7 @@ declare -a config_home=(
 "$config/.xmonad"
 "$config/.zshrc"
 "$config/.bashrc"
+"$config/.specrtvm.conf"
 
 
 )
