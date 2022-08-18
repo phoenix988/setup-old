@@ -590,8 +590,6 @@ if [ -d /etc/dnf ] ;then
             sudo ln -s /usr/bin/nvim /usr/bin/nano &> /dev/null 
 
 
-
-
 fi
 
   
@@ -610,7 +608,6 @@ homefolders() { \
 startxconf() { \
 
 echo "exec /usr/bin/qtile start" > $HOME/.xinitrc
-echo "startx" >> $HOME/.zshrc
 
 zshrc_content=$(printf 'if [ -z $DISPLAY ] ; then\n' 
 printf "startx\n"
@@ -1026,7 +1023,6 @@ if [ -d /etc/apt ] ; then
          
          nanonuke         
          clear
-         startxconf
          
          if [ "$install_docker" = "y" ] ; then
                 
@@ -1236,6 +1232,7 @@ echo "## Installing my config files ##"
 echo "################################"
 
 moveconfig
+startxconf
 
 sleep 4
 clear
