@@ -632,8 +632,8 @@ unzip master.zip && sudo mv gtk-master /usr/share/themes/Dracula
 wget https://github.com/dracula/gtk/files/5214870/Dracula.zip
 unzip Dracula.zip && sudo mv Dracula /usr/share/icons/Dracula
 
-check_icon=$(grep "gtk-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
-check_gtk= $(grep "gtk-icon-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
+check_gtk=$(grep "gtk-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
+check_icon= $(grep "gtk-icon-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
 
 if [ -z $check_icon ] ; then
 
