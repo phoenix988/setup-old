@@ -619,6 +619,20 @@ printf '%s\n' "${zshrc_content[@]}" | sed '/^ *$/d' >> $HOME/.zshrc
 
 }
 
+gtktheme() { \
+
+
+wget https://github.com/dracula/gtk/archive/master.zip
+unzip master.zip && sudo mv master.zip /usr/share/themes/Dracula
+wget https://github.com/dracula/gtk/files/5214870/Dracula.zip
+unzip master.zip && sudo mv master.zip /usr/share/icons/Dracula
+echo "gtk-theme-name=Dracula" >> "$HOME/.config/gtk-3.o/settings.ini"
+echo "gtk-icon-theme-name=Dracula" >> "$HOME/.config/gtk-3.o/settings.ini"
+
+
+
+}
+
 
 defaultsettings
 
@@ -699,7 +713,7 @@ declare -a config_home=(
 "$config/.xmonad"
 "$config/.zshrc"
 "$config/.bashrc"
-"$config/.specrtvm.conf"
+"$config/.spectrwm.conf"
 
 
 )
@@ -1346,6 +1360,10 @@ else
        
    fi
 
+#Installs gtk theme
+gtktheme
+
+   
 #Creates my personal scripts folder in usr/bin if it doesn't exis
 if [ "$modify_fstab" = "n" ] ; then
 
