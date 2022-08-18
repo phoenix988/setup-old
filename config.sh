@@ -622,7 +622,7 @@ printf '%s\n' "${zshrc_content[@]}" | sed '/^ *$/d' >> $HOME/.zshrc
 gtktheme() { \
 
 
-[ -d "$HOME/.config/gtk-3.0" ] && mkdir -p $HOME/.config/gtk-3.0  
+[ -d "$HOME/.config/gtk-3.0" ] || mkdir -p $HOME/.config/gtk-3.0  
 
 wget https://github.com/dracula/gtk/archive/master.zip
 unzip gtk-master.zip && sudo mv gtk-master /usr/share/themes/Dracula
