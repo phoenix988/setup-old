@@ -625,7 +625,7 @@ gtktheme() { \
 [ -d "$HOME/.config/gtk-3.0" ] || mkdir -p $HOME/.config/gtk-3.0  
 
 wget https://github.com/dracula/gtk/archive/master.zip
-unzip gtk-master.zip && sudo mv gtk-master /usr/share/themes/Dracula
+unzip master.zip && sudo mv gtk-master /usr/share/themes/Dracula
 wget https://github.com/dracula/gtk/files/5214870/Dracula.zip
 unzip Dracula.zip && sudo mv Dracula /usr/share/icons/Dracula
 echo "gtk-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
