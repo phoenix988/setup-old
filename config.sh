@@ -619,6 +619,57 @@ printf '%s\n' "${zshrc_content[@]}" | sed '/^ *$/d' >> $HOME/.zshrc
 
 }
 
+gtktheme() { \
+
+theme_icon="Dracula"
+theme_gtk="Dracula"
+
+
+[ -d "$HOME/.config/gtk-3.0" ] || mkdir -p $HOME/.config/gtk-3.0  
+
+
+if [ -d /usr/share/theme/$theme_gtk ] ; then 
+        echo "" &> /dev/null  
+else
+        wget https://github.com/dracula/gtk/archive/master.zip 
+        unzip master.zip && sudo mv gtk-master /usr/share/themes/Dracula
+fi
+
+
+if [ -d /usr/share/icon/$theme_icon ] ; then 
+        
+        echo "" &> /dev/null  
+else
+        wget https://github.com/dracula/gtk/files/5214870/Dracula.zip
+        unzip Dracula.zip && sudo mv Dracula /usr/share/icons/Dracula
+fi
+
+check_gtk=$(grep "gtk-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
+check_icon=$(grep "gtk-icon-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
+
+if [ -z $check_icon ] ; then
+
+   echo "gtk-icon-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
+
+else
+   
+   sed  -i "s|$check_icon|$theme_icon|g" "$HOME/.config/gtk-3.0/settings.ini"
+
+fi
+
+if [ -z $check_gtk ] ; then
+
+   echo "gtk-theme-name=Dracula" >> "$HOME/.config/gtk-3.0/settings.ini"
+
+else
+   
+   sed  -i "s|$check_gtk|$theme_gtk|g" "$HOME/.config/gtk-3.0/settings.ini"
+
+fi
+
+
+}
+
 
 defaultsettings
 
@@ -686,6 +737,9 @@ declare -a config_config=(
 "$config/.config/bash"
 "$config/.config/alacritty"
 "$config/.config/rofi"
+"$config/.config/vifm"
+"$config/.config/conky"
+"$config/.config/dunst"
 "$config/.config/starship.toml"
 
 )
@@ -696,6 +750,7 @@ declare -a config_home=(
 "$config/.xmonad"
 "$config/.zshrc"
 "$config/.bashrc"
+"$config/.spectrwm.conf"
 
 
 )
@@ -1342,6 +1397,10 @@ else
        
    fi
 
+#Installs gtk theme
+gtktheme
+
+   
 #Creates my personal scripts folder in usr/bin if it doesn't exis
 if [ "$modify_fstab" = "n" ] ; then
 
