@@ -701,7 +701,7 @@ declare -a config_home=(
 )
 declare -a config_sudo=(
 
-"$config/.config/lightdm"
+"$config/etc/lightdm"
 
 )
 
@@ -710,26 +710,32 @@ cronfile="$config/.config/cron"
 
 moveconfig(){ \
             
-        for cc in "${config_config[@]}" ; do
-        
-              cp -r $cc $HOME/.config/
+[ -d $HOME/.config.backup ] || mkdir $HOME/.config.backup
 
-        done
-        
-        for ca in "${config_home[@]}" ; do
-        
-              cp -r $ca $HOME/
-       
-        done
-        for cs in "${config_sudo[@]}" ; do
-        
-              sudo cp -r $cs /etc 
-        done
+for cc in "${config_config[@]}" ; do
 
+      cc_backup=$(echo $cc | sed "s|$config|$HOME|g") 
+      cp -r $cc_backup $HOME/.config.backup/
+      cp -r $cc $HOME/.config/
+
+done
+
+for ca in "${config_home[@]}" ; do
+
+      ca_backup=$(echo $ca | sed "s|$config|$HOME|g") 
+      cp -r $ca_backup $HOME/.config.backup/
+      cp -r $ca $HOME/
+
+done
+for cs in "${config_sudo[@]}" ; do
+
+      cs_backup=$(echo $cs | sed "s|$config|\/etc|g") 
+      sudo cp -r $cs /etc 
+
+done
 
 
 }
-
 
 
 #Cloning my repo if its needed
@@ -993,7 +999,7 @@ if [ -d /etc/apt ] ; then
          if [ -e /usr/bin/bat ] ; then
 
 
-          printf "\n" > /dev/null  
+            printf "\n" > /dev/null  
 
         
         else
@@ -1206,10 +1212,6 @@ if [ -e /etc/pacman.conf ] ; then
          clear
 fi
 
-
-
-
-
 check_sudoers=$(sudo grep -e '^%wheel\|^%sudo' /etc/sudoers | awk '/NOPASSWD/' )
 
 if [ -z "$check_sudoers" ] ; then
@@ -1321,8 +1323,6 @@ clear
 [ -d "$HOME/Pictures" ] || mkdir $HOME/Pictures
 
 if [ -d $HOME/Pictures/Wallpapers/ ] ; then
-   
-      
       
       printf "\n"
   
