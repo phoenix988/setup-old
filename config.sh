@@ -1,6 +1,52 @@
 #!/bin/bash
    
-        
+config="$HOME/dotfiles"
+files="$HOME/dotfiles/setup-files"
+
+#some variables yhat will be used later on in the script
+fstab="$files/fstab"
+pacman_conf="$files/pacman.conf"
+pacman="$files/pacman"
+paru="$files/paru"
+dnf="$files/dnf"
+apt="$files/apt"
+
+
+#add the configs file you want to copy over here
+declare -a config_config=(
+
+"$config/.config/fish"
+"$config/.config/kitty"
+"$config/.config/nvim"
+"$config/.config/oh-my-zsh/"
+"$config/.config/qtile"
+"$config/.config/qutebrowser"
+"$config/.config/bash"
+"$config/.config/alacritty"
+"$config/.config/rofi"
+"$config/.config/vifm"
+"$config/.config/conky"
+"$config/.config/dunst"
+"$config/.config/starship.toml"
+
+)
+
+declare -a config_home=(
+
+"$config/.tmux.conf.local"
+"$config/.xmonad"
+"$config/.zshrc"
+"$config/.bashrc"
+"$config/.spectrwm.conf"
+
+
+)
+declare -a config_sudo=(
+
+"$config/etc/lightdm"
+
+)
+       
 echo "################################################################"
 echo "## Syncing the repos and installing 'dialog' if not installed ##"
 echo "################################################################"
@@ -315,7 +361,7 @@ installportainer() { \
     }
 
 installfonts() { \
-   dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Move all my fonts to /usr/share/fonts? (Note this can cause some problems)" 8 60 && install_fonts=y 
+   dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Move all my fonts to $HOME/.local/share/fonts?" 8 60 && install_fonts=y 
     }
 
 installxorg() { \
@@ -325,14 +371,143 @@ installxorg() { \
 modifyfstab() { \
    dialog --colors --title "\Z7\ZbCustomize the script" --yes-label "Yes" --no-label "No" --yesno "\Z4Do you want to Modify fstab and add my NFS shares this is mostly for my personal use so most should say no here" 8 60 && modify_fstab="y" || modify_fstab="n" 
     }
+
+shell() { \
+
+declare -a shell_number=( 
+
+"1 Fish"
+"2 Zsh"
+"3 Bash"
+
+)
+
+
+
+until [ "$shell" = "1" -o "$shell" = "2" -o "$shell" = "3"  ] ; do
+        shell_list=$(printf '%s\n' "${shell_number[@]}")
+        
+ list=$(printf   '%s\n' "Which shell do you want to use as a main?:"  \
+"${shell_number[@]} : " | sed -e 's/_/ /g'  ; printf "\nYour Choice : (Seperated by space): "  )
+
+
+until [ "$words" = "1" ] ; do
+
+   read -p "$list"  shell
+
+
+   words=$(echo $shell | wc -w)
+   
+   clear
+   
+   [ $words = "1" ] || printf '%s\n' "It only accept one value Please try again" ""
+
+
+done      
+       if [ $shell = "1" -o $shell = "2" -o $shell = "3" ] ; then
+           
+            echo "" &> /dev/null 
+       else
+       
+            errormsg
+            words="0"
+            clear 
+       fi
+
+
+done
+
+shell=$(printf '%s\n' "${shell_number[@]}" | grep $shell | sed -e "s/[1-9]*//g" | awk '{print $NF}')
+clear
+
+}
+
+optional_config() { \
+
+config="$HOME/dotfiles"
+run="yes"
+
+while [ $run = "yes" ] ; do
+declare -A config_opt 
+config_opt[1_cron]="$config/var/spool/cron"
+config_opt[2_fstab]="$config/etc/fstab"
+config_opt[blank]="blank"
+
+declare -a order=(
+"1_cron"
+"2_fstab"
+"blank"
+)
+
+numbers_available=$(printf '%s\n' "${order[@]}" | awk -F "_" '{print $1}' | sed '$d')
+list=$(printf   '%s\n' "Which Optional files do you want"  \
+"These files are available: ?" \
+"${order[@]} : " | sed -e 's/_/ /g' | sed '$d' ; printf "\nYour Choice : (Seperated by space): "  )
+
+read -p "$list"  choice
+clear
+
+for ch in $choice ; do
+
+    check=$(echo $numbers_available | grep  $ch)
+    check_add=$(echo $check_add $check)
+
+   [ -z $check_add ] && printf '%s\n' "Your option is not valid Please try again" ""  
+   [ -z $check_add ] || run="no"
+
+done
+
+
+
+done 
+
+clear
+
+for ch in $choice ; do
+
+match=$(printf '%s\n'  \
+"${order[@]} : "  | grep $ch  )
+
+optional_choices=$(printf '%s\n' "$optional_choices" "${config_opt["${match}"]}")
+
+
+done
+ 
+
+for optional in $optional_choices ; do
+
+    name=$( echo $optional | awk -F '/' '{print $NF}' ) 
+    destination=$(echo $optional | sed "s|$config||g" | sed "s|$name||g"  )
+    
+    sudo cp -r $optional $destination
+
+
+    if [ -d $destination/$name ] ; then
+        
+        echo "" > /dev/null
+    
+    else
+     
+     [ -d $HOME/.config.backup ] || mkdir $HOME/.config.backup   
+    
+    fi
+
+
+done
+
+
+
+
+    }
+
 browser() { \
 
 declare -a browser_number=( 
 
-"qutebrowser 1"
-"brave 2"
-"chromium 3"
-"firefox 4"
+"1 qutebrowser"
+"2 brave"
+"3 chromium"
+"4 firefox"
 )
 
 
@@ -340,23 +515,38 @@ declare -a browser_number=(
 until [ "$browser" = "1" -o "$browser" = "2" -o "$browser" = "3" -o "$browser" = "4" ] ; do
         browser_list=$(printf '%s\n' "${browser_number[@]}")
         
-        browser=$(dialog --colors --title "\Z7\ZbBrowser" --inputbox "\Z4Which Browser do you want to use as your default?\nAnswer with a number between 1-4\n$browser_list" --output-fd 1 8 60  ) 
+ list=$(printf   '%s\n' "Which browser do you want to use as a main?:"  \
+"${browser_number[@]} : " | sed -e 's/_/ /g'  ; printf "\nYour Choice : (Seperated by space): "  )
 
 
+until [ "$words" = "1" ] ; do
+
+   read -p "$list"  browser
+
+
+   words=$(echo $browser | wc -w)
+   
+   clear
+   
+   [ $words = "1" ] || printf '%s\n' "It only accept one value Please try again" ""
+
+
+done      
        if [ $browser = "1" -o $browser = "2" -o $browser = "3" -o $browser = "4" ] ; then
            
-            echo " &> /dev/null" 
+            echo "" &> /dev/null 
        else
        
             errormsg
-       
+            words="0"
+            clear       
        fi
-
 
 
 done
 
-browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]*//g" | awk '{print $1}')
+browser=$(printf '%s\n' "${browser_number[@]}" | grep $browser | sed -e "s/[1-9]*//g" | awk '{print $NF}')
+clear
 
 }
 
@@ -674,8 +864,6 @@ fi
 defaultsettings
 
 
- 
-
 if [ $use_default = "y" -o $use_default = "Y" ] ; then
        
        install_docker="y"
@@ -684,6 +872,7 @@ if [ $use_default = "y" -o $use_default = "Y" ] ; then
        install_fonts="y"
        modify_fstab="n"
        browser="brave"
+       shell="zsh"
 else 
 
        installdocker 
@@ -702,66 +891,26 @@ else
        installfonts 
 
        modifyfstab 
-
-       browser
        
+       clear 
+       
+       browser
+
+       optional_config
+
+       shell
 
 fi
+
+clear 
 
 
 Lastchance || error "User choose to exit"
 
+
 clear
 
-config="$HOME/dotfiles"
-files="$HOME/dotfiles/setup-files"
 
-
-fstab="$HOME/dotfiles/setup-files/fstab"
-pacman_conf="$HOME/dotfiles/setup-files/pacman.conf"
-pacman="$HOME/dotfiles/setup-files/pacman"
-paru="$HOME/dotfiles/setup-files/paru"
-dnf="$HOME/dotfiles/setup-files/dnf"
-apt="$HOME/dotfiles/setup-files/apt"
-
-
-
-declare -a config_config=(
-
-"$config/.config/fish"
-"$config/.config/kitty"
-"$config/.config/nvim"
-"$config/.config/oh-my-zsh/"
-"$config/.config/qtile"
-"$config/.config/qutebrowser"
-"$config/.config/bash"
-"$config/.config/alacritty"
-"$config/.config/rofi"
-"$config/.config/vifm"
-"$config/.config/conky"
-"$config/.config/dunst"
-"$config/.config/starship.toml"
-
-)
-
-declare -a config_home=(
-
-"$config/.tmux.conf.local"
-"$config/.xmonad"
-"$config/.zshrc"
-"$config/.bashrc"
-"$config/.spectrwm.conf"
-
-
-)
-declare -a config_sudo=(
-
-"$config/etc/lightdm"
-
-)
-
-#Optional
-cronfile="$config/.config/cron"
 
 moveconfig(){ \
             
@@ -890,19 +1039,19 @@ else
      sleep 2 
      clear     
      
-     echo "###################################"
-     echo "## Changing Default Shell to ZSH ##"
-     echo "###################################"
-     usermod=$(sudo usermod -s /bin/zsh $USER)       
-     
-     sleep 2
-     clear
 fi
+
+echo "############################"
+echo "## Changing Default Shell ##"
+echo "############################"
+usermod=$(sudo usermod -s /bin/$shell $USER)       
+
+sleep 2
+clear
 
 #Installs the starship prompt if its not installed   
 #This will print the version of starship Installed 
 #But if it's not installed this script will go ahead and install it
-
 if [ -e /usr/local/bin/starship ] ; then
      
      sleep 2
