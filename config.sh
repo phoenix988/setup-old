@@ -376,9 +376,9 @@ shell() { \
 
 declare -a shell_number=( 
 
-"1 Fish"
-"2 Zsh"
-"3 Bash"
+"1 fish"
+"2 zsh"
+"3 bash"
 
 )
 
@@ -481,7 +481,8 @@ for optional in $optional_choices ; do
     
     sudo cp -r $optional $destination
 
-
+    echo $optional
+    echo $destination
     if [ -d $destination/$name ] ; then
         
         echo "" > /dev/null
@@ -499,6 +500,7 @@ done
 
 
     }
+
 
 browser() { \
 
@@ -896,8 +898,6 @@ else
        
        browser
 
-       optional_config
-
        shell
 
 fi
@@ -990,7 +990,9 @@ echo "#########################################################"
 sleep 2
 clear
        
+optional_config
 
+clear
 
 echo "###################################################"
 echo "## Installing curl zsh wget if its not installed ##"
