@@ -479,10 +479,6 @@ for optional in $optional_choices ; do
     name=$( echo $optional | awk -F '/' '{print $NF}' ) 
     destination=$(echo $optional | sed "s|$config||g" | sed "s|$name||g"  )
     
-    sudo cp -r $optional $destination
-
-    echo $optional
-    echo $destination
     if [ -d $destination/$name ] ; then
         
         echo "" > /dev/null
@@ -490,9 +486,13 @@ for optional in $optional_choices ; do
     else
      
      [ -d $HOME/.config.backup ] || mkdir $HOME/.config.backup   
+      sudo cp -r destination/$name $HOME/.config.backup  
     
     fi
 
+    sudo cp -r $optional $destination
+
+    
 
 done
 
@@ -674,6 +674,8 @@ mwfromsource() {\
 git clone https://github.com/LukeSmithxyz/mutt-wizard
 cd mutt-wizard
 sudo make install
+cd ..
+rm -rf mutt-wizard
 
 }
 
@@ -694,16 +696,33 @@ sudo rm -rf $HOME/lightdm-glorious-webkit2
 
 sddminstall() { \
 
+choosentheme="plasma-chili"
+ 
+text=$(printf "[Theme]"\nCurrent=$choosentheme)
+
+[ -e /etc/sddm.conf ] || sudo touch /etc/sddm.conf
+
+check=$(cat /etc/sddm.conf)
+[ -z $check ] && printf '%s\n' "${text[@]}" > /etc/sddm.conf
+
 theme=$(grep "Current" /etc/sddm.conf | grep -v "^#" | awk -F = '{print $2}')
 
 [ -z $theme ] && sudo sed -i 's/#Current/Current/g' /etc/sddm.conf && theme=$(grep "Current" /etc/sddm.conf | grep -v "^#" | awk -F = '{print $2}')
 
-sudo sed -i "s|$theme|materia-dark|g" /etc/sddm.conf
+sudo sed -i "s|$theme|$choosentheme|g" /etc/sddm.conf
 
 displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
 
 sudo systemctl disable $displaymanager
 sudo systemctl enable sddm
+
+
+wget https://github.com/MarianArlt/kde-plasma-chili/archive/refs/tags/0.5.5.tar.gz
+tar -zxf kde-plasma-chili-0.5.5.tar.gz
+cp -r kde-plasma-chili-0.5.5 /usr/share/sddm/theme/plasma-chili
+rm -rf kde-plasma-chili-0.5.5.tar.gz
+rm -rf kde-plasma-chili-0.5.5
+
 
 }
    
@@ -919,7 +938,7 @@ moveconfig(){ \
 for cc in "${config_config[@]}" ; do
 
       cc_backup=$(echo $cc | sed "s|$config|$HOME|g") 
-      cp -r $cc_backup $HOME/.config.backup/
+      [ -d $cc_backup ] && cp -r $cc_backup $HOME/.config.backup/
       cp -r $cc $HOME/.config/
 
 done
@@ -927,13 +946,14 @@ done
 for ca in "${config_home[@]}" ; do
 
       ca_backup=$(echo $ca | sed "s|$config|$HOME|g") 
-      cp -r $ca_backup $HOME/.config.backup/
+      [ -d $ca_backup ] &&  cp -r $ca_backup $HOME/.config.backup/
       cp -r $ca $HOME/
 
 done
 for cs in "${config_sudo[@]}" ; do
+       cs_backup=$(echo $cs | sed "s|$config|\/etc|g") 
 
-      cs_backup=$(echo $cs | sed "s|$config|\/etc|g") 
+      [ -d $cs_backup ] && sudo cp -r $cs_backup $HOME/.config.backup/       s
       sudo cp -r $cs /etc 
 
 done
@@ -1167,27 +1187,29 @@ if [ -d /etc/apt ] ; then
 
          #Installs glorious theme for lightdm
          #And also installs lightdm webkit2 greeter so the theme will work
-         sudo apt install -y lightdm
-         [ -e ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb ] || wget https://download.opensuse.org/repositories/home:/antergos/xUbuntu_17.10/amd64/lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
-         sudo apt install -y ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
-         rm -rf lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
-         
-         clear 
+         sudo apt install -y sddm
+         sddminstall
+    
+        # [ -e ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb ] || wget https://download.opensuse.org/repositories/home:/antergos/xUbuntu_17.10/amd64/lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
+        # sudo apt install -y ./lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
+        # rm -rf lightdm-webkit2-greeter_2.2.5-1+15.31_amd64.deb
+        # 
+        # clear 
 
-         lightdmtheme
+        # lightdmtheme
 
-         displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
-         
-        if [ $displaymanager = "lightdm.service" ] ; then 
+        # displaymanager=$(ls -la /etc/systemd/system/display-manager.service | awk '{print $NF}' | awk -F / '{print $NF}')
+        # 
+        #if [ $displaymanager = "lightdm.service" ] ; then 
 
-            echo "" &> /dev/null
-        
-        else
+        #    echo "" &> /dev/null
+        #
+        #else
 
-            sudo systemctl disable $displaymanager
-            sudo systemctl enable lightdm
-         
-        fi
+        #    sudo systemctl disable $displaymanager
+        #    sudo systemctl enable lightdm
+        # 
+        #fi
          
 
         if [ -e /usr/bin/lsd ] ; then
