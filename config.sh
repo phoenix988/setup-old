@@ -721,7 +721,7 @@ sudo systemctl enable sddm
 
 wget $url
 tar -zxf $theme_name.tar.gz
-cp -r $theme_name /usr/share/sddm/themes/$choosentheme
+sudo cp -r $theme_name /usr/share/sddm/themes/$choosentheme
 rm -rf $theme_name.tar.gz
 rm -rf $theme_name
 
