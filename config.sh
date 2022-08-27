@@ -696,8 +696,10 @@ sudo rm -rf $HOME/lightdm-glorious-webkit2
 
 sddminstall() { \
 
-choosentheme="plasma-chili"
- 
+choosentheme="sugar-candy"
+url="https://framagit.org/MarianArlt/sddm-sugar-candy/-/archive/master/sddm-sugar-candy-master.tar.gz" 
+theme_name=$(echo $url | awk -f "/" '{print $NF}' | sed -e 's/.tar//g' -e 's/.gz//g')
+
 text=$(printf "[Theme]"\nCurrent=$choosentheme)
 
 [ -e /etc/sddm.conf ] || sudo touch /etc/sddm.conf
@@ -717,11 +719,11 @@ sudo systemctl disable $displaymanager
 sudo systemctl enable sddm
 
 
-wget https://github.com/MarianArlt/kde-plasma-chili/archive/refs/tags/0.5.5.tar.gz
-tar -zxf kde-plasma-chili-0.5.5.tar.gz
-cp -r kde-plasma-chili-0.5.5 /usr/share/sddm/theme/plasma-chili
-rm -rf kde-plasma-chili-0.5.5.tar.gz
-rm -rf kde-plasma-chili-0.5.5
+wget $url
+tar -zxf $theme_name.tar.gz
+cp -r $theme_name /usr/share/sddm/theme/$choosentheme
+rm -rf $theme_name.tar.gz
+rm -rf $theme_name
 
 
 }
