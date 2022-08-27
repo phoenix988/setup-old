@@ -698,14 +698,14 @@ sddminstall() { \
 
 choosentheme="sugar-candy"
 url="https://framagit.org/MarianArlt/sddm-sugar-candy/-/archive/master/sddm-sugar-candy-master.tar.gz" 
-theme_name=$(echo $url | awk -f "/" '{print $NF}' | sed -e 's/.tar//g' -e 's/.gz//g')
+theme_name=$(echo $url | awk -F "/" '{print $NF}' | sed -e 's/.tar//g' -e 's/.gz//g')
 
 text=$(printf "[Theme]"\nCurrent=$choosentheme)
 
 [ -e /etc/sddm.conf ] || sudo touch /etc/sddm.conf
 
 check=$(cat /etc/sddm.conf)
-[ -z $check ] && printf '%s\n' "${text[@]}" > /etc/sddm.conf
+[ -z "$check" ] && printf '%s\n' "${text[@]}" | sudo tee /etc/sddm.conf
 
 theme=$(grep "Current" /etc/sddm.conf | grep -v "^#" | awk -F = '{print $2}')
 
@@ -721,7 +721,7 @@ sudo systemctl enable sddm
 
 wget $url
 tar -zxf $theme_name.tar.gz
-cp -r $theme_name /usr/share/sddm/theme/$choosentheme
+cp -r $theme_name /usr/share/sddm/themes/$choosentheme
 rm -rf $theme_name.tar.gz
 rm -rf $theme_name
 
