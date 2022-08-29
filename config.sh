@@ -1638,6 +1638,9 @@ homefolders
 
 clear
 
+
+[ -e /usr/bin/vifmrun ] && sudo ln -s $HOME/.config/vifm/scripts/vifmrun /usr/bin/vifmrun
+
 if [ "$install_fonts" = "y" ] ; then
 
     echo "#####################"
