@@ -27,6 +27,7 @@ declare -a config_config=(
 "$config/.config/vifm"
 "$config/.config/conky"
 "$config/.config/dunst"
+"$config/.config/sxiv"
 "$config/.config/starship.toml"
 
 )
@@ -38,6 +39,7 @@ declare -a config_home=(
 "$config/.zshrc"
 "$config/.bashrc"
 "$config/.spectrwm.conf"
+"$config/.Xresources"
 
 
 )
