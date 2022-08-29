@@ -843,7 +843,7 @@ theme_gtk="Dracula"
 [ -d "$HOME/.config/gtk-3.0" ] || mkdir -p $HOME/.config/gtk-3.0  
 
 
-if [ -d /usr/share/theme/$theme_gtk ] ; then 
+if [ -d /usr/share/themes/$theme_gtk ] ; then 
         echo "" &> /dev/null  
 else
         wget https://github.com/dracula/gtk/archive/master.zip 
@@ -851,7 +851,7 @@ else
 fi
 
 
-if [ -d /usr/share/icon/$theme_icon ] ; then 
+if [ -d /usr/share/icons/$theme_icon ] ; then 
         
         echo "" &> /dev/null  
 else
@@ -1247,7 +1247,8 @@ if [ -d /etc/apt ] ; then
         clear
         [ -e /usr/bin/uwufetch ] || uwufetchfromsource
         clear
-        [ -e /usr/bin/btop ] || btopfromsource
+        which btop &> /dev/null
+        [ $? = "0"  ] || btopfromsource
         clear
         neomuttfromsource
         clear
