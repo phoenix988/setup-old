@@ -18,26 +18,38 @@ Fedora
 ## What this script does
 
 This script includes the following
+All config files will be pulled from my dotfiles repository
 
-Qtile
+Qtile - Window Manager
 
-Kitty
+Kitty - Terminal emulator
 
-Neovim
+Neovim - Text Editor
 
-Neomutt (If you use arch it will also install muttwizard)
+Neomutt (If you use arch it will also install muttwizard) - Terminal Mail Client
 
-fish,zsh and bash - you get to choose the Default
+SDDM - Displaymanager
+
+Rofi - Run Launcher
+![rofi](https://i.imgur.com/qy1yTFX.png)
+
+Slock - Lockscreen
+
+Tmux with OH-MY-TMUX - Terminal Multiplexer 
+
+Vifm - Terminal FileManager
+
+PcManFM - Graphical FileManager
+
+OH-MY-ZSH - Plugin Manager for ZSH
+
+Fish,Zsh and Bash - you get to choose the Default
 
 Choose between firefox,qutebrowser,chromium or brave as your browser
 
-SDDM
+Grub Theme (Only have it tested and working on Debian and Arch)
 
-Rofi
-
-Slock
-
-Tmux
+OBS this script also deactivates root password prompt when using sudo this will be a security risk I just prefer it because I'm lazy
 
 
 ## This repo is mainly for me to make it easier for me when I reinstall
