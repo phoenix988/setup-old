@@ -14,16 +14,23 @@ Fedora,
 This script includes the following
 
 Qtile
+
 Kitty
+
 Neovim
+
 Neomutt (If you use arch it will also install muttwizard)
 
 fish,zsh and bash - you get to choose the Default
 
 Choose between firefox,qutebrowser,chromium or brave as your browser
+
 SDDM
+
 Rofi
+
 Slock
+
 Tmux
 
 
