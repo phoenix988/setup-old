@@ -4,10 +4,14 @@ Utility that will configure your desktop using my configuration files
 
 # OBS This is a work in progress
 Currently testing on 
-Arch, 
-Ubuntu,
-Debian,
-Fedora,
+
+Arch 
+
+Ubuntu
+
+Debian
+
+Fedora
 
 ## What this script does
 
