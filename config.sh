@@ -889,8 +889,8 @@ slockinstall() { \
 
   git clone https://github.com/phoenix988/slock.git
   cd slock
-  sed -i "s|nobody|$USER|g" $HOME/slock/config.def.h
-  sed -i "s|nogroup|$USER|g" $HOME/slock/config.def.h
+  sed -i "s|nobody|$USER|g" config.def.h
+  sed -i "s|nogroup|$USER|g" config.def.h
   rm -rf config.h
   sudo make install
   cd ..
