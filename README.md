@@ -1,19 +1,41 @@
-# setup
+# Setup - Utility that will configure my desktop
 
-This is a work in progress 
+Utility that will configure your desktop using my configuration files
 
-But the point of this repository is so that it will be faster for me when I install a new system
+# OBS This is a work in progress
+# Currently testing on ARch, Ubuntu, Debian and Fedora
 
-In order to use this script follow these steps
+## What this script does
+
+This script includes the following
+
+Qtile
+Kitty
+Neovim
+Neomutt (If you use arch it will also install muttwizard)
+
+fish,zsh and bash - you get to choose the Default
+
+Choose between firefox,qutebrowser,chromium or brave as your browser
+SDDM
+Rofi
+Slock
+Tmux
 
 
+##This repo is mainly for me to make it easier for me when I install this system
 
-1 If you want to run this on a remote machine you need to run run.sh and then type the 
-ip address
+##The run.sh script is broken it doesnt work, I also wanted to be able to run this script on a remote 
+##Machine but at the moment that doesnt work
 
-2 If you ran this on a remote machine it will execute config.sh on that remote machine and 
-install all my config files etc. 
 
-3 But if you run this script on your local machine you only need to run config.sh
+##In order to use this script follow these steps
+
+1. git clone https://github.com/phoenix988/setup.git 
+2. cd setup
+3. ./config.sh
+
+
+And lastly just follow the prompts this script will ask you some questions before it run
 
 
