@@ -31,6 +31,7 @@ Neomutt (If you use arch it will also install muttwizard) - Terminal Mail Client
 SDDM - Displaymanager
 
 Rofi - Run Launcher
+
 ![rofi](https://i.imgur.com/qy1yTFX.png)
 
 Slock - Lockscreen
