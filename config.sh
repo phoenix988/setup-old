@@ -848,6 +848,7 @@ if [ -d /usr/share/themes/$theme_gtk ] ; then
 else
         wget https://github.com/dracula/gtk/archive/master.zip 
         unzip master.zip && sudo mv gtk-master /usr/share/themes/Dracula
+        rm master.zip
 fi
 
 
@@ -857,6 +858,7 @@ if [ -d /usr/share/icons/$theme_icon ] ; then
 else
         wget https://github.com/dracula/gtk/files/5214870/Dracula.zip
         unzip Dracula.zip && sudo mv Dracula /usr/share/icons/Dracula
+        rm Dracula.zip
 fi
 
 check_gtk=$(grep "gtk-theme-name" "$HOME/.config/gtk-3.0/settings.ini" | awk -F "=" '{ print $NF }')
