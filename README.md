@@ -4,10 +4,10 @@ Utility that will configure your desktop using my configuration files
 
 # OBS This is a work in progress
 Currently testing on 
-Arch 
-Ubuntu
-Debian
-Fedora
+Arch, 
+Ubuntu,
+Debian,
+Fedora,
 
 ## What this script does
 
@@ -33,7 +33,7 @@ Tmux
 ## Machine but at the moment that doesnt work
 
 
-##In order to use this script follow these steps
+## In order to use this script follow these steps
 
 1. git clone https://github.com/phoenix988/setup.git 
 2. cd setup
