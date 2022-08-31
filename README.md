@@ -38,10 +38,9 @@ Slock
 Tmux
 
 
-## This repo is mainly for me to make it easier for me when I install this system
+## This repo is mainly for me to make it easier for me when I reinstall
 
-## The run.sh script is broken it doesnt work, I also wanted to be able to run this script on a remote 
-## Machine but at the moment that doesnt work
+## The run.sh script is broken it doesnt work, I also wanted to be able to run this script on a remote machine but at the moment that doesnt work
 
 
 ## In order to use this script follow these steps
