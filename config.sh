@@ -573,8 +573,8 @@ if [ -d /etc/apt ] ; then
                               echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && \
                               sudo apt update && sudo apt install -y brave-browser && sudo ln -s /usr/bin/brave-browser /usr/bin/brave
   [ "$browser" = "qutebrowser" ] && sudo apt install -y qutebrowser
-  [ "$browser" = "chromium" ] && sudo apt install -y chromium
-  [ "$browser" = "firefox" ] && sudo apt install -y firefox
+  [ "$browser" = "chromium" ] && sudo apt install -y --ignore-missing chromium chromium-bsu
+  [ "$browser" = "firefox" ] && sudo apt install -y --ignore-missing firefox firefox-esr 
 
 fi
 
@@ -885,9 +885,20 @@ fi
 
 }
 
+slockinstall() { \
+
+  git clone https://github.com/phoenix988/slock.git
+  cd slock
+  sed -i "s|nobody|$USER|g" $HOME/slock/config.def.h
+  sed -i "s|nogroup|$USER|g" $HOME/slock/config.def.h
+  rm -rf config.h
+  sudo make install
+  cd ..
+  rm -rf slock
+
+}
 
 defaultsettings
-
 
 if [ $use_default = "y" -o $use_default = "Y" ] ; then
        
@@ -1255,6 +1266,10 @@ if [ -d /etc/apt ] ; then
         editorgui
         clear
         mwfromsource
+        clear
+
+        pip install ueberzug
+        pip install xlib
 
         echo "####################################"
         echo "## Removing nano if its installed ##"
@@ -1638,8 +1653,10 @@ homefolders
 
 clear
 
+slockinstall
 
-[ -e /usr/bin/vifmrun ] && sudo ln -s $HOME/.config/vifm/scripts/vifmrun /usr/bin/vifmrun
+[ -e /usr/bin/vifmrun ] || sudo ln -s $HOME/.config/vifm/scripts/vifmrun /usr/bin/vifmrun
+[ -e /usr/bin/vifmimg ] || sudo ln -s $HOME/.config/vifm/scripts/vifmimg /usr/bin/vifmimg
 
 if [ "$install_fonts" = "y" ] ; then
 
