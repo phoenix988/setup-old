@@ -68,7 +68,7 @@ Some of these Programs are optional and the script will prompt you if you want t
 
 Dracula
  
-## Important Info
+## Important Info!!!
 
 This repo is mainly for me to make it easier for me when I reinstall
 
