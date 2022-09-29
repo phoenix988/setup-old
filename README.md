@@ -4,7 +4,7 @@ Utility that will configure your desktop using my configuration files
 
 My plan is to make this work on any distro but currently its just in testing phase and isn't that stable, But this script will work best on arch for now
 
-# OBS This is a work in progress
+# OBS This project is work in progress use on your own risk
 Currently testing on 
 
 Arch 
@@ -26,6 +26,8 @@ Kitty - Terminal emulator
 
 Neovim - Text Editor
 
+Goneovim - Neovim Graphical Program
+
 Neomutt (If you use arch it will also install muttwizard) - Terminal Mail Client
 
 SDDM - Displaymanager
@@ -35,6 +37,8 @@ Rofi - Run Launcher
 ![rofi](https://i.imgur.com/qy1yTFX.png)
 
 Slock - Lockscreen
+
+![slock](https://i.imgur.com/74fazMq.png)
 
 Tmux with OH-MY-TMUX - Terminal Multiplexer 
 
@@ -46,12 +50,23 @@ OH-MY-ZSH - Plugin Manager for ZSH
 
 Fish,Zsh and Bash - you get to choose the Default
 
+Starship - Crossplatform Shell Prompt
+
 Choose between firefox,qutebrowser,chromium or brave as your browser
 
 Grub Theme (Only have it tested and working on Debian and Arch)
 
+BTOP - Terminal System Resource Monitor
+
+Docker - Container Virtulization 
+
 OBS this script also deactivates root password prompt when using sudo this will be a security risk I just prefer it because I'm lazy
 
+Some of these Programs are optional and the script will prompt you if you want to install it or not. 
+
+#This script installs some GTK themes which includes
+
+Dracula
 
 ## This repo is mainly for me to make it easier for me when I reinstall
 

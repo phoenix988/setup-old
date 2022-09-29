@@ -667,8 +667,6 @@ make && sudo make install
 cd ..
 rm -rf btop
 
-
-
 }
 
 mwfromsource() {\
@@ -702,7 +700,7 @@ choosentheme="sugar-candy"
 url="https://framagit.org/MarianArlt/sddm-sugar-candy/-/archive/master/sddm-sugar-candy-master.tar.gz" 
 theme_name=$(echo $url | awk -F "/" '{print $NF}' | sed -e 's/.tar//g' -e 's/.gz//g')
 
-text=$(printf "[Theme]"\nCurrent=$choosentheme)
+text=$(printf "[Theme]\nCurrent=$choosentheme")
 
 [ -e /etc/sddm.conf ] || sudo touch /etc/sddm.conf
 
