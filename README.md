@@ -5,7 +5,7 @@ Utility that will configure your desktop using my configuration files
 My plan is to make this work on any distro but currently its just in testing phase and isn't that stable, But this script will work best on arch for now
 
 # OBS This project is work in progress use on your own risk
-Currently testing on 
+## Currently testing on 
 
 Arch 
 
@@ -64,14 +64,17 @@ OBS this script also deactivates root password prompt when using sudo this will 
 
 Some of these Programs are optional and the script will prompt you if you want to install it or not. 
 
-#This script installs some GTK themes which includes
+## This script installs some GTK themes which includes
 
 Dracula
+ 
+## Important Info
 
-## This repo is mainly for me to make it easier for me when I reinstall
+This repo is mainly for me to make it easier for me when I reinstall
 
-## The run.sh script is broken it doesnt work, I also wanted to be able to run this script on a remote machine but at the moment that doesnt work
+The run.sh script is broken it doesnt work, I also wanted to be able to run this script on a remote machine but at the moment that doesnt work
 
+This is in Beta I recommend to not use this on a production machine use it in  VM or Testing Machine
 
 ## In order to use this script follow these steps
 
