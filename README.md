@@ -67,7 +67,18 @@ Some of these Programs are optional and the script will prompt you if you want t
 ## This script installs some GTK themes which includes
 
 Dracula
- 
+
+## Information for Arch Users
+
+If you need to install a fresh version of arch linux this script can do it for you automatically.
+All you need to do is to answer a few prompt for example which disk you want to use for the installation.
+The script will detect that you use the archiso so you can just run the same script
+
+1. wget https://raw.githubusercontent.com/phoenix988/setup/main/config.sh
+2. bash config.sh
+3. Reboot
+4. Now you can customize your new installation by hand or clone this repo and run this script again.
+
 ## Important Info!!!
 
 This repo is mainly for me to make it easier for me when I reinstall
