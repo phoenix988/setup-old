@@ -92,8 +92,6 @@ Lastchance() { \
         dialog --colors --title "\Z7\ZbPoint of no Return" --yes-label "Yes Continue with the install" --no-label "No" --yesno "\Z4Up to this point No changes Have been Made. But now the installation will begin if you click yes there will be no going back. Are you sure you want to do this?" 8 60 && use_default=y 
     }
 
-
-
 welcome || error "user choose to exist"
 
 os=$(cat /etc/os-release | awk -F = '/^NAME/ {print $2}' | sed 's/"//g' | awk '{print $1}') 
@@ -101,9 +99,7 @@ hostname=$(cat /etc/hostname)
 availabledisks=$(sudo fdisk -l | grep ^/dev | awk '{print $1}')
 availablebiosdisk=$(sudo fdisk -l | grep ^/dev | awk '{print $1}' | sed 's/[1-9]*//g')
 
-
 if [ "$hostname" = "archiso" ] ; then 
-
 
 fs() { \
    fs=$(dialog --colors --title "\Z7\ZbFilesystem" --inputbox "\Z4Choose your filesystem btrfs and ext4 supported?" --output-fd 1 8 60  ) 
@@ -155,14 +151,14 @@ while [ -z $user ] ;
 
 do
     
-    user     
+   user     
 
 done
 
 while [ -z $host_name ] ;
 
 do
-    
+   
    host_name
 
 done
@@ -308,6 +304,7 @@ echo "######################"
 echo "## Generating fstab ##"
 echo "######################"
 genfstab -U /mnt >> /mnt/etc/fstab
+
 sleep 2
 clear
 
@@ -322,28 +319,27 @@ arch-chroot /mnt echo "efidrive=$efidrive" >> /mnt/root/.bashrc
 arch-chroot /mnt echo "biosdrive=$biosdrive" >> /mnt/root/.bashrc 
 arch-chroot /mnt sh $HOME/arch-chroot.sh
 
+clear
+
 echo "####################"              
 echo "## Chroot is done ##"
 echo "####################"              
 
-
-
+sleep 1
 clear 
 exit
-else
- 
-    
 
+else
 
  if [ "$(id -u)" = 0  ]; then
-echo "##################################################################"
-echo "This script MUST NOT be run as root user since it makes changes"
-echo "to the \$HOME directory of the \$USER executing this script."
-echo "The \$HOME directory of the root user is, of course, '/root'."
-echo "We don't want to mess around in there. So run this script as a"
-echo "normal user. You will be asked for a sudo password when necessary."
-echo "##################################################################"
-exit 1
+    echo "##################################################################"
+    echo "This script MUST NOT be run as root user since it makes changes"
+    echo "to the \$HOME directory of the \$USER executing this script."
+    echo "The \$HOME directory of the root user is, of course, '/root'."
+    echo "We don't want to mess around in there. So run this script as a"
+    echo "normal user. You will be asked for a sudo password when necessary."
+    echo "##################################################################"
+    exit 1
  fi
 
 
@@ -1312,7 +1308,7 @@ if [ -d /etc/dnf ] ; then
          
          lightdmtheme
          clear
-         uwufetchfromsource
+        [ -e /usr/bin/uwufetch ] || uwufetchfromsource
          clear
          installchoosenbrowser
          clear
@@ -1320,7 +1316,8 @@ if [ -d /etc/dnf ] ; then
          clear
          neomuttfromsource
          clear
-         btopfromsource
+         which btop &> /dev/null
+         [ $? = "0"  ] || btopfromsource
          clear
          mwfromsource
          clear
