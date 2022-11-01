@@ -4,7 +4,7 @@ Utility that will configure your desktop using my configuration files
 
 My plan is to make this work on any distro but currently its just in testing phase and isn't that stable, But this script will work best on arch for now
 
-# OBS This project is work in progress use on your own risk (I recommendnd to not use it at all not working right now)
+# OBS This project is work in progress use on your own risk (I recommendnd to not use it at all not working right now!!!)
 ## Currently testing on 
 
 Arch 
