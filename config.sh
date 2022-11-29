@@ -1,5 +1,6 @@
 #!/bin/bash
-   
+
+
 config="$HOME/dotfiles"
 files="$HOME/dotfiles/setup-files"
 
